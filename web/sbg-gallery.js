@@ -324,17 +324,19 @@ export function initGallery(mountEl, config) {
 
   function renderFolderNav() {
     folderNav.innerHTML = "";
-    const rootLabel = (state.roots.find(r => r.id === state.rootId) || {}).label || state.rootId;
+    const displayRootLabel = (root) => root.id === "output" && root.label === "Output" ? "输出目录" : root.label;
+    const selectedRoot = state.roots.find(r => r.id === state.rootId);
+    const rootLabel = selectedRoot ? (displayRootLabel(selectedRoot) || state.rootId) : state.rootId;
 
     if (state.roots.length > 1) {
-      const rootBtn = h("button", { class: "sbg-crumb sbg-crumb--root", text: rootLabel, title: "Click to change root" });
+      const rootBtn = h("button", { class: "sbg-crumb sbg-crumb--root", text: rootLabel, title: "点击切换根目录" });
       rootBtn.addEventListener("click", () => {
         _toggleCrumbPopup("root", rootBtn, () => {
           const popup = h("div", { class: "sbg-crumb-popup" });
           for (const r of state.roots) {
             const item = h("div", {
               class: `sbg-crumb-popup__item${r.id === state.rootId ? " sbg-crumb-popup__item--active" : ""}`,
-              text: r.label,
+              text: displayRootLabel(r),
             });
             item.addEventListener("click", () => {
               _closeCrumbPopup();
@@ -349,14 +351,14 @@ export function initGallery(mountEl, config) {
     }
 
     if (state.subfolders.length > 0) {
-      const currentLabel = state.subfolder || "All folders";
-      const pickBtn = h("button", { class: "sbg-crumb sbg-crumb--pick", text: "📂 " + currentLabel, title: "Browse folders" });
+      const currentLabel = state.subfolder || "所有文件夹";
+      const pickBtn = h("button", { class: "sbg-crumb sbg-crumb--pick", text: "📂 " + currentLabel, title: "浏览文件夹" });
       pickBtn.addEventListener("click", () => {
         // Scroll position persists through every close path (dismiss, toggle,
         // pick) via the toggle helper's onClose hook.
         const popup = _toggleCrumbPopup("folders", pickBtn, () => {
           const p = h("div", { class: "sbg-crumb-popup sbg-crumb-popup--folders" });
-          const allItem = h("div", { class: `sbg-crumb-popup__item${!state.subfolder ? " sbg-crumb-popup__item--active" : ""}`, text: "📁 All folders" });
+          const allItem = h("div", { class: `sbg-crumb-popup__item${!state.subfolder ? " sbg-crumb-popup__item--active" : ""}`, text: "📁 所有文件夹" });
           allItem.addEventListener("click", () => {
             _closeCrumbPopup();
             state.subfolder = "";
@@ -400,31 +402,31 @@ export function initGallery(mountEl, config) {
     }
   }
 
-  const kindBtnAll = h("button", { class: "sbg-kind-btn sbg-kind-btn--active", text: "All", "data-kind": "", title: "Show all files" });
-  const kindBtnImg = h("button", { class: "sbg-kind-btn", html: IMG_FILTER_ICON, "data-kind": "image", title: "Images only" });
-  const kindBtnVid = h("button", { class: "sbg-kind-btn", html: VID_FILTER_ICON, "data-kind": "video", title: "Videos only" });
-  const kindBtnAud = h("button", { class: "sbg-kind-btn", html: AUD_FILTER_ICON, "data-kind": "audio", title: "Audio only" });
+  const kindBtnAll = h("button", { class: "sbg-kind-btn sbg-kind-btn--active", text: "全部", "data-kind": "", title: "显示所有文件" });
+  const kindBtnImg = h("button", { class: "sbg-kind-btn", html: IMG_FILTER_ICON, "data-kind": "image", title: "仅显示图片" });
+  const kindBtnVid = h("button", { class: "sbg-kind-btn", html: VID_FILTER_ICON, "data-kind": "video", title: "仅显示视频" });
+  const kindBtnAud = h("button", { class: "sbg-kind-btn", html: AUD_FILTER_ICON, "data-kind": "audio", title: "仅显示音频" });
   const kindButtons = [kindBtnAll, kindBtnImg, kindBtnVid, kindBtnAud];
   const kindGroup = h("div", { class: "sbg-kind-group" }, kindButtons);
 
-  const sortSel = h("select", { class: "sbg-select", title: "Sort order", style: "flex:0 0 auto;width:auto" }, [
-    h("option", { value: "created_desc", text: "Created ↓" }),
-    h("option", { value: "created_asc", text: "Created ↑" }),
-    h("option", { value: "modified_desc", text: "Modified ↓" }),
-    h("option", { value: "modified_asc", text: "Modified ↑" }),
-    h("option", { value: "name_asc", text: "Name ↑" }),
-    h("option", { value: "name_desc", text: "Name ↓" }),
-    h("option", { value: "size_desc", text: "Size ↓" }),
-    h("option", { value: "size_asc", text: "Size ↑" }),
+  const sortSel = h("select", { class: "sbg-select", title: "排序方式", style: "flex:0 0 auto;width:auto" }, [
+    h("option", { value: "created_desc", text: "创建时间 ↓" }),
+    h("option", { value: "created_asc", text: "创建时间 ↑" }),
+    h("option", { value: "modified_desc", text: "修改时间 ↓" }),
+    h("option", { value: "modified_asc", text: "修改时间 ↑" }),
+    h("option", { value: "name_asc", text: "名称 ↑" }),
+    h("option", { value: "name_desc", text: "名称 ↓" }),
+    h("option", { value: "size_desc", text: "大小 ↓" }),
+    h("option", { value: "size_asc", text: "大小 ↑" }),
   ]);
   sortSel.value = state.sort;
-  const diagBtn = h("button", { class: "sbg-btn", html: GEAR_SVG, title: "Gallery Settings" });
+  const diagBtn = h("button", { class: "sbg-btn", html: GEAR_SVG, title: "图库设置" });
 
   /* Search bar */
 
-  const qInput = h("input", { class: "sbg-input", placeholder: "Search all fields… (name: for filename only)", title: "Search across all metadata fields. Press Enter to add as a tag. Use name: for filename-only, model: lora: prompt: keyword: sampler: controlnet: for specific fields" });
-  const searchClear = h("button", { class: "sbg-search-clear", text: "✕", title: "Clear search" });
-  const searchRefresh = h("button", { class: "sbg-search-refresh", text: "⟳", title: "Refresh gallery (rescan disk)" });
+  const qInput = h("input", { class: "sbg-input", placeholder: "搜索所有字段…（仅搜索文件名请用 name:）", title: "搜索所有元数据字段。按 Enter 添加搜索标签。使用 name: 仅搜索文件名；使用 model:、lora:、prompt:、keyword:、sampler:、controlnet: 搜索指定字段" });
+  const searchClear = h("button", { class: "sbg-search-clear", text: "✕", title: "清除搜索" });
+  const searchRefresh = h("button", { class: "sbg-search-refresh", text: "⟳", title: "刷新图库（重新扫描磁盘）" });
   searchRefresh.addEventListener("click", () => { fetchAllItems({ rescan: true }); });
   const _syncSearchBtns = () => {
     const active = state.searchTags.length > 0 || qInput.value.length > 0;
@@ -433,9 +435,9 @@ export function initGallery(mountEl, config) {
   };
   const searchTagsWrap = h("div", { class: "sbg-search-tags" });
 
-  const searchModeSel = h("select", { class: "sbg-search-mode", title: "Toggle whether tags should match ALL requirements (AND) or ANY requirement (OR)", style: "display:none;" }, [
-    h("option", { value: "AND", text: "AND" }),
-    h("option", { value: "OR", text: "OR" })
+  const searchModeSel = h("select", { class: "sbg-search-mode", title: "切换搜索标签的匹配方式：满足所有条件（与）或任一条件（或）", style: "display:none;" }, [
+    h("option", { value: "AND", text: "与" }),
+    h("option", { value: "OR", text: "或" })
   ]);
   searchModeSel.addEventListener("change", () => {
     state.searchMode = searchModeSel.value;
@@ -612,7 +614,7 @@ export function initGallery(mountEl, config) {
 
   /* Status bar */
 
-  const statusLeft = h("span", { class: "sbg-status__left", text: "Ready" });
+  const statusLeft = h("span", { class: "sbg-status__left", text: "就绪" });
   const statusRight = h("span", { class: "sbg-status__right" });
 
   // Auto-reindex indicator. After a restart that updated the metadata parser,
@@ -621,7 +623,7 @@ export function initGallery(mountEl, config) {
   const statusReindex = h("span", {
     class: "sbg-status__reindex",
     style: "color:var(--sbg-accent);display:none;white-space:nowrap",
-    title: "The metadata parser was updated - all files are being re-read in the background. The gallery stays usable; updated metadata appears as files are re-indexed.",
+    title: "元数据解析器已更新，正在后台重新读取所有文件。图库仍可正常使用，重新建立索引后会显示更新的元数据。",
   });
   // Status-bar consumer of the shared progress poller (sbg-core.js): shows the
   // full rebuild if one runs, else any root's first index. Subscribes at mount
@@ -647,12 +649,12 @@ export function initGallery(mountEl, config) {
         const f = formatProgress(e);
         statusReindex.textContent = e.phase === "scanning"
           ? `⟳ ${f.text}`
-          : `⟳ Updating metadata index… ${f.text}`;
+          : `⟳ 正在更新元数据索引… ${f.text}`;
         return;
       }
       if (meta.settled) {
         if (sawRunning) {
-          statusReindex.textContent = "✓ Metadata index updated";
+          statusReindex.textContent = "✓ 元数据索引已更新";
           setTimeout(() => { statusReindex.style.display = "none"; }, 8000);
         } else {
           statusReindex.style.display = "none";
@@ -760,7 +762,7 @@ export function initGallery(mountEl, config) {
     }
 
     if (isVideo(it)) {
-      thumbWrap.appendChild(h("span", { class: "sbg-card__video-badge", text: (it.ext || "").replace(".", "").toUpperCase() || "VID" }));
+      thumbWrap.appendChild(h("span", { class: "sbg-card__video-badge", text: (it.ext || "").replace(".", "").toUpperCase() || "视频" }));
       thumbWrap.appendChild(h("div", { class: "sbg-card__play-icon", html: PLAY_SVG }));
     } else if (isAudio(it)) {
       thumbWrap.appendChild(h("span", { class: "sbg-card__video-badge", text: (it.ext || "").replace(".", "").toUpperCase() }));
@@ -780,7 +782,7 @@ export function initGallery(mountEl, config) {
 
     if (it._matchedFields && state._searchMatches) {
       const _renames = getSectionRenames();
-      const _BADGE_FALLBACK = { pos_prompt: "POSITIVE", neg_prompt: "NEGATIVE", filename: "FILENAME", keyword: "KEYWORD", app: "APP", any: "ANY" };
+      const _BADGE_FALLBACK = { pos_prompt: "正向提示词", neg_prompt: "反向提示词", filename: "文件名", keyword: "关键词", app: "应用", any: "任意字段" };
       const _searchToCanonical = {};
       for (const [name, def] of Object.entries(SectionRegistry.sectionDefs)) {
         if (def.searchField) _searchToCanonical[def.searchField] = name;
@@ -935,7 +937,7 @@ export function initGallery(mountEl, config) {
       if (state.filteredItems.length === 0) {
         _emptyMsg = h("div", { class: "sbg-empty", style: "grid-column:1/-1" }, [
           h("div", { class: "sbg-empty__icon", text: "📂" }),
-          h("div", { text: "No media found" }),
+          h("div", { text: "未找到媒体文件" }),
         ]);
         grid.appendChild(_emptyMsg);
       }
@@ -1074,7 +1076,7 @@ export function initGallery(mountEl, config) {
     // profiles against (TL.getSectionRenames).
     if (cfg.section_titles) setCatalogTitles(cfg.section_titles);
     state.roots = cfg.roots || [];
-    if (!state.roots.find(r => r.id === "output")) state.roots.unshift({ id: "output", label: "Output" });
+    if (!state.roots.find(r => r.id === "output")) state.roots.unshift({ id: "output", label: "输出目录" });
     _dataCache.roots = state.roots;
     _dataCache._autoRefreshSecs = (typeof cfg.auto_refresh_interval_s === "number") ? cfg.auto_refresh_interval_s : 15;
     _startAutoRefresh(); // apply a possibly-changed interval immediately
@@ -1120,7 +1122,7 @@ export function initGallery(mountEl, config) {
       state.allItems = [];
       applyFilters();
       renderFromScratch();
-      showProgress("Indexing new folder…", -1);
+      showProgress("正在为新文件夹建立索引…", -1);
       // Watch this root's first-index entry via the shared poller so a slow
       // (network) folder shows progress instead of a static bar. `idxActive`
       // guards a tick already in flight when we unsubscribe, so a late callback
@@ -1131,7 +1133,7 @@ export function initGallery(mountEl, config) {
         const e = (data.roots || {})[newRootId];
         if (!e || !e.running) return;
         const f = formatProgress(e);
-        showProgress(e.phase === "scanning" ? f.text : `Indexing… ${f.text}`, f.pct);
+        showProgress(e.phase === "scanning" ? f.text : `正在建立索引… ${f.text}`, f.pct);
       });
       fetchAllItems({ rescan: false })
         .then(() => loadSubfolders())
@@ -1197,7 +1199,7 @@ export function initGallery(mountEl, config) {
     const showedLoading = !rescan && rid === state.rootId;
     if (showedLoading) setLoading(true);
     if (rescan) resetFailedThumbs(); // give previously-failed thumbnails another chance
-    if (rid === state.rootId) statusLeft.textContent = rescan ? "Scanning…" : "Loading…";
+    if (rid === state.rootId) statusLeft.textContent = rescan ? "正在扫描…" : "正在加载…";
     try {
       const ts = Math.max(512, thumbSize * 2);
       _dataCache._thumbSize = ts;
@@ -1263,7 +1265,7 @@ export function initGallery(mountEl, config) {
 
       if (isCurrent) {
         state.allItems = newItems;
-        statusLeft.textContent = "Ready";
+        statusLeft.textContent = "就绪";
         applyFilters();
         if (!noChange || cacheReset) renderFromScratch();
         // An open lightbox holds the previous items array, so a full refetch
@@ -1275,7 +1277,7 @@ export function initGallery(mountEl, config) {
         if (state.searchTags.length > 0 && !noChange) _triggerMultiSearch();
       }
     } catch (e) {
-      if (rid === state.rootId) statusLeft.textContent = `Error: ${e.message || e}`;
+      if (rid === state.rootId) statusLeft.textContent = `错误：${e.message || e}`;
     } finally {
       if (showedLoading) setLoading(false);
     }
@@ -1289,14 +1291,14 @@ export function initGallery(mountEl, config) {
 
     const overlay = h("div", { class: "sbg-first-time-overlay" });
     const modal = h("div", { class: "sbg-first-time-modal" });
-    const title = h("h3", { text: "🗂️ Building Index for the First Time" });
-    const desc = h("p", { text: "This will scan all media files and parse their metadata. This may take a couple minutes depending on library size." });
+    const title = h("h3", { text: "🗂️ 首次建立索引" });
+    const desc = h("p", { text: "将扫描所有媒体文件并解析其元数据。所需时间取决于文件数量，可能需要几分钟。" });
     const progressBar = h("div", { class: "sbg-progress__bar" });
     const progressFillM = h("div", { class: "sbg-progress__fill" });
     progressBar.appendChild(progressFillM);
     const progressTextM = h("span", { class: "sbg-first-time-progress", text: "" });
-    const startBtn = h("button", { class: "sbg-btn sbg-btn--primary", text: "🚀 Start Indexing" });
-    const skipBtn = h("button", { class: "sbg-btn", text: "Skip (no metadata)" });
+    const startBtn = h("button", { class: "sbg-btn sbg-btn--primary", text: "🚀 开始建立索引" });
+    const skipBtn = h("button", { class: "sbg-btn", text: "跳过（不读取元数据）" });
 
     modal.appendChild(title);
     modal.appendChild(desc);
@@ -1309,9 +1311,9 @@ export function initGallery(mountEl, config) {
     skipBtn.addEventListener("click", () => overlay.remove());
     startBtn.addEventListener("click", async () => {
       startBtn.disabled = true;
-      startBtn.textContent = "Indexing…";
+      startBtn.textContent = "正在建立索引…";
       skipBtn.style.display = "none";
-      progressTextM.textContent = "Starting…";
+      progressTextM.textContent = "正在启动…";
       try { await fetch("/sidebar_gallery/rebuild_index", { method: "POST" }); } catch { }
       let sawRunning = false; // ignore early polls before the worker spins up
       let modalActive = true;
@@ -1330,9 +1332,9 @@ export function initGallery(mountEl, config) {
         // Real failure (e.g. "database is locked"): say so and offer a retry.
         if (e && !data.running && (e.error || e.phase === "error")) {
           modalActive = false; unsub();
-          progressTextM.textContent = `Indexing failed: ${e.error || "unknown error"}. Click to try again.`;
+          progressTextM.textContent = `建立索引失败：${e.error || "未知错误"}。点击重试。`;
           startBtn.disabled = false;
-          startBtn.textContent = "🚀 Start Indexing";
+          startBtn.textContent = "🚀 开始建立索引";
           skipBtn.style.display = "";
           return;
         }
@@ -1343,16 +1345,16 @@ export function initGallery(mountEl, config) {
           if (sawRunning || (e && e.phase === "done")) {
             modalActive = false; unsub();
             progressFillM.style.width = "100%";
-            progressTextM.textContent = `Done! ${(e && (e.done || e.total)) || ""} files indexed.`;
+            progressTextM.textContent = `完成！已为 ${(e && (e.done || e.total)) || ""} 个文件建立索引。`;
             setTimeout(() => { overlay.remove(); fetchAllItems(); }, 1500);
           } else {
             // The rebuild never started (refused because another scan holds the
             // writer, or it died before reporting): recover the buttons instead of
             // sitting on a disabled "Starting…" forever.
             modalActive = false; unsub();
-            progressTextM.textContent = "Couldn't start. Another scan is still running; try again in a moment.";
+            progressTextM.textContent = "无法启动。另一次扫描仍在运行，请稍后重试。";
             startBtn.disabled = false;
-            startBtn.textContent = "🚀 Start Indexing";
+            startBtn.textContent = "🚀 开始建立索引";
             skipBtn.style.display = "";
           }
         }
@@ -1617,7 +1619,7 @@ export function initGallery(mountEl, config) {
       applyFilters();
       renderFromScratch();
       document.dispatchEvent(new CustomEvent("sbg-items-updated", { detail: { items: state.filteredItems } }));
-      statusLeft.textContent = "Ready";
+      statusLeft.textContent = "就绪";
     } catch (e) {
       console.warn("[SBG] Delta refresh failed, falling back to full:", e);
       return fetchAllItems({ rescan: true, rootId: rid });
@@ -1722,7 +1724,7 @@ export function initGallery(mountEl, config) {
       _dataCache.lastSearchMatches = null;
       hideProgress();
       refilter();
-      statusLeft.textContent = "Ready";
+      statusLeft.textContent = "就绪";
       return;
     }
 
@@ -1744,8 +1746,8 @@ export function initGallery(mountEl, config) {
       _dataCache.lastSearchMatches = matchMap;
       _setSearchQuery(state.searchTags.map(t => t.value).join("\x00"));
       refilter();
-      statusLeft.textContent = `Found ${matchMap.size} matches (filename)`;
-      showToast(`Found ${matchMap.size} matches`);
+      statusLeft.textContent = `找到 ${matchMap.size} 个匹配项（文件名）`;
+      showToast(`找到 ${matchMap.size} 个匹配项`);
       return;
     }
 
@@ -1753,8 +1755,8 @@ export function initGallery(mountEl, config) {
       const ctrl = new AbortController();
       _searchAbort = ctrl;
       try {
-        statusLeft.textContent = "Searching…";
-        showProgress("Searching…", -1);
+        statusLeft.textContent = "正在搜索…";
+        showProgress("正在搜索…", -1);
         _dataCache.searchTags = [...state.searchTags];
         _dataCache.lastSearchMode = state.searchMode;
         const resp = await fetch("/sidebar_gallery/search", {
@@ -1795,12 +1797,12 @@ export function initGallery(mountEl, config) {
         const totalMatches = state._searchMatches.size;
         const inFolder = state.subfolder ? state.filteredItems.length : totalMatches;
         statusLeft.textContent = state.subfolder
-          ? `Found ${totalMatches} matches (${inFolder} in folder) of ${total} scanned`
-          : `Found ${totalMatches} of ${total} scanned`;
-        showToast(`Found ${totalMatches} matches`);
+          ? `已扫描 ${total} 个文件，找到 ${totalMatches} 个匹配项（当前文件夹 ${inFolder} 个）`
+          : `已扫描 ${total} 个文件，找到 ${totalMatches} 个匹配项`;
+        showToast(`找到 ${totalMatches} 个匹配项`);
       } catch (e) {
         if (e.name !== "AbortError") {
-          statusLeft.textContent = `Search error: ${e?.message || e}`;
+          statusLeft.textContent = `搜索错误：${e?.message || e}`;
           hideProgress();
         }
       }
@@ -1861,7 +1863,7 @@ export function initGallery(mountEl, config) {
     renderSearchTags();
     hideProgress();
     refilter();
-    statusLeft.textContent = "Ready";
+    statusLeft.textContent = "就绪";
   });
 
   searchTagsWrap.parentElement?.addEventListener("click", (e) => {
@@ -1965,7 +1967,7 @@ export function initGallery(mountEl, config) {
         }
         sortSel.value = state.sort;
 
-        statusLeft.textContent = "Ready";
+        statusLeft.textContent = "就绪";
         applyFilters();
         await new Promise(r => requestAnimationFrame(r));
         renderFromScratch();
@@ -1983,7 +1985,7 @@ export function initGallery(mountEl, config) {
           // so the first post-refresh reconcile is a tiny list_new instead of
           // escalating to a full list_all.
           if (persisted.serverTime) _dataCache.serverTime[state.rootId] = persisted.serverTime;
-          statusLeft.textContent = "Ready";
+          statusLeft.textContent = "就绪";
           applyFilters();
           await new Promise(r => requestAnimationFrame(r));
           renderFromScratch();
@@ -1995,7 +1997,7 @@ export function initGallery(mountEl, config) {
         }
       }
     } catch (e) {
-      statusLeft.textContent = `Error: ${e?.message || e}`;
+      statusLeft.textContent = `错误：${e?.message || e}`;
     }
     watchReindexProgress();
   })();

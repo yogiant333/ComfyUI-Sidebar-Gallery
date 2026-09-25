@@ -47,16 +47,16 @@ const gsOverlay = h("div", { class: "sbg-gs-overlay" });
 const gsPanel = h("div", { class: "sbg-gs-panel" });
 
 // Header
-const gsClose = h("button", { class: "sbg-gs-close", text: "✕", title: "Close" });
+const gsClose = h("button", { class: "sbg-gs-close", text: "✕", title: "关闭" });
 const gsHeader = h("div", { class: "sbg-gs-header" }, [
-  h("span", { class: "sbg-gs-title", text: "⚙ Gallery Settings" }),
+  h("span", { class: "sbg-gs-title", text: "⚙ 图库设置" }),
   gsClose,
 ]);
 
 // Tab bar
-const TAB_NAMES = ["Layout", "Appearance", "Keybindings", "Settings", "Presets", "Diagnostics"];
-const tabBtns = TAB_NAMES.map(name =>
-  h("button", { class: "sbg-gs-tab", text: name, "data-tab": name.toLowerCase() })
+const TAB_LABELS = { layout: "布局", appearance: "外观", keybindings: "快捷键", settings: "设置", presets: "预设", diagnostics: "诊断" };
+const tabBtns = Object.entries(TAB_LABELS).map(([id, label]) =>
+  h("button", { class: "sbg-gs-tab", text: label, "data-tab": id })
 );
 const tabBar = h("div", { class: "sbg-gs-tabs" }, tabBtns);
 const content = h("div", { class: "sbg-gs-content" });
@@ -99,7 +99,7 @@ async function refreshDiagStats(diagStatsContainer) {
 
     const indexInfo = st.index || {};
     const counts = indexInfo.counts || st.index || {};
-    const indexTitle = h("div", { class: "sbg-diag-section__title", text: "SQLite Index", title: "Server-side SQLite database that stores the file listing and parsed metadata summaries for fast gallery loading without disk scanning" });
+    const indexTitle = h("div", { class: "sbg-diag-section__title", text: "SQLite 索引", title: "服务器端 SQLite 数据库保存文件列表和元数据摘要，便于快速加载图库，无需扫描磁盘" });
     diagStatsContainer.appendChild(indexTitle);
 
     const countsObj = typeof counts === "object" && !Array.isArray(counts) ? counts : {};
@@ -107,19 +107,19 @@ async function refreshDiagStats(diagStatsContainer) {
       if (rid === "db_path" || rid === "db_size_mb" || rid === "counts") continue;
       diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [
         h("span", { class: "sbg-diag-stat__label", text: rid }),
-        h("span", { class: "sbg-diag-stat__value", text: Number(count).toLocaleString() + " files" }),
+        h("span", { class: "sbg-diag-stat__value", text: Number(count).toLocaleString() + " 个文件" }),
       ]));
     }
 
     if (indexInfo.db_path) {
-      diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat", title: "Full filesystem path of the SQLite database file" }, [
-        h("span", { class: "sbg-diag-stat__label", text: "DB Path" }),
+      diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat", title: "SQLite 数据库文件的完整路径" }, [
+        h("span", { class: "sbg-diag-stat__label", text: "数据库路径" }),
         h("span", { class: "sbg-diag-stat__value sbg-diag-stat__value--path", text: indexInfo.db_path }),
       ]));
     }
     if (indexInfo.db_size_mb !== undefined) {
-      diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat", title: "Size of the SQLite database file on disk" }, [
-        h("span", { class: "sbg-diag-stat__label", text: "DB Size" }),
+      diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat", title: "SQLite 数据库文件占用的磁盘空间" }, [
+        h("span", { class: "sbg-diag-stat__label", text: "数据库大小" }),
         h("span", { class: "sbg-diag-stat__value", text: `${indexInfo.db_size_mb} MB` }),
       ]));
     }
@@ -134,38 +134,38 @@ async function refreshDiagStats(diagStatsContainer) {
       if (entry) {
         const f = formatProgress(entry);
         diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat", style: "margin-top:6px;color:var(--sbg-accent)" }, [
-          h("span", { class: "sbg-diag-stat__label", text: `${entry.phase || "Indexing"}…` }),
+          h("span", { class: "sbg-diag-stat__label", text: `${entry.phase || "正在建立索引"}…` }),
           h("span", { class: "sbg-diag-stat__value", text: f.text }),
         ]));
       }
     } catch { }
 
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-section__title", text: "Server Thumbnails", title: "JPEG thumbnails generated and stored on the server in the .thumbs folder. Shared across all browsers/clients. No in-memory cache. Served directly from disk on each request.", style: "margin-top:10px" }));
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "Count" }), h("span", { class: "sbg-diag-stat__value", text: (st.thumbnails?.count || 0).toLocaleString() })]));
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "Size" }), h("span", { class: "sbg-diag-stat__value", text: `${st.thumbnails?.size_mb || 0} MB` })]));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-section__title", text: "服务器缩略图", title: "JPEG 缩略图生成后保存在服务器的 .thumbs 文件夹中，供所有浏览器和客户端共用。每次请求都直接从磁盘读取。", style: "margin-top:10px" }));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "数量" }), h("span", { class: "sbg-diag-stat__value", text: (st.thumbnails?.count || 0).toLocaleString() })]));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "大小" }), h("span", { class: "sbg-diag-stat__value", text: `${st.thumbnails?.size_mb || 0} MB` })]));
 
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-section__title", text: "Browser Thumb Cache", title: "Thumbnails cached in this browser's IndexedDB for instant loading without server requests.", style: "margin-top:10px" }));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-section__title", text: "浏览器缩略图缓存", title: "缩略图缓存在此浏览器的 IndexedDB 中，可直接加载而无需请求服务器。", style: "margin-top:10px" }));
     const _tcCountEl = h("span", { class: "sbg-diag-stat__value", text: "…" });
     const _tcSizeEl = h("span", { class: "sbg-diag-stat__value", text: "…" });
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "Cached" }), _tcCountEl]));
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "Size" }), _tcSizeEl]));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "已缓存" }), _tcCountEl]));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "大小" }), _tcSizeEl]));
 
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-section__title", text: "Browser Meta Cache", title: "Parsed metadata summaries cached in IndexedDB and in-memory.", style: "margin-top:10px" }));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-section__title", text: "浏览器元数据缓存", title: "解析后的元数据摘要缓存在 IndexedDB 和内存中。", style: "margin-top:10px" }));
     const _mcCountEl = h("span", { class: "sbg-diag-stat__value", text: "…" });
     const _mcSizeEl = h("span", { class: "sbg-diag-stat__value", text: "…" });
-    const _mcMemEl = h("span", { class: "sbg-diag-stat__value", text: `${_metaCache.size} entries` });
+    const _mcMemEl = h("span", { class: "sbg-diag-stat__value", text: `${_metaCache.size} 条` });
     diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "IndexedDB" }), _mcCountEl]));
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "Size" }), _mcSizeEl]));
-    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat", title: "Metadata entries in JS memory for this session" }, [h("span", { class: "sbg-diag-stat__label", text: "In-memory" }), _mcMemEl]));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat" }, [h("span", { class: "sbg-diag-stat__label", text: "大小" }), _mcSizeEl]));
+    diagStatsContainer.appendChild(h("div", { class: "sbg-diag-stat", title: "当前会话中保存在 JS 内存里的元数据条目" }, [h("span", { class: "sbg-diag-stat__label", text: "内存中" }), _mcMemEl]));
 
     Promise.all([_thumbCacheAPI.getStats(), _metaCacheAPI.getStats()]).then(([ts, ms]) => {
-      _tcCountEl.textContent = `${ts.count.toLocaleString()} thumbs`;
+      _tcCountEl.textContent = `${ts.count.toLocaleString()} 张缩略图`;
       _tcSizeEl.textContent = _fmtCacheSize(ts.totalSizeBytes);
-      _mcCountEl.textContent = `${ms.count.toLocaleString()} entries`;
+      _mcCountEl.textContent = `${ms.count.toLocaleString()} 条`;
       _mcSizeEl.textContent = _fmtCacheSize(ms.totalSizeBytes);
     }).catch(() => { });
   } catch (e) {
-    diagStatsContainer.innerHTML = `<div style="padding:8px;color:var(--sbg-text-dim)">Error: ${e?.message || e}</div>`;
+    diagStatsContainer.innerHTML = `<div style="padding:8px;color:var(--sbg-text-dim)">错误：${e?.message || e}</div>`;
   }
 }
 
@@ -306,9 +306,23 @@ function _colorInput(id, fallback, label, tooltip, callback, replaceChannel) {
   return _settingRow(label, wrap, tooltip);
 }
 
+const OPTION_LABELS = {
+  comfyui: "跟随 ComfyUI", dark: "深色", blue: "蓝色", midnight: "午夜",
+  synthwave: "合成波", retro: "复古", custom: "自定义",
+  auto: "自动", square: "方形", ar: "原始比例",
+  created_desc: "创建时间：最新优先", created_asc: "创建时间：最早优先",
+  modified_desc: "修改时间：最新优先", modified_asc: "修改时间：最早优先",
+  name_asc: "名称：升序", name_desc: "名称：降序",
+  size_desc: "大小：从大到小", size_asc: "大小：从小到大",
+  mouse: "鼠标", touchpad: "触控板", cursor: "光标", center: "中心",
+  independent: "独立", synced: "同步",
+  enhanced: "增强", initial: "初始", remember: "记住上次选择",
+  basename: "仅文件名", relpath: "相对路径",
+};
+
 function _comboInput(id, fallback, options, label, tooltip, callback) {
   const val = getSetting(id, fallback);
-  const sel = h("select", { class: "sbg-gs-select" }, options.map(o => h("option", { value: o, text: o })));
+  const sel = h("select", { class: "sbg-gs-select" }, options.map(o => h("option", { value: o, text: OPTION_LABELS[o] || o })));
   sel.value = val;
   sel.addEventListener("change", () => { saveSetting(id, sel.value); if (callback) callback(sel.value); });
   return _settingRow(label, sel, tooltip);
@@ -366,26 +380,26 @@ function renderAppearance() {
     wrap.appendChild(row);
   }
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Badge Colors" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "徽标颜色" }));
 
   for (const [key, def, text, caption, tip] of [
-    [S.BADGE_HIGH_COLOR, "#f87171", "HIGH", " Badge", "Color for HIGH/base KSampler and model badges"],
-    [S.BADGE_LOW_COLOR, "#60a5fa", "LOW", " Badge", "Color for LOW/refine KSampler and model badges"],
-    [S.VIDEO_BADGE_COLOR, "#facc15", "MP4", " Badge", "Color for the format badge on video and audio thumbnails"],
-    [S.SEARCH_TAG_COLOR, "#6495ed", "search", " Search Badge", "Color for search tag badges in the search bar"],
-    [S.SEARCH_TAG_NEG_COLOR, "#ef4444", "\u2212exclude", " Exclude Badge", "Color for negative/exclude search tag badges"],
+    [S.BADGE_HIGH_COLOR, "#f87171", "HIGH", " 徽标", "HIGH／基础 KSampler 和模型徽标的颜色"],
+    [S.BADGE_LOW_COLOR, "#60a5fa", "LOW", " 徽标", "LOW／精修 KSampler 和模型徽标的颜色"],
+    [S.VIDEO_BADGE_COLOR, "#facc15", "MP4", " 徽标", "视频和音频缩略图的格式徽标颜色"],
+    [S.SEARCH_TAG_COLOR, "#6495ed", "search", " 搜索徽标", "搜索栏中搜索标签徽标的颜色"],
+    [S.SEARCH_TAG_NEG_COLOR, "#ef4444", "\u2212exclude", " 排除徽标", "排除搜索标签徽标的颜色"],
   ]) {
     const chip = _badgePreview(text, getSetting(key, def) || def);
     if (key === S.VIDEO_BADGE_COLOR) chip.style.color = "#000";
     _chipRow(key, def, chip, { caption, tooltip: tip, onColor: (c) => { chip.style.background = c; } });
   }
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Highlight Color", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "高亮颜色", style: "margin-top:16px" }));
   const hlColor = localStorage.getItem("SBG.GS.HighlightBg") || "rgba(250, 204, 21, 0.35)";
-  const hlSample = h("span", { text: "Highlight", style: `background:${hlColor};padding:1px 4px;border-radius:2px;` });
+  const hlSample = h("span", { text: "高亮", style: `background:${hlColor};padding:1px 4px;border-radius:2px;` });
   _chipRow("HighlightBg", "rgba(250, 204, 21, 0.35)", hlSample, {
-    prefix: "Search ",
-    tooltip: "Background color for search match highlighting in metadata panel",
+    prefix: "搜索",
+    tooltip: "元数据面板中搜索结果的高亮背景色",
     onColor: (c) => {
       localStorage.setItem("SBG.GS.HighlightBg", c);
       document.documentElement.style.setProperty("--sbg-highlight-bg", c);
@@ -393,11 +407,11 @@ function renderAppearance() {
     },
   });
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Theme", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "主题", style: "margin-top:16px" }));
 
   const customWrap = h("div", { class: "sbg-gs-form sbg-gs-custom-theme", style: getSetting(S.THEME, "comfyui") === "custom" ? "display:block; margin-top:10px; padding:10px; background:rgba(0,0,0,0.15); border-radius:5px; border:1px solid var(--sbg-border)" : "display:none" });
 
-  wrap.appendChild(_comboInput(S.THEME, "comfyui", ["comfyui", "dark", "blue", "midnight", "synthwave", "retro", "custom"], "Gallery Theme", "Color theme for the gallery sidebar", (val) => {
+  wrap.appendChild(_comboInput(S.THEME, "comfyui", ["comfyui", "dark", "blue", "midnight", "synthwave", "retro", "custom"], "图库主题", "图库侧边栏的配色主题", (val) => {
     const rootEl = document.querySelector(".sbg-root");
     if (rootEl) {
       if (val !== "comfyui") rootEl.setAttribute("data-theme", val);
@@ -407,17 +421,17 @@ function renderAppearance() {
     customWrap.style.display = val === "custom" ? "block" : "none";
   }));
 
-  customWrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Configure your own custom UI colors." }));
+  customWrap.appendChild(h("div", { class: "sbg-gs-desc", text: "配置自定义界面颜色。" }));
   const applyVar = (v, c) => { if (getSetting(S.THEME, "comfyui") === "custom") document.querySelector(".sbg-root")?.style.setProperty(v, c); };
-  customWrap.appendChild(_colorInput("CUSTOM_BG", "#1a1a1a", "Background", "Base background color", (c) => applyVar("--sbg-bg", c)));
-  customWrap.appendChild(_colorInput("CUSTOM_SURFACE", "#222222", "Surface", "Surface background color", (c) => applyVar("--sbg-surface", c)));
-  customWrap.appendChild(_colorInput("CUSTOM_BORDER", "#444444", "Border elements", "Borders and dividers", (c) => applyVar("--sbg-border", c)));
-  customWrap.appendChild(_colorInput("CUSTOM_TEXT", "#e0e0e0", "Text", "Main text color", (c) => applyVar("--sbg-text", c)));
-  customWrap.appendChild(_colorInput("CUSTOM_ACCENT", "#7c6aef", "Accent", "Primary accent color", (c) => applyVar("--sbg-accent", c)));
+  customWrap.appendChild(_colorInput("CUSTOM_BG", "#1a1a1a", "背景", "基础背景色", (c) => applyVar("--sbg-bg", c)));
+  customWrap.appendChild(_colorInput("CUSTOM_SURFACE", "#222222", "表面", "表面背景色", (c) => applyVar("--sbg-surface", c)));
+  customWrap.appendChild(_colorInput("CUSTOM_BORDER", "#444444", "边框元素", "边框和分隔线", (c) => applyVar("--sbg-border", c)));
+  customWrap.appendChild(_colorInput("CUSTOM_TEXT", "#e0e0e0", "文字", "主要文字颜色", (c) => applyVar("--sbg-text", c)));
+  customWrap.appendChild(_colorInput("CUSTOM_ACCENT", "#7c6aef", "强调色", "主要强调色", (c) => applyVar("--sbg-accent", c)));
   wrap.appendChild(customWrap);
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Lightbox Button Colors", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Leave blank for default colors." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "查看器按钮颜色", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "留空则使用默认颜色。" }));
 
   const _ACCENT = "var(--sbg-accent,#7c6aef)";
   function _btnPreview(text, color) {
@@ -425,18 +439,18 @@ function renderAppearance() {
   }
 
   for (const [key, text, tip] of [
-    [S.LB_COLOR_DOWNLOAD, "Download", "Background color for download button"],
-    [S.LB_COLOR_COPY_PROMPT, "Copy Prompt", "Background color for copy prompt button"],
-    [S.LB_COLOR_COPY_WF, "Copy WF", "Background color for copy workflow button"],
-    [S.LB_COLOR_LOAD_WF, "Load Workflow", "Background color for load workflow button"],
-    [S.LB_COLOR_COMPARE, "Compare", "Background color for compare button"],
+    [S.LB_COLOR_DOWNLOAD, "下载", "下载按钮的背景色"],
+    [S.LB_COLOR_COPY_PROMPT, "复制提示词", "复制提示词按钮的背景色"],
+    [S.LB_COLOR_COPY_WF, "复制工作流", "复制工作流按钮的背景色"],
+    [S.LB_COLOR_LOAD_WF, "加载工作流", "加载工作流按钮的背景色"],
+    [S.LB_COLOR_COMPARE, "对比", "对比按钮的背景色"],
   ]) {
     const chip = _btnPreview(text, getSetting(key, ""));
     _chipRow(key, "", chip, { tooltip: tip, onColor: (c) => { chip.style.background = c || _ACCENT; } });
   }
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "App Badge Colors", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Customize the color of each source application badge. Leave blank for defaults." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "应用徽标颜色", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "自定义各来源应用的徽标颜色。留空则使用默认颜色。" }));
 
   // Rows derive from the single app registry in sbg-core.js, so the preview
   // here, the boot-time CSS vars, and the lightbox badge read the same defaults.
@@ -454,35 +468,35 @@ function renderAppearance() {
     if (saved) document.documentElement.style.setProperty(a.cssVar, saved);
   }
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Initial Image Tab", style: "margin-top:16px" }));
-  const initTabBadge = _badgePreview("Initial Image", getSetting(S.INITIAL_IMAGE_TAB_COLOR, "") || "#94a3b8");
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "初始图像标签页", style: "margin-top:16px" }));
+  const initTabBadge = _badgePreview("初始图像", getSetting(S.INITIAL_IMAGE_TAB_COLOR, "") || "#94a3b8");
   _chipRow(S.INITIAL_IMAGE_TAB_COLOR, "#94a3b8", initTabBadge, {
-    tooltip: "Color for the Initial Image tab button in the lightbox metadata panel",
+    tooltip: "查看器元数据面板中“初始图像”标签按钮的颜色",
     onColor: (c) => { initTabBadge.style.background = c || "#94a3b8"; },
   });
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Default Pill Colors", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "The default background, text and border for values shown as pills, used for any field you have not given its own colour. Leave a box empty for the theme default." }));
-  const pillPreview = _badgePreview("Example Pill", getSetting(S.PILL_BG_COLOR, "") || "rgba(255,255,255,0.06)");
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "默认胶囊标签颜色", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "未单独设置颜色的字段会使用这些胶囊标签背景、文字和边框颜色。留空则使用主题默认值。" }));
+  const pillPreview = _badgePreview("示例标签", getSetting(S.PILL_BG_COLOR, "") || "rgba(255,255,255,0.06)");
   pillPreview.style.color = getSetting(S.PILL_TEXT_COLOR, "") || "rgba(255,255,255,0.8)";
   pillPreview.style.border = `1px solid ${getSetting(S.PILL_BORDER_COLOR, "") || "rgba(255,255,255,0.08)"}`;
-  const pillBgRow = _colorInput(S.PILL_BG_COLOR, "rgba(255,255,255,0.06)", "Background", "Pill background color", (c) => {
+  const pillBgRow = _colorInput(S.PILL_BG_COLOR, "rgba(255,255,255,0.06)", "背景", "胶囊标签背景色", (c) => {
     pillPreview.style.background = c || "rgba(255,255,255,0.06)";
     if (c) document.documentElement.style.setProperty("--sbg-pill-bg", c);
     else document.documentElement.style.removeProperty("--sbg-pill-bg");
   }, "bg");
-  const pillTextRow = _colorInput(S.PILL_TEXT_COLOR, "rgba(255,255,255,0.8)", "Text", "Pill text color", (c) => {
+  const pillTextRow = _colorInput(S.PILL_TEXT_COLOR, "rgba(255,255,255,0.8)", "文字", "胶囊标签文字颜色", (c) => {
     pillPreview.style.color = c || "rgba(255,255,255,0.8)";
     if (c) document.documentElement.style.setProperty("--sbg-pill-text", c);
     else document.documentElement.style.removeProperty("--sbg-pill-text");
   }, "text");
-  const pillBorderRow = _colorInput(S.PILL_BORDER_COLOR, "rgba(255,255,255,0.08)", "Border", "Pill border color", (c) => {
+  const pillBorderRow = _colorInput(S.PILL_BORDER_COLOR, "rgba(255,255,255,0.08)", "边框", "胶囊标签边框颜色", (c) => {
     pillPreview.style.border = `1px solid ${c || "rgba(255,255,255,0.08)"}`;
     if (c) document.documentElement.style.setProperty("--sbg-pill-border", c);
     else document.documentElement.style.removeProperty("--sbg-pill-border");
   }, "border");
   const pillPreviewRow = h("div", { style: "display:flex;align-items:center;gap:8px;margin-bottom:8px" });
-  pillPreviewRow.appendChild(h("span", { class: "sbg-gs-label", text: "Preview:", style: "font-size:11px;opacity:0.6" }));
+  pillPreviewRow.appendChild(h("span", { class: "sbg-gs-label", text: "预览：", style: "font-size:11px;opacity:0.6" }));
   pillPreviewRow.appendChild(pillPreview);
   wrap.appendChild(pillPreviewRow);
   wrap.appendChild(pillBgRow);
@@ -495,36 +509,36 @@ function renderAppearance() {
 function renderKeybindings() {
   content.innerHTML = "";
   const wrap = h("div", { class: "sbg-gs-form" });
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Keyboard Shortcuts" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Comma-separated key names. Example: ArrowLeft,a. Combos join modifiers with a plus sign, like Shift+ArrowLeft or Ctrl+d. Mouse buttons can be named too: MiddleClick, Mouse4, Mouse5. The comma key is written Comma and the plus key Plus." }));
-  wrap.appendChild(_textInput(S.KEY_PREV, "ArrowLeft,a,j", "Previous Image", "Keys for previous image in lightbox"));
-  wrap.appendChild(_textInput(S.KEY_NEXT, "ArrowRight,d,l", "Next Image", "Keys for next image in lightbox"));
-  wrap.appendChild(_textInput(S.KEY_CLOSE, "Escape,q,z,0", "Close Lightbox", "Keys to close lightbox"));
-  wrap.appendChild(_textInput(S.KEY_TOGGLE, "z,0", "Toggle Gallery", "Keys to open/close the gallery sidebar"));
-  wrap.appendChild(_textInput(S.KEY_REFRESH, "", "Refresh Gallery", "Key to refresh gallery (leave empty to disable)"));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "键盘快捷键" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "用逗号分隔按键名称，例如 ArrowLeft,a。组合键用加号连接，如 Shift+ArrowLeft 或 Ctrl+d。鼠标按键可写为 MiddleClick、Mouse4、Mouse5；逗号键写作 Comma，加号键写作 Plus。" }));
+  wrap.appendChild(_textInput(S.KEY_PREV, "ArrowLeft,a,j", "上一张图像", "在查看器中切换到上一张图像"));
+  wrap.appendChild(_textInput(S.KEY_NEXT, "ArrowRight,d,l", "下一张图像", "在查看器中切换到下一张图像"));
+  wrap.appendChild(_textInput(S.KEY_CLOSE, "Escape,q,z,0", "关闭查看器", "关闭查看器的快捷键"));
+  wrap.appendChild(_textInput(S.KEY_TOGGLE, "z,0", "切换图库", "打开或关闭图库侧边栏"));
+  wrap.appendChild(_textInput(S.KEY_REFRESH, "", "刷新图库", "刷新图库的快捷键（留空则禁用）"));
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Lightbox Actions", style: "margin-top:16px" }));
-  wrap.appendChild(_textInput(S.KEY_FULLSCREEN, "f", "Fullscreen", "Toggle fullscreen in lightbox"));
-  wrap.appendChild(_textInput(S.KEY_DOWNLOAD, "", "Download", "Download current file (leave empty to disable)"));
-  wrap.appendChild(_textInput(S.KEY_COPY_PROMPT, "", "Copy Prompt", "Copy positive prompt (leave empty to disable)"));
-  wrap.appendChild(_textInput(S.KEY_COPY_WF, "", "Copy Workflow", "Copy workflow JSON (leave empty to disable)"));
-  wrap.appendChild(_textInput(S.KEY_LOAD_WF, "", "Load Workflow", "Load workflow into ComfyUI (leave empty to disable)"));
-  wrap.appendChild(_textInput(S.KEY_COMPARE, "c", "Compare Mode", "Toggle compare mode in lightbox"));
-  wrap.appendChild(_textInput(S.KEY_RESET_ZOOM, "MiddleClick,r", "Reset Zoom", "Return the image to fit. In independent compare zoom this targets the pane under the cursor, then the leftmost zoomed pane."));
-  wrap.appendChild(_textInput(S.KEY_ZOOM_IN, "=,+", "Zoom In", "Zoom in one step per press; hold to keep zooming. Follows the Zoom Sensitivity and Zoom Direction settings."));
-  wrap.appendChild(_textInput(S.KEY_ZOOM_OUT, "-", "Zoom Out", "Zoom out one step per press; hold to keep zooming."));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "查看器操作", style: "margin-top:16px" }));
+  wrap.appendChild(_textInput(S.KEY_FULLSCREEN, "f", "全屏", "在查看器中切换全屏"));
+  wrap.appendChild(_textInput(S.KEY_DOWNLOAD, "", "下载", "下载当前文件（留空则禁用）"));
+  wrap.appendChild(_textInput(S.KEY_COPY_PROMPT, "", "复制提示词", "复制正向提示词（留空则禁用）"));
+  wrap.appendChild(_textInput(S.KEY_COPY_WF, "", "复制工作流", "复制工作流 JSON（留空则禁用）"));
+  wrap.appendChild(_textInput(S.KEY_LOAD_WF, "", "加载工作流", "将工作流加载到 ComfyUI（留空则禁用）"));
+  wrap.appendChild(_textInput(S.KEY_COMPARE, "c", "对比模式", "在查看器中切换对比模式"));
+  wrap.appendChild(_textInput(S.KEY_RESET_ZOOM, "MiddleClick,r", "重置缩放", "将图像恢复为适合窗口的大小。独立缩放对比时优先作用于光标所在窗格，其次为最左侧已缩放窗格。"));
+  wrap.appendChild(_textInput(S.KEY_ZOOM_IN, "=,+", "放大", "每按一次放大一级；按住可持续放大。受缩放灵敏度和缩放方向设置控制。"));
+  wrap.appendChild(_textInput(S.KEY_ZOOM_OUT, "-", "缩小", "每按一次缩小一级；按住可持续缩小。"));
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Video", style: "margin-top:16px" }));
-  wrap.appendChild(_textInput(S.KEY_MUTE, "m", "Mute", "Mute or unmute the current video"));
-  wrap.appendChild(_textInput(S.KEY_FRAME_PREV, "Comma", "Frame Back", "Pause the video and step one frame back"));
-  wrap.appendChild(_textInput(S.KEY_FRAME_NEXT, ".", "Frame Forward", "Pause the video and step one frame forward"));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "视频", style: "margin-top:16px" }));
+  wrap.appendChild(_textInput(S.KEY_MUTE, "m", "静音", "切换当前视频的静音状态"));
+  wrap.appendChild(_textInput(S.KEY_FRAME_PREV, "Comma", "上一帧", "暂停视频并后退一帧"));
+  wrap.appendChild(_textInput(S.KEY_FRAME_NEXT, ".", "下一帧", "暂停视频并前进一帧"));
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Compare Mode", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Plain navigation keys change the compared image on the right. These change the current image on the left." }));
-  wrap.appendChild(_textInput(S.KEY_CMP_CUR_PREV, "Shift+ArrowLeft,Shift+a", "Current Image Previous", "Previous current image while compare mode is open"));
-  wrap.appendChild(_textInput(S.KEY_CMP_CUR_NEXT, "Shift+ArrowRight,Shift+d", "Current Image Next", "Next current image while compare mode is open"));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "对比模式", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "普通导航键切换右侧对比图像；以下快捷键切换左侧当前图像。" }));
+  wrap.appendChild(_textInput(S.KEY_CMP_CUR_PREV, "Shift+ArrowLeft,Shift+a", "当前图像上一张", "在对比模式中切换左侧当前图像到上一张"));
+  wrap.appendChild(_textInput(S.KEY_CMP_CUR_NEXT, "Shift+ArrowRight,Shift+d", "当前图像下一张", "在对比模式中切换左侧当前图像到下一张"));
 
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Note: Arrows seek video in fullscreen. A/D always navigate." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "注意：全屏时方向键用于视频快进／后退，A／D 键始终用于切换图像。" }));
   content.appendChild(wrap);
 }
 
@@ -532,10 +546,10 @@ function renderSettings() {
   content.innerHTML = "";
   const wrap = h("div", { class: "sbg-gs-form" });
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Gallery" }));
-  wrap.appendChild(_numberInput(S.THUMB_SIZE, 110, "Thumbnail Size (px)", "Size of thumbnail grid cells (64-256). Only used when Items Per Row is 'auto' - it decides how many columns fit."));
-  wrap.appendChild(_comboInput(S.THUMB_PER_ROW, "auto", ["auto", "1", "2", "3", "4", "5", "6", "8", "10"], "Items Per Row", "auto = fit as many as the Thumbnail Size allows. A number = ALWAYS that many per row; thumbnails are sized to fill the row based on their aspect ratios. Reopen the gallery to apply."));
-  wrap.appendChild(_comboInput(S.THUMB_SHAPE, "square", ["square", "ar"], "Thumbnail Shape", "Square crops; AR preserves aspect ratio"));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "图库" }));
+  wrap.appendChild(_numberInput(S.THUMB_SIZE, 110, "缩略图大小（像素）", "缩略图网格单元大小（64–256）。仅在“每行项目数”为自动时用于计算列数。"));
+  wrap.appendChild(_comboInput(S.THUMB_PER_ROW, "auto", ["auto", "1", "2", "3", "4", "5", "6", "8", "10"], "每行项目数", "自动：根据缩略图大小决定列数。数字：每行固定显示该数量，缩略图按纵横比填满行。重新打开图库后生效。"));
+  wrap.appendChild(_comboInput(S.THUMB_SHAPE, "square", ["square", "ar"], "缩略图形状", "方形会裁切；原始比例会保留宽高比"));
   // Normalize a legacy stored sort value so the combo shows the right selection.
   {
     const _sortAlias = { newest: "created_desc", oldest: "created_asc" };
@@ -544,8 +558,8 @@ function renderSettings() {
   }
   wrap.appendChild(_comboInput(S.SORT, "created_desc",
     ["created_desc", "created_asc", "modified_desc", "modified_asc", "name_asc", "name_desc", "size_desc", "size_asc"],
-    "Default Sort", "Default sort order for gallery items (matches the gallery's sort menu)"));
-  wrap.appendChild(_numberInput(S.VSCROLL_BUFFER, 8, "Scroll Buffer (rows)", "Extra rows pre-rendered above/below viewport (2-30). Higher = less blank space on fast scroll, but more DOM nodes."));
+    "默认排序", "图库项目的默认排序方式（与图库排序菜单一致）"));
+  wrap.appendChild(_numberInput(S.VSCROLL_BUFFER, 8, "滚动缓冲（行）", "在视口上下预先渲染的额外行数（2–30）。数值越大，快速滚动时空白越少，但 DOM 节点越多。"));
 
   // Shared config helpers, defined before the first server-backed row so it can
   // call them directly. _postConfig checks the response, so a failed save
@@ -556,7 +570,7 @@ function renderSettings() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(patch),
     });
-    if (!r.ok) throw new Error("Save failed (HTTP " + r.status + ")");
+    if (!r.ok) throw new Error("保存失败（HTTP " + r.status + ")");
     return r.json();
   }
   const _loadCfg = () => fetch("/sidebar_gallery/config").then(r => r.json());
@@ -579,57 +593,57 @@ function renderSettings() {
         const cfg = await _postConfig({ auto_refresh_interval_s: n });
         const eff = (cfg && typeof cfg.auto_refresh_interval_s === "number") ? cfg.auto_refresh_interval_s : n;
         arInput.value = String(eff);
-        if (eff <= 0) showToast("Auto-refresh timer off (still checks when you return)");
-        else if (eff !== n) showToast(`Auto-refresh every ${eff}s (5s minimum)`);
-        else showToast(`Auto-refresh every ${eff}s`);
+        if (eff <= 0) showToast("已关闭定时自动刷新（返回图库时仍会检查）");
+        else if (eff !== n) showToast(`每 ${eff} 秒自动刷新（最短 5 秒）`);
+        else showToast(`每 ${eff} 秒自动刷新`);
         if (galleryCtx.refreshConfig) await galleryCtx.refreshConfig();
       } catch (e) {
         arInput.value = String(n);
-        showToast("Failed to update: " + (e?.message || e));
+        showToast("更新失败：" + (e?.message || e));
       }
       finally { arBusy = false; }
     });
-    wrap.appendChild(_settingRow("Auto-refresh interval", arInput,
-      "How often the open gallery checks for files added, removed, or renamed on disk (minimum 5s). 0 turns off the background timer; the gallery still checks once when you come back to it. Applies right away."));
+    wrap.appendChild(_settingRow("自动刷新间隔", arInput,
+      "图库打开时检查磁盘中文件新增、删除或重命名的间隔（最短 5 秒）。设为 0 可关闭后台定时检查；返回图库时仍会检查一次。立即生效。"));
   }
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Tooltips", style: "margin-top:16px" }));
-  wrap.appendChild(_toggle(S.TOOLTIP_NAME, true, "Show Filename", "Show filename in card tooltip"));
-  wrap.appendChild(_toggle(S.TOOLTIP_SIZE, true, "Show File Size", "Show file size in card tooltip"));
-  wrap.appendChild(_toggle(S.TOOLTIP_DATE, true, "Show Date", "Show date in card tooltip"));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "悬停提示", style: "margin-top:16px" }));
+  wrap.appendChild(_toggle(S.TOOLTIP_NAME, true, "显示文件名", "在卡片悬停提示中显示文件名"));
+  wrap.appendChild(_toggle(S.TOOLTIP_SIZE, true, "显示文件大小", "在卡片悬停提示中显示文件大小"));
+  wrap.appendChild(_toggle(S.TOOLTIP_DATE, true, "显示日期", "在卡片悬停提示中显示日期"));
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Lightbox Buttons", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Show or hide individual buttons in the lightbox toolbar." }));
-  wrap.appendChild(_toggle(S.LB_SHOW_DOWNLOAD, true, "Download Button", "Show download button in lightbox"));
-  wrap.appendChild(_toggle(S.LB_SHOW_COPY_PROMPT, true, "Copy Prompt Button", "Show copy prompt button in lightbox"));
-  wrap.appendChild(_toggle(S.LB_SHOW_COPY_WF, true, "Copy WF Button", "Show copy workflow button in lightbox"));
-  wrap.appendChild(_toggle(S.LB_SHOW_LOAD_WF, true, "Load Workflow Button", "Show load workflow button in lightbox"));
-  wrap.appendChild(_toggle(S.LB_SHOW_COMPARE, true, "Compare Button", "Show compare button in lightbox"));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "查看器按钮", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "显示或隐藏查看器工具栏中的各个按钮。" }));
+  wrap.appendChild(_toggle(S.LB_SHOW_DOWNLOAD, true, "下载按钮", "在查看器中显示下载按钮"));
+  wrap.appendChild(_toggle(S.LB_SHOW_COPY_PROMPT, true, "复制提示词按钮", "在查看器中显示复制提示词按钮"));
+  wrap.appendChild(_toggle(S.LB_SHOW_COPY_WF, true, "复制工作流按钮", "在查看器中显示复制工作流按钮"));
+  wrap.appendChild(_toggle(S.LB_SHOW_LOAD_WF, true, "加载工作流按钮", "在查看器中显示加载工作流按钮"));
+  wrap.appendChild(_toggle(S.LB_SHOW_COMPARE, true, "对比按钮", "在查看器中显示对比按钮"));
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Lightbox Zoom", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Zoom and pan on the image or video in the lightbox. Pinch always zooms; drag pans when zoomed in." }));
-  wrap.appendChild(_comboInput(S.LB_ZOOM_SCROLL_MODE, "mouse", ["mouse", "touchpad", "auto"], "Scroll Input",
-    "What plain scrolling over the image does. Mouse: scroll zooms. Touchpad: two-finger scroll pans when zoomed (pinch always zooms). Auto: detect the device from the scroll events."));
-  wrap.appendChild(_comboInput(S.LB_ZOOM_ANCHOR, "cursor", ["cursor", "center"], "Zoom Direction",
-    "Zoom toward the mouse cursor or toward the center of the view."));
-  wrap.appendChild(_numberInput(S.LB_ZOOM_SENSITIVITY, 1, "Zoom Sensitivity",
-    "Zoom speed multiplier, 0.1 to 5. 1 = default; higher zooms faster per scroll."));
-  wrap.appendChild(_comboInput(S.LB_COMPARE_ZOOM, "independent", ["independent", "synced"], "Compare Zoom",
-    "In compare mode: zoom/pan only the side under the cursor, or keep both sides at the same zoom and relative position."));
-  wrap.appendChild(_toggle(S.LB_ZOOM_KEEP_ON_NAV, false, "Keep Zoom While Browsing",
-    "Keep the current zoom level and position when moving to the next or previous image or video. Off: every navigation resets to fit-to-screen."));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "查看器缩放", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "在查看器中缩放和平移图像或视频。双指捏合始终用于缩放；放大后拖动可平移。" }));
+  wrap.appendChild(_comboInput(S.LB_ZOOM_SCROLL_MODE, "mouse", ["mouse", "touchpad", "auto"], "滚动输入",
+    "普通滚动在图像上的作用。鼠标：滚轮缩放。触控板：放大后双指滚动平移（捏合始终缩放）。自动：根据滚动事件识别设备。"));
+  wrap.appendChild(_comboInput(S.LB_ZOOM_ANCHOR, "cursor", ["cursor", "center"], "缩放方向",
+    "朝鼠标光标或视图中心缩放。"));
+  wrap.appendChild(_numberInput(S.LB_ZOOM_SENSITIVITY, 1, "缩放灵敏度",
+    "缩放速度倍数，范围 0.1–5。1 为默认值；数值越大，每次滚动缩放越快。"));
+  wrap.appendChild(_comboInput(S.LB_COMPARE_ZOOM, "independent", ["independent", "synced"], "对比缩放",
+    "对比模式下，仅缩放／平移光标所在一侧，或让两侧保持相同缩放比例和相对位置。"));
+  wrap.appendChild(_toggle(S.LB_ZOOM_KEEP_ON_NAV, false, "浏览时保持缩放",
+    "切换到上一张或下一张图像／视频时保持当前缩放和位置。关闭后每次切换都会恢复为适合屏幕的大小。"));
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Metadata", style: "margin-top:16px" }));
-  wrap.appendChild(_comboInput(S.PROMPT_VIEW, "remember", ["enhanced", "initial", "remember"], "Default Tab View", "Which tab opens first in tabbed sections. For prompt sections this picks Enhanced or Initial, while 'Remember' keeps your last-opened tab on every tabbed section."));
-  wrap.appendChild(_comboInput(S.PROMPT_PADDING, "6", ["0", "1", "2", "3", "4", "5", "6", "8", "10", "12"], "Prompt Padding", "Horizontal padding inside prompt text boxes (in px); top/bottom run 2px tighter.", (v) => {
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "元数据", style: "margin-top:16px" }));
+  wrap.appendChild(_comboInput(S.PROMPT_VIEW, "remember", ["enhanced", "initial", "remember"], "默认标签页", "标签式区块初次打开时显示的标签页。提示词区块可选择增强或初始；“记住”会保留每个区块上次打开的标签页。"));
+  wrap.appendChild(_comboInput(S.PROMPT_PADDING, "6", ["0", "1", "2", "3", "4", "5", "6", "8", "10", "12"], "提示词内边距", "提示词文本框的水平内边距（像素）；上下内边距比该值小 2 像素。", (v) => {
     document.documentElement.style.setProperty("--sbg-prompt-padding", v + "px");
   }));
-  wrap.appendChild(_comboInput(S.FILENAME_STYLE, "basename", ["basename", "relpath"], "Filename Display", "Show just the filename or the full relative path in File Info."));
-  wrap.appendChild(_comboInput(S.MODEL_NAME_STYLE, "basename", ["basename", "relpath"], "Model Display", "Show model and LoRA names as just the filename (basename) or the full relative path."));
-  wrap.appendChild(_toggle(S.META_TAB_PERSIST, false, "Remember Metadata Tab", "Keep the active metadata tab (Generated/Initial Image) when navigating between images."));
+  wrap.appendChild(_comboInput(S.FILENAME_STYLE, "basename", ["basename", "relpath"], "文件名显示", "在文件信息中显示文件名或完整相对路径。"));
+  wrap.appendChild(_comboInput(S.MODEL_NAME_STYLE, "basename", ["basename", "relpath"], "模型名显示", "模型和 LoRA 名称可显示文件名或完整相对路径。"));
+  wrap.appendChild(_toggle(S.META_TAB_PERSIST, false, "记住元数据标签页", "切换图像时保留当前元数据标签页（生成图像／初始图像）。"));
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Folders", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Extra folders to browse and index alongside ComfyUI's output folder. Paths are on the machine running ComfyUI." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "文件夹", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "除 ComfyUI 输出文件夹外，可浏览和建立索引的其他文件夹。路径位于运行 ComfyUI 的机器上。" }));
   const foldersList = h("div", {});
   wrap.appendChild(foldersList);
 
@@ -643,37 +657,37 @@ function renderSettings() {
       el.appendChild(h("span", { class: "sbg-gs-label", text: label, title: sub || "" }));
       if (sub) el.appendChild(h("span", { style: "opacity:.55;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:50%", text: sub }));
       if (removeRaw != null) {
-        const del = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", text: "🗑", title: "Remove this folder from the gallery (files on disk are not touched)" });
+        const del = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", text: "🗑", title: "从图库中移除此文件夹（不会删除磁盘上的文件）" });
         del.addEventListener("click", async () => {
           try {
             await _postRoots((cfg.extra_roots || []).filter(p => p !== removeRaw));
-            showToast("Folder removed");
+            showToast("已移除文件夹");
             if (galleryCtx.refreshConfig) await galleryCtx.refreshConfig();
             _renderFolders();
-          } catch (e) { showToast("Failed to remove folder: " + (e?.message || e)); }
+          } catch (e) { showToast("移除文件夹失败：" + (e?.message || e)); }
         });
         el.appendChild(del);
       } else {
-        el.appendChild(h("span", { style: "opacity:.4;font-size:11px", text: "built-in" }));
+        el.appendChild(h("span", { style: "opacity:.4;font-size:11px", text: "内置" }));
       }
       return el;
     };
-    foldersList.appendChild(row("Output", "ComfyUI's output folder", null));
+    foldersList.appendChild(row("输出", "ComfyUI 输出文件夹", null));
     for (const p of cfg.extra_roots || []) foldersList.appendChild(row(p.split(/[\\/]/).pop() || p, p, p));
 
     const addHint = h("div", { class: "sbg-gs-desc", style: "margin-top:8px" });
     addHint.appendChild(document.createTextNode(
-      "To add a folder, open sidebar_gallery_config.json and put the path in its extra_roots list, for example "));
+      "要添加文件夹，请打开 sidebar_gallery_config.json，在 extra_roots 列表中填入路径，例如 "));
     addHint.appendChild(h("code", { text: '{"extra_roots": ["C:/Renders"]}' }));
-    addHint.appendChild(document.createTextNode(". The gallery picks the change up within a few seconds."));
+    addHint.appendChild(document.createTextNode("。图库将在几秒内识别此更改。"));
     foldersList.appendChild(addHint);
     if (cfg.config_path) {
       foldersList.appendChild(h("div", { class: "sbg-gs-desc", style: "font-family:monospace;overflow-wrap:anywhere;user-select:text", text: cfg.config_path, title: cfg.config_path }));
     }
   }
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Excluded folders", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Folder names to skip while scanning (e.g. thumbnails, backup). Matching is by folder name rather than full path, and ignores case. Changes take effect on the next scan." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "排除的文件夹", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "扫描时要跳过的文件夹名称（例如 thumbnails、backup）。按文件夹名称匹配，而非完整路径，且不区分大小写。更改将在下次扫描时生效。" }));
   const excludedList = h("div", {});
   wrap.appendChild(excludedList);
 
@@ -696,58 +710,58 @@ function renderSettings() {
       try {
         await _postConfig({ index_hidden_dirs: hiddenChk.checked });
         showToast(hiddenChk.checked
-          ? "Hidden folders will be scanned on the next scan"
-          : "Hidden folders will be skipped on the next scan");
+          ? "下次扫描将包含隐藏文件夹"
+          : "下次扫描将跳过隐藏文件夹");
         if (galleryCtx.refreshConfig) await galleryCtx.refreshConfig();
       } catch (e) {
         hiddenChk.checked = !hiddenChk.checked;
-        showToast("Failed to update: " + (e?.message || e));
+        showToast("更新失败：" + (e?.message || e));
       } finally { excludedBusy = false; }
     });
-    excludedList.appendChild(_settingRow("Include hidden folders", hiddenChk,
-      "Also scan folders whose names start with a dot (e.g. .thumbs). Off by default - hidden folders are skipped."));
+    excludedList.appendChild(_settingRow("包含隐藏文件夹", hiddenChk,
+      "同时扫描名称以点开头的文件夹（例如 .thumbs）。默认关闭，隐藏文件夹会被跳过。"));
 
     const row = (name) => {
       const el = h("div", { class: "sbg-gs-row", style: "align-items:center" });
       el.appendChild(h("span", { class: "sbg-gs-label", text: name }));
-      const del = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", text: "🗑", title: "Stop excluding this folder (its files reappear on the next scan)" });
+      const del = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", text: "🗑", title: "停止排除此文件夹（其中的文件将在下次扫描后重新显示）" });
       del.addEventListener("click", async () => {
         if (excludedBusy) return;
         excludedBusy = true;
         try {
           await _postExcluded(current.filter(d => d !== name));
-          showToast("Folder no longer excluded - it will be re-indexed on the next scan");
+          showToast("已取消排除文件夹，下次扫描时将重新建立索引");
           if (galleryCtx.refreshConfig) await galleryCtx.refreshConfig();
           _renderExcluded();
-        } catch (e) { showToast("Failed to update: " + (e?.message || e)); }
+        } catch (e) { showToast("更新失败：" + (e?.message || e)); }
         finally { excludedBusy = false; }
       });
       el.appendChild(del);
       return el;
     };
     if (current.length === 0) {
-      excludedList.appendChild(h("div", { class: "sbg-gs-row", style: "opacity:.5;font-size:11px", text: "No extra folders excluded." }));
+      excludedList.appendChild(h("div", { class: "sbg-gs-row", style: "opacity:.5;font-size:11px", text: "没有额外排除的文件夹。" }));
     } else {
       for (const name of current) excludedList.appendChild(row(name));
     }
 
     const addWrap = h("div", { class: "sbg-gs-row", style: "align-items:center;gap:6px" });
-    const inp = h("input", { type: "text", class: "sbg-gs-input", placeholder: "thumbnails", style: "flex:1" });
-    const addBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "+ Add" });
+    const inp = h("input", { type: "text", class: "sbg-gs-input", placeholder: "缩略图", style: "flex:1" });
+    const addBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "+ 添加" });
     const doAdd = async () => {
       if (excludedBusy) return;
       // Accept a plain name or a pasted path; keep just the last real path segment.
       const name = (inp.value.split(/[\\/]/).filter(Boolean).pop() || "").trim().toLowerCase();
-      if (!name || name === "." || name === "..") { showToast("Enter a folder name to exclude"); return; }
-      if (current.includes(name)) { showToast("Already excluded"); inp.value = ""; return; }
+      if (!name || name === "." || name === "..") { showToast("请输入要排除的文件夹名称"); return; }
+      if (current.includes(name)) { showToast("已经排除此文件夹"); inp.value = ""; return; }
       excludedBusy = true;
       try {
         await _postExcluded([...current, name]);
-        showToast("Folder excluded - it will be skipped on the next scan");
+        showToast("已排除此文件夹，下次扫描时将跳过");
         inp.value = "";
         if (galleryCtx.refreshConfig) await galleryCtx.refreshConfig();
         _renderExcluded();
-      } catch (e) { showToast("Failed to add: " + (e?.message || e)); }
+      } catch (e) { showToast("添加失败：" + (e?.message || e)); }
       finally { excludedBusy = false; }
     };
     addBtn.addEventListener("click", doAdd);
@@ -771,8 +785,8 @@ function renderSettings() {
 function renderPresets() {
   content.innerHTML = "";
   const wrap = h("div", { class: "sbg-gs-form" });
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Presets" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Save and load gallery configuration presets." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "预设" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "保存和加载图库配置预设。" }));
 
   const PRESETS_KEY = "SBG.Presets";
   let presets = [];
@@ -783,10 +797,10 @@ function renderPresets() {
   const incColors = h("input", { type: "checkbox" }); incColors.checked = true;
   const incSettings = h("input", { type: "checkbox" }); incSettings.checked = true;
   const incKeys = h("input", { type: "checkbox" }); incKeys.checked = true;
-  saveChecks.appendChild(h("label", {}, [incLayout, document.createTextNode(" Layout")]));
-  saveChecks.appendChild(h("label", {}, [incColors, document.createTextNode(" Colors")]));
-  saveChecks.appendChild(h("label", {}, [incSettings, document.createTextNode(" Settings")]));
-  saveChecks.appendChild(h("label", {}, [incKeys, document.createTextNode(" Keybindings")]));
+  saveChecks.appendChild(h("label", {}, [incLayout, document.createTextNode(" 布局")]));
+  saveChecks.appendChild(h("label", {}, [incColors, document.createTextNode(" 颜色")]));
+  saveChecks.appendChild(h("label", {}, [incSettings, document.createTextNode(" 设置")]));
+  saveChecks.appendChild(h("label", {}, [incKeys, document.createTextNode(" 快捷键")]));
   wrap.appendChild(saveChecks);
 
   // Every colour the Appearance tab manages, as setting ids: the S entries
@@ -865,30 +879,30 @@ function renderPresets() {
     if (p.keys) _applyPresetKeys(p.keys);
   }
 
-  const nameInput = h("input", { type: "text", class: "sbg-gs-input", placeholder: "Preset name" });
-  const saveBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "💾 Save Preset" });
+  const nameInput = h("input", { type: "text", class: "sbg-gs-input", placeholder: "预设名称" });
+  const saveBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "💾 保存预设" });
   saveBtn.addEventListener("click", () => {
     const name = nameInput.value.trim();
-    if (!name) { showToast("Enter a preset name"); return; }
+    if (!name) { showToast("请输入预设名称"); return; }
     const preset = capturePreset(name);
     presets = presets.filter(p => p.name !== name);
     presets.unshift(preset);
     localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
-    showToast(`Preset "${name}" saved`);
+    showToast(`预设“${name}”已保存`);
     renderPresets();
   });
   const saveRow = h("div", { class: "sbg-gs-preset-save" }, [nameInput, saveBtn]);
   wrap.appendChild(saveRow);
 
   if (presets.length > 0) {
-    wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Saved Presets", style: "margin-top:16px" }));
+    wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "已保存的预设", style: "margin-top:16px" }));
     for (const p of presets) {
       const row = h("div", { class: "sbg-gs-preset-item" });
       row.appendChild(h("span", { class: "sbg-gs-preset-name", text: p.name }));
-      const loadBtn = h("button", { class: "sbg-btn sbg-btn--accent sbg-btn--sm", text: "Load" });
+      const loadBtn = h("button", { class: "sbg-btn sbg-btn--accent sbg-btn--sm", text: "加载" });
       confirmClick(loadBtn, () => {
         applyPreset(p);
-        showToast(`Preset "${p.name}" loaded. Refresh gallery to apply.`);
+        showToast(`预设“${p.name}”已加载。刷新图库后生效。`);
       }, { background: "var(--sbg-danger)" });
       const delBtn = h("button", { class: "sbg-btn sbg-btn--danger sbg-btn--sm", text: "✕" });
       confirmClick(delBtn, () => {
@@ -911,8 +925,8 @@ function renderPresets() {
     }
   }
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Import", style: "margin-top:16px" }));
-  const importBtn = h("button", { class: "sbg-btn", text: "📥 Import Preset" });
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "导入", style: "margin-top:16px" }));
+  const importBtn = h("button", { class: "sbg-btn", text: "📥 导入预设" });
   importBtn.addEventListener("click", () => {
     const fi = h("input", { type: "file", accept: ".json" });
     fi.addEventListener("change", async () => {
@@ -920,42 +934,42 @@ function renderPresets() {
       try {
         const text = await fi.files[0].text();
         const p = JSON.parse(text);
-        if (!p.name) { showToast("Invalid preset file"); return; }
+        if (!p.name) { showToast("无效的预设文件"); return; }
         presets = presets.filter(x => x.name !== p.name);
         presets.unshift(p);
         localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
-        showToast(`Preset "${p.name}" imported`);
+        showToast(`预设“${p.name}”已导入`);
         renderPresets();
-      } catch (e) { showToast(`Import error: ${e.message}`); }
+      } catch (e) { showToast(`导入失败：${e.message}`); }
     });
     fi.click();
   });
   wrap.appendChild(importBtn);
 
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Server Themes", style: "margin-top:16px" }));
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Presets stored in the extension's themes/ folder. Persist across reinstalls." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "服务器主题", style: "margin-top:16px" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "保存在扩展 themes/ 文件夹中的预设，重新安装后仍可保留。" }));
   const serverList = h("div", { class: "sbg-gs-preset-list" });
-  serverList.textContent = "Loading...";
+  serverList.textContent = "加载中…";
   wrap.appendChild(serverList);
 
   fetch("/sidebar_gallery/presets").then(r => r.json()).then(data => {
     serverList.innerHTML = "";
     if (!data.presets || data.presets.length === 0) {
-      serverList.textContent = "No server themes found.";
+      serverList.textContent = "未找到服务器主题。";
       return;
     }
     for (const sp of data.presets) {
       const row = h("div", { class: "sbg-gs-preset-item" });
       row.appendChild(h("span", { class: "sbg-gs-preset-name", text: sp.name }));
-      const loadBtn = h("button", { class: "sbg-btn sbg-btn--accent sbg-btn--sm", text: "Load" });
+      const loadBtn = h("button", { class: "sbg-btn sbg-btn--accent sbg-btn--sm", text: "加载" });
       confirmClick(loadBtn, async () => {
         try {
           const resp = await fetch(`/sidebar_gallery/preset?filename=${encodeURIComponent(sp.filename)}`);
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
           const p = await resp.json();
           applyPreset(p);
-          showToast(`Server theme "${sp.name}" loaded. Refresh gallery to apply.`);
-        } catch (e) { showToast("Error loading theme: " + e.message); }
+          showToast(`服务器主题“${sp.name}”已加载。刷新图库后生效。`);
+        } catch (e) { showToast("加载主题失败：" + e.message); }
       }, { background: "var(--sbg-danger)" });
       const delBtn = h("button", { class: "sbg-btn sbg-btn--danger sbg-btn--sm", text: "\u2715" });
       confirmClick(delBtn, async () => {
@@ -966,19 +980,19 @@ function renderPresets() {
             body: JSON.stringify({ action: "delete", name: sp.name }),
           });
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        } catch (e) { showToast("Error deleting theme: " + e.message); }
+        } catch (e) { showToast("删除主题失败：" + e.message); }
         renderPresets();
       });
       row.appendChild(loadBtn);
       row.appendChild(delBtn);
       serverList.appendChild(row);
     }
-  }).catch(() => { serverList.textContent = "Could not load server themes."; });
+  }).catch(() => { serverList.textContent = "无法加载服务器主题。"; });
 
-  const saveServerBtn = h("button", { class: "sbg-btn", text: "💾 Save to Server", style: "margin-top:8px" });
+  const saveServerBtn = h("button", { class: "sbg-btn", text: "💾 保存到服务器", style: "margin-top:8px" });
   saveServerBtn.addEventListener("click", async () => {
     const name = nameInput.value.trim();
-    if (!name) { showToast("Enter a preset name first"); return; }
+    if (!name) { showToast("请先输入预设名称"); return; }
     const preset = capturePreset(name);
     try {
       const r = await fetch("/sidebar_gallery/presets", {
@@ -987,9 +1001,9 @@ function renderPresets() {
         body: JSON.stringify({ action: "save", name, data: preset }),
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      showToast(`Theme "${name}" saved to server`);
+      showToast(`主题“${name}”已保存到服务器`);
       renderPresets();
-    } catch (e) { showToast("Error saving to server: " + e.message); }
+    } catch (e) { showToast("保存到服务器失败：" + e.message); }
   });
   wrap.appendChild(saveServerBtn);
 
@@ -999,30 +1013,30 @@ function renderPresets() {
 function renderDiagnosticsTab() {
   content.innerHTML = "";
   const wrap = h("div", { class: "sbg-gs-form" });
-  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "Diagnostics & Tools" }));
+  wrap.appendChild(h("div", { class: "sbg-gs-section-title", text: "诊断与工具" }));
 
   const actionRow = h("div", { style: "display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap" });
 
-  const diagGalleryRefreshBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "🔃 Refresh", title: "Re-fetch all items from the server and refresh the gallery view" });
+  const diagGalleryRefreshBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "🔃 刷新", title: "从服务器重新获取所有项目并刷新图库" });
   diagGalleryRefreshBtn.addEventListener("click", async () => {
     diagGalleryRefreshBtn.disabled = true;
-    diagGalleryRefreshBtn.textContent = "Refreshing…";
+    diagGalleryRefreshBtn.textContent = "刷新中…";
     try {
       await galleryCtx.fetchAllItems({ rescan: true });
-      showToast("Gallery refreshed");
+      showToast("图库已刷新");
       await refreshDiagStats(diagStatsContainer);
     } catch (e) {
-      showToast(`Error: ${e?.message || e}`);
+      showToast(`错误：${e?.message || e}`);
     } finally {
       diagGalleryRefreshBtn.disabled = false;
-      diagGalleryRefreshBtn.textContent = "🔃 Refresh";
+      diagGalleryRefreshBtn.textContent = "🔃 刷新";
     }
   });
 
-  const diagRefreshBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "🔄 Rebuild DB Index", title: "Rescan all roots and rebuild metadata/tag index on server" });
+  const diagRefreshBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "🔄 重建数据库索引", title: "重新扫描所有根目录并重建服务器上的元数据／标签索引" });
   confirmClick(diagRefreshBtn, async () => {
     diagRefreshBtn.disabled = true;
-    diagRefreshBtn.textContent = "🔄 Rebuilding DB... (0%)";
+    diagRefreshBtn.textContent = "🔄 正在重建数据库…（0%）";
     try {
       await fetch("/sidebar_gallery/rebuild_index", { method: "POST" });
     } catch { }
@@ -1041,18 +1055,18 @@ function renderDiagnosticsTab() {
       if (e && data.running) {
         const f = formatProgress(e);
         diagRefreshBtn.textContent = f.pct >= 0
-          ? `🔄 Rebuilding DB... (${f.pct}%)`
-          : `🔄 Rebuilding DB... (${f.text})`;
+          ? `🔄 正在重建数据库…（${f.pct}%）`
+          : `🔄 正在重建数据库…（${f.text}）`;
       }
       if (meta.settled) {
         active = false;
         unsub();
         diagRefreshBtn.textContent = sawRunning
-          ? "🔄 DB Indexed Successfully!"
-          : "Couldn't start. Another scan is running";
+          ? "🔄 数据库索引已重建！"
+          : "无法开始，另一个扫描正在运行";
         setTimeout(() => {
           diagRefreshBtn.disabled = false;
-          diagRefreshBtn.textContent = "🔄 Rebuild DB Index";
+          diagRefreshBtn.textContent = "🔄 重建数据库索引";
         }, 3000);
         if (sawRunning) {
           galleryCtx.fetchAllItems({ rescan: true });
@@ -1062,10 +1076,10 @@ function renderDiagnosticsTab() {
     });
   }, { background: "#f59e0b", color: "#000" });
 
-  const diagCacheMetaBtn = h("button", { class: "sbg-btn", text: "📦 Cache All Metadata", title: "Fetch and cache metadata summaries for all files to IndexedDB" });
+  const diagCacheMetaBtn = h("button", { class: "sbg-btn", text: "📦 缓存所有元数据", title: "获取所有文件的元数据摘要并缓存到 IndexedDB" });
   diagCacheMetaBtn.addEventListener("click", async () => {
     diagCacheMetaBtn.disabled = true;
-    diagCacheMetaBtn.textContent = "Caching…";
+    diagCacheMetaBtn.textContent = "缓存中…";
     try {
       const items = galleryCtx.allItems || [];
       let cached = 0;
@@ -1079,27 +1093,27 @@ function renderDiagnosticsTab() {
           batch.push({ key, value: m });
           cached++;
           if (cached % 50 === 0) {
-            diagCacheMetaBtn.textContent = `Caching… ${cached}/${items.length}`;
+            diagCacheMetaBtn.textContent = `缓存中… ${cached}/${items.length}`;
             if (batch.length >= 50) { await _metaCacheAPI.putBatch(batch.splice(0)); }
           }
         } catch { cached++; }
       }
       if (batch.length) await _metaCacheAPI.putBatch(batch);
-      diagCacheMetaBtn.textContent = "📦 Cache All Metadata";
+      diagCacheMetaBtn.textContent = "📦 缓存所有元数据";
       diagCacheMetaBtn.disabled = false;
-      showToast(`Metadata cached: ${cached} items`);
+      showToast(`已缓存 ${cached} 项元数据`);
       await refreshDiagStats(diagStatsContainer);
     } catch (e) {
-      diagCacheMetaBtn.textContent = "📦 Cache All Metadata";
+      diagCacheMetaBtn.textContent = "📦 缓存所有元数据";
       diagCacheMetaBtn.disabled = false;
-      showToast(`Error: ${e?.message || e}`);
+      showToast(`错误：${e?.message || e}`);
     }
   });
 
-  const diagCacheThumbBtn = h("button", { class: "sbg-btn", text: "🖼️ Cache Thumbnails", title: "Cache all lazy-load thumbnails into the local browser IndexedDB" });
+  const diagCacheThumbBtn = h("button", { class: "sbg-btn", text: "🖼️ 缓存缩略图", title: "将所有延迟加载的缩略图缓存到本地浏览器 IndexedDB" });
   diagCacheThumbBtn.addEventListener("click", async () => {
     diagCacheThumbBtn.disabled = true;
-    diagCacheThumbBtn.textContent = "Caching…";
+    diagCacheThumbBtn.textContent = "缓存中…";
     try {
       const items = galleryCtx.allItems || [];
       let cached = 0;
@@ -1119,34 +1133,34 @@ function renderDiagnosticsTab() {
           if (got !== it.thumb_url) cached++;
           else skipped++;
           if ((cached + skipped) % 20 === 0) {
-            diagCacheThumbBtn.textContent = `Caching… ${cached}/${items.length}`;
+            diagCacheThumbBtn.textContent = `缓存中… ${cached}/${items.length}`;
           }
         } catch { skipped++; }
       }
-      diagCacheThumbBtn.textContent = "🖼️ Cache Thumbnails";
+      diagCacheThumbBtn.textContent = "🖼️ 缓存缩略图";
       diagCacheThumbBtn.disabled = false;
       showToast(skipped
-        ? `Thumbnails cached: ${cached} items (${skipped} unavailable)`
-        : `Thumbnails cached: ${cached} items`);
+        ? `已缓存 ${cached} 张缩略图（${skipped} 张不可用）`
+        : `已缓存 ${cached} 张缩略图`);
       await refreshDiagStats(diagStatsContainer);
     } catch (e) {
-      diagCacheThumbBtn.textContent = "🖼️ Cache Thumbnails";
+      diagCacheThumbBtn.textContent = "🖼️ 缓存缩略图";
       diagCacheThumbBtn.disabled = false;
-      showToast(`Error: ${e?.message || e}`);
+      showToast(`错误：${e?.message || e}`);
     }
   });
 
-  const diagClearMetaBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "🗑️ Clear Meta Cache", title: "Clear browser IndexedDB metadata cache" });
+  const diagClearMetaBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "🗑️ 清除元数据缓存", title: "清除浏览器 IndexedDB 元数据缓存" });
   confirmClick(diagClearMetaBtn, async () => {
     try {
       const ok = await _metaCacheAPI.clear();
       _metaCache.clear();
-      showToast(ok ? "Metadata cache cleared" : "Could not clear the meta cache (browser storage unavailable)");
+      showToast(ok ? "元数据缓存已清除" : "无法清除元数据缓存（浏览器存储不可用）");
       await refreshDiagStats(diagStatsContainer);
-    } catch (e) { showToast("Error clearing meta cache: " + e.message); }
+    } catch (e) { showToast("清除元数据缓存时出错：" + e.message); }
   }, { background: "#f59e0b", color: "#000" });
 
-  const diagClearThumbBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "🗑️ Clear Thumb Cache", title: "Clear browser IndexedDB thumbnails cache" });
+  const diagClearThumbBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "🗑️ 清除缩略图缓存", title: "清除浏览器 IndexedDB 缩略图缓存" });
   confirmClick(diagClearThumbBtn, async () => {
     try {
       const ok = await _thumbCacheAPI.clear();
@@ -1161,12 +1175,12 @@ function renderDiagnosticsTab() {
         _thumbMemCache.delete(url);
       }
       resetFailedThumbs();
-      showToast(ok ? "Thumbnails cache cleared" : "Could not clear the thumbnail cache (browser storage unavailable)");
+      showToast(ok ? "缩略图缓存已清除" : "无法清除缩略图缓存（浏览器存储不可用）");
       await refreshDiagStats(diagStatsContainer);
-    } catch (e) { showToast("Error clearing thumb cache: " + e.message); }
+    } catch (e) { showToast("清除缩略图缓存时出错：" + e.message); }
   }, { background: "#f59e0b", color: "#000" });
 
-  const diagNukeBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "💣 Nuclear Clear All", title: "Delete ALL browser cache databases (including legacy), reset version tracking, clean up old settings keys, and reload. Fixes any corruption." });
+  const diagNukeBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "💣 清除所有缓存", title: "删除所有浏览器缓存数据库（包括旧版），重置版本记录，清理旧设置项并重新加载页面。可用于修复缓存损坏。" });
   confirmClick(diagNukeBtn, () => {
     // Nuke IDB: current + legacy databases
     try { _resetIdb(); } catch (e) { /* ignore */ }
@@ -1181,9 +1195,9 @@ function renderDiagnosticsTab() {
     }
 
     _metaCache.clear();
-    showToast("All caches cleared. Reloading…");
+    showToast("所有缓存已清除，正在重新加载…");
     setTimeout(() => location.reload(true), 500);
-  }, { label: "⚠️ Sure? This will reload the page", armMs: 3000, background: "#ef4444", color: "#fff" });
+  }, { label: "⚠️ 确定吗？页面将重新加载", armMs: 3000, background: "#ef4444", color: "#fff" });
 
   actionRow.appendChild(diagGalleryRefreshBtn);
   actionRow.appendChild(diagRefreshBtn);

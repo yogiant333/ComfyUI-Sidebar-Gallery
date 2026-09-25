@@ -74,6 +74,26 @@ export function saveProfiles(profiles) {
  */
 let _catalogTitles = null;
 
+// Profiles saved before the Chinese defaults keep their original display text
+// in settings. Translate only known built-in section titles on read; custom
+// titles and the stored document are left untouched.
+const LEGACY_SECTION_TITLES = {
+  file_info: "File Info", models: "Models", sampling: "Sampling",
+  loras: "LoRAs", positive: "Positive Prompt", negative: "Negative Prompt",
+  initial_prompt: "Original Prompt (pre-enhance)", track: "Track",
+  audio_tags: "Tags", audio_lyrics: "Lyrics", controlnet: "ControlNet",
+  adetailer: "ADetailer", upscaling: "Upscaling",
+  interpolation: "Interpolation", mmaudio: "MMAudio",
+  extra: "Extra Metadata", workflow_nodes: "Workflow Nodes",
+  raw: "Raw Metadata", features: "Features", llm: "LLM",
+  song: "Song", voice: "Voice",
+};
+const SHIPPED_SECTION_TITLES = Object.fromEntries(
+  [...DEFAULT_IMAGE_LAYOUT, ...DEFAULT_VIDEO_LAYOUT, ...DEFAULT_AUDIO_LAYOUT]
+    .filter(section => section && section.id && section.title)
+    .map(section => [section.id, section.title]),
+);
+
 export function setCatalogTitles(map) {
   if (map && typeof map === "object" && !Array.isArray(map)) _catalogTitles = map;
 }
@@ -119,7 +139,9 @@ export function getSectionRenames(profiles = getProfiles()) {
     for (const sec of prof) {
       if (!sec || typeof sec !== "object") continue;
       const def = defaults[sec.id];
-      if (def && sec.title && sec.title !== def) renames[def] = sec.title;
+      if (def && sec.title && sec.title !== def && sec.title !== LEGACY_SECTION_TITLES[sec.id]) {
+        renames[LEGACY_SECTION_TITLES[sec.id] || def] = sec.title;
+      }
     }
   }
   return renames;
@@ -254,10 +276,19 @@ export function getActiveProfile(app, media) {
   const profiles = getProfiles();
   const med = _mediaName(media);
   const key = profileKey(app, med);
-  if (Array.isArray(profiles[key]) && profiles[key].length) return profiles[key];
+  if (Array.isArray(profiles[key]) && profiles[key].length) return _localizeLegacyTitles(profiles[key]);
   const fallback = profiles[`comfyui_${med}`];
-  if (Array.isArray(fallback) && fallback.length) return JSON.parse(JSON.stringify(fallback));
+  if (Array.isArray(fallback) && fallback.length) return _localizeLegacyTitles(JSON.parse(JSON.stringify(fallback)));
   return defaultLayoutFor(med);
+}
+
+function _localizeLegacyTitles(profile) {
+  const defaults = _defaultTitles();
+  return profile.map(section => {
+    if (!section || section.title !== LEGACY_SECTION_TITLES[section.id]) return section;
+    const title = SHIPPED_SECTION_TITLES[section.id] || defaults[section.id];
+    return title ? { ...section, title } : section;
+  });
 }
 
 export { defaultImageLayout, defaultVideoLayout, defaultAudioLayout, uid };
@@ -594,7 +625,7 @@ function _resolveNodes(summary) {
   const nodes = [];
   for (const wn of (summary.workflow_nodes || [])) {
     if (!wn || typeof wn !== "object") continue;
-    const label = wn.title || (wn._from ? `${wn.class_type} (from ${wn._from})` : (wn.class_type || "Unknown"));
+    const label = wn.title || (wn._from ? `${wn.class_type}（来自 ${wn._from}）` : (wn.class_type || "未知节点"));
     const params = wn.params && typeof wn.params === "object" ? wn.params : {};
     const entries = [];
     for (const [pk, pv] of Object.entries(params)) {
@@ -950,7 +981,7 @@ function _renderTabbedUsable(section, usable, summary, ctx) {
     };
 
     usable.forEach((u, i) => {
-      const btn = h("button", { class: "sbg-prompt-pill", text: u.tab.label || `Tab ${i + 1}` });
+      const btn = h("button", { class: "sbg-prompt-pill", text: u.tab.label || `标签页 ${i + 1}` });
       if (u.tab.pillColor) applyColor(btn, u.tab.pillColor);
       btn.addEventListener("click", () => { idx = i; try { localStorage.setItem(lsKey, u.tab.label || ""); } catch { } render(); });
       pillRow.appendChild(btn);
@@ -1206,7 +1237,7 @@ function _highLowKeyPath(section) {
 
 function _emitPair(section, hi, lo, wrap, summary, source) {
   const pair = h("div", { class: "sbg-meta-pair" });
-  for (const [label, el] of [["HIGH", hi], ["LOW", lo]]) {
+  for (const [label, el] of [["高噪声", hi], ["低噪声", lo]]) {
     const item = h("div", { class: "sbg-meta-pair__item" });
     item.appendChild(h("span", { class: "sbg-meta-pair__label", text: label }));
     const card = _renderOneCard(section, el, summary, false, source);

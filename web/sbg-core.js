@@ -187,11 +187,11 @@ export function fmtBytes(b) {
 
 export function timeAgo(ts) {
   const diff = (Date.now() / 1000) - ts;
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-  return new Date(ts * 1000).toLocaleDateString();
+  if (diff < 60) return "刚刚";
+  if (diff < 3600) return `${Math.floor(diff / 60)} 分钟前`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} 小时前`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)} 天前`;
+  return new Date(ts * 1000).toLocaleDateString("zh-CN");
 }
 
 export function pj(x) { try { return JSON.stringify(x, null, 2); } catch { return String(x); } }
@@ -213,7 +213,7 @@ export function showToast(msg, duration = 1800) {
  * armClass, all restored on disarm.
  */
 export function confirmClick(btn, onConfirm, opts = {}) {
-  const label = opts.label || "Sure?";
+  const label = opts.label || "确定？";
   const armMs = opts.armMs || 2000;
   let armed = false, timer = null;
   const orig = { text: "", background: "", color: "" };
@@ -244,18 +244,18 @@ export function confirmClick(btn, onConfirm, opts = {}) {
 }
 
 export function copyText(text) {
-  if (text == null || text === "") { showToast("Nothing to copy"); return; }
+  if (text == null || text === "") { showToast("没有可复制的内容"); return; }
   const str = String(text);
   // navigator.clipboard only exists in a secure context (https or localhost).
   // ComfyUI is often served over plain HTTP on a LAN IP, where it is undefined,
   // so fall back to the legacy execCommand path.
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(str)
-      .then(() => showToast("Copied"))
-      .catch(() => { if (!_copyFallback(str)) showToast("Copy failed"); });
+      .then(() => showToast("已复制"))
+      .catch(() => { if (!_copyFallback(str)) showToast("复制失败"); });
     return;
   }
-  if (!_copyFallback(str)) showToast("Copy failed");
+  if (!_copyFallback(str)) showToast("复制失败");
 }
 
 function _copyFallback(str) {
@@ -271,7 +271,7 @@ function _copyFallback(str) {
     ta.setSelectionRange(0, str.length);
     const ok = document.execCommand("copy");
     document.body.removeChild(ta);
-    if (ok) showToast("Copied");
+    if (ok) showToast("已复制");
     return ok;
   } catch {
     return false;
@@ -822,10 +822,10 @@ export const progressPoller = {
 export function formatProgress(entry) {
   if (!entry) return null;
   if (entry.phase === "error") {
-    return { text: `Indexing failed: ${entry.error || "unknown error"}`, pct: -1, error: true };
+    return { text: `建立索引失败：${entry.error || "未知错误"}`, pct: -1, error: true };
   }
   if (entry.phase === "scanning") {
-    return { text: `Scanning folder… ${(entry.total || 0).toLocaleString()} found`, pct: -1 };
+    return { text: `正在扫描文件夹…已发现 ${(entry.total || 0).toLocaleString()} 个文件`, pct: -1 };
   }
   const total = entry.total || 0;
   const done = entry.done || 0;
@@ -870,7 +870,7 @@ export async function loadSettings() {
         }
       } else {
         console.warn("[SBG] Failed to load settings from server: HTTP " + resp.status);
-        showToast("Loading saved gallery settings failed. Defaults are in use for this session.", 5000);
+        showToast("加载图库设置失败，本次会话将使用默认设置。", 5000);
       }
     } catch (e) {
       console.warn("[SBG] Failed to load settings from server:", e);
@@ -942,7 +942,7 @@ function _saveFailed(key, detail) {
   const now = Date.now();
   if (now - _lastSaveFailToast >= _SAVE_FAIL_TOAST_GAP_MS) {
     _lastSaveFailToast = now;
-    showToast("Saving gallery settings failed. Recent changes may be lost when the page reloads.", 5000);
+    showToast("保存图库设置失败，刷新页面后最近的更改可能丢失。", 5000);
   }
 }
 

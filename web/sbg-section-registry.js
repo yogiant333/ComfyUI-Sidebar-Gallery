@@ -11,27 +11,27 @@
 // for match-badge labels, so "prompt" labels as Negative Prompt and
 // "workflow_nodes" as Prompt Enhancer.
 const SECTION_DEFS = {
-  "File Info": { searchField: "fileinfo" },
-  "Models": { searchField: "model" },
-  "Sampling": { searchField: "sampling" },
+  "File Info": { searchField: "fileinfo", displayName: "文件信息" },
+  "Models": { searchField: "model", displayName: "模型" },
+  "Sampling": { searchField: "sampling", displayName: "采样" },
   "LoRAs": { searchField: "lora" },
-  "ControlNet": { searchField: "controlnet" },
-  "ADetailer": { searchField: "adetailer" },
-  "Upscaling": { searchField: "upscaling" },
-  "Interpolation": { searchField: "interpolation" },
+  "ControlNet": { searchField: "controlnet", displayName: "ControlNet" },
+  "ADetailer": { searchField: "adetailer", displayName: "ADetailer" },
+  "Upscaling": { searchField: "upscaling", displayName: "放大" },
+  "Interpolation": { searchField: "interpolation", displayName: "插帧" },
   "MMAudio": { searchField: "mmaudio" },
-  "Positive Prompt": { searchField: "prompt" },
-  "Negative Prompt": { searchField: "prompt" },
-  "Tags": { searchField: "tags" },
-  "Lyrics": { searchField: "lyrics" },
-  "Track": { searchField: "track" },
-  "Extra Metadata": { searchField: "extra", displayName: "Details" },
-  "Workflow Nodes": { searchField: "workflow_nodes" },
-  "VLM Captioner": { searchField: "workflow_nodes" },
-  "AIO Aux Preprocessor": { searchField: "workflow_nodes" },
-  "Prompt Enhancer": { searchField: "workflow_nodes" },
-  "Raw Prompt JSON": { searchField: null },
-  "Raw Workflow JSON": { searchField: null },
+  "Positive Prompt": { searchField: "prompt", displayName: "正向提示词" },
+  "Negative Prompt": { searchField: "prompt", displayName: "负向提示词" },
+  "Tags": { searchField: "tags", displayName: "标签" },
+  "Lyrics": { searchField: "lyrics", displayName: "歌词" },
+  "Track": { searchField: "track", displayName: "音轨" },
+  "Extra Metadata": { searchField: "extra", displayName: "附加元数据" },
+  "Workflow Nodes": { searchField: "workflow_nodes", displayName: "工作流节点" },
+  "VLM Captioner": { searchField: "workflow_nodes", displayName: "VLM 图像描述" },
+  "AIO Aux Preprocessor": { searchField: "workflow_nodes", displayName: "AIO 辅助预处理" },
+  "Prompt Enhancer": { searchField: "workflow_nodes", displayName: "提示词增强" },
+  "Raw Prompt JSON": { searchField: null, displayName: "原始提示词 JSON" },
+  "Raw Workflow JSON": { searchField: null, displayName: "原始工作流 JSON" },
 };
 
 const SEARCH_FIELD_ALIASES = {
@@ -64,6 +64,9 @@ const SectionRegistry = {
     if (!displayName) return null;
     const dn = displayName.trim();
     if (SECTION_DEFS[dn]) return dn;
+    for (const [canonical, def] of Object.entries(SECTION_DEFS)) {
+      if (def.displayName?.toLowerCase() === dn.toLowerCase()) return canonical;
+    }
     const aliased = SEARCH_FIELD_ALIASES[dn.toLowerCase()];
     if (aliased) return aliased;
     // Only canonicals with a registry entry resolve; a retitled section that has

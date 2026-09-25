@@ -22,8 +22,8 @@ import { itemKey, nextCompareIdx, remapCompareIdx, initialImageList, initialAudi
 import { createZoomPanController } from "./sbg-lightbox-zoom.js";
 import { descFromKeyEvent, descFromMouseEvent, matchExplicit, matchBare } from "./sbg-keybinds.js";
 
-const COMPARE_LABEL = "Compare";
-const COMPARE_EXIT_LABEL = "✕ Exit Compare";
+const COMPARE_LABEL = "对比";
+const COMPARE_EXIT_LABEL = "✕ 退出对比";
 
 // Fully release a media element's decoder. Removing the element from the DOM
 // is not enough, since the browser keeps the (hardware) decoder alive until garbage
@@ -157,17 +157,17 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
   /* Build DOM */
 
   const mediaContainer = h("div", { style: "display:flex;align-items:center;justify-content:center;width:100%;height:100%" });
-  const prevBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--prev", text: "‹", title: `Previous (${keyPrev})` });
-  const nextBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--next", text: "›", title: `Next (${keyNext})` });
-  const closeBtn = h("button", { class: "sbg-lb__close", text: "✕", title: `Close (${keyClose})` });
+  const prevBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--prev", text: "‹", title: `上一项（${keyPrev}）` });
+  const nextBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--next", text: "›", title: `下一项（${keyNext}）` });
+  const closeBtn = h("button", { class: "sbg-lb__close", text: "✕", title: `关闭（${keyClose}）` });
 
   const bottomName = h("span", { class: "sbg-lb__bottom-name" });
-  const dlBtn = h("a", { class: "sbg-btn sbg-btn--sm", text: "Download", title: "Download file", download: "", target: "_blank" });
-  const loadWfBtn = h("button", { class: "sbg-btn sbg-btn--sm sbg-btn--accent", text: "Load Workflow", title: "Load workflow into ComfyUI", disabled: "true" });
-  const copyPromptBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: "Copy Prompt", title: "Copy positive prompt", disabled: "true" });
-  const copyWfBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: "Copy WF", title: "Copy workflow JSON", disabled: "true" });
+  const dlBtn = h("a", { class: "sbg-btn sbg-btn--sm", text: "下载", title: "下载文件", download: "", target: "_blank" });
+  const loadWfBtn = h("button", { class: "sbg-btn sbg-btn--sm sbg-btn--accent", text: "加载工作流", title: "将工作流加载到 ComfyUI", disabled: "true" });
+  const copyPromptBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: "复制提示词", title: "复制正向提示词", disabled: "true" });
+  const copyWfBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: "复制工作流", title: "复制工作流 JSON", disabled: "true" });
 
-  const compareBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: COMPARE_LABEL, title: `Compare with another file${keyCompare ? ` (${keyCompare})` : ""}` });
+  const compareBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: COMPARE_LABEL, title: `与其他文件对比${keyCompare ? ` (${keyCompare})` : ""}` });
 
   if (!getSetting(S.LB_SHOW_DOWNLOAD, true)) dlBtn.style.display = "none";
   if (!getSetting(S.LB_SHOW_COPY_PROMPT, true)) copyPromptBtn.style.display = "none";
@@ -196,15 +196,15 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
   ]);
 
   const metaBody = h("div", { class: "sbg-lb__meta-body" }, [
-    h("div", { class: "sbg-lb__loading sbg-loading", text: "Loading metadata…" }),
+    h("div", { class: "sbg-lb__loading sbg-loading", text: "正在加载元数据…" }),
   ]);
   const metaResizeHandle = h("div", { class: "sbg-lb__meta-resize" });
   const savedMetaWidth = localStorage.getItem("SBG.MetaPanelWidth");
   const _metaHeaderBadge = h("span", { class: "sbg-source-app" }); // placeholder, filled by renderMeta
 
   // The tab bar is only shown when source media (initial image/audio) exists.
-  const _tabGenerated = h("button", { class: "sbg-lb__meta-tab sbg-lb__meta-tab--active", text: "Generated" });
-  const _tabInitialImage = h("button", { class: "sbg-lb__meta-tab", text: "Initial Image" });
+  const _tabGenerated = h("button", { class: "sbg-lb__meta-tab sbg-lb__meta-tab--active", text: "生成结果" });
+  const _tabInitialImage = h("button", { class: "sbg-lb__meta-tab", text: "初始图像" });
   const initTabColor = getSetting(S.INITIAL_IMAGE_TAB_COLOR, "");
   if (initTabColor) {
     _tabInitialImage.style.color = initTabColor;
@@ -382,7 +382,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
     if (!_compareActive) _metaTabs.style.display = "none"; // hide until source media found
 
     if (!m) {
-      metaBody.appendChild(h("div", { class: "sbg-lb__loading", text: "No metadata" }));
+      metaBody.appendChild(h("div", { class: "sbg-lb__loading", text: "无元数据" }));
       return;
     }
 
@@ -484,8 +484,8 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
 
   // The tab covers every source kind, named for the source kinds present.
   function _initialTabLabel(imgs, auds) {
-    if (imgs && auds) return "Initial Media";
-    return auds ? "Initial Audio" : "Initial Image";
+    if (imgs && auds) return "初始媒体";
+    return auds ? "初始音频" : "初始图像";
   }
 
   // Fresh wrapper of per-image blocks. The DOM is intentionally NOT cached:
@@ -500,11 +500,11 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
     const audios = initialAudioList(s);
     const el = h("div", {});
     list.forEach((entry, i) => {
-      const label = list.length > 1 ? `Source Image ${i + 1} of ${list.length}` : "Source Image";
+      const label = list.length > 1 ? `源图像 ${i + 1}／${list.length}` : "源图像";
       el.appendChild(_buildInitialContent(entry, rootId, label));
     });
     audios.forEach((entry, i) => {
-      const label = audios.length > 1 ? `Source Audio ${i + 1} of ${audios.length}` : "Source Audio";
+      const label = audios.length > 1 ? `源音频 ${i + 1}／${audios.length}` : "源音频";
       el.appendChild(_buildInitialContent(entry, rootId, label, "audio"));
     });
     return el;
@@ -521,7 +521,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
     const initWrap = h("div", { class: "sbg-meta-group", style: "padding:8px" });
 
     const { path: imgPath, name: imgName, srcType } = normalizeInitialEntry(entry);
-    initWrap.appendChild(h("div", { style: "font-size:12px;font-weight:600;color:var(--sbg-text);margin-bottom:6px", text: label || "Source Image" }));
+    initWrap.appendChild(h("div", { style: "font-size:12px;font-weight:600;color:var(--sbg-text);margin-bottom:6px", text: label || "源图像" }));
 
     // Preview via ComfyUI's /view endpoint, an image thumbnail or an audio
     // player by source kind. The file can live in input, output, or temp, and
@@ -577,7 +577,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
     // shows "unavailable" for THIS block only and (since misses are never
     // cached) retries naturally on the next render.
     if (imgPath) {
-      const metaNote = h("div", { class: "sbg-lb__loading sbg-loading", text: "Loading initial image metadata…", style: "font-size:10px;padding:8px" });
+      const metaNote = h("div", { class: "sbg-lb__loading sbg-loading", text: "正在加载源媒体元数据…", style: "font-size:10px;padding:8px" });
       initWrap.appendChild(metaNote);
       const _initGen = _navGen;
       (async () => {
@@ -599,7 +599,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
             initWrap.appendChild(makeSection(section, contentEl));
           }
         } else {
-          metaNote.textContent = "Source image metadata unavailable";
+          metaNote.textContent = "无法获取源媒体元数据";
           metaNote.classList.remove("sbg-loading");
           metaNote.style.cssText = "font-size:10px;padding:8px;opacity:0.5";
         }
@@ -874,10 +874,10 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
       scrub.addEventListener("lostpointercapture", () => { scrubbing = false; });
 
       // Controls row.
-      const playBtn = h("button", { class: "sbg-lb__audio-btn sbg-lb__audio-btn--play", html: _PLAY_SVG, title: "Play/Pause (Space)" });
+      const playBtn = h("button", { class: "sbg-lb__audio-btn sbg-lb__audio-btn--play", html: _PLAY_SVG, title: "播放／暂停（空格键）" });
       playBtn.addEventListener("click", _toggle);
       const timeEl = h("span", { class: "sbg-lb__audio-time", text: "0:00 / 0:00" });
-      const muteBtn = h("button", { class: "sbg-lb__audio-btn", html: audio.muted ? _VOL_MUTED_SVG : _VOL_SVG, title: "Mute" });
+      const muteBtn = h("button", { class: "sbg-lb__audio-btn", html: audio.muted ? _VOL_MUTED_SVG : _VOL_SVG, title: "静音" });
       muteBtn.addEventListener("click", () => { audio.muted = !audio.muted; });
       const volSlider = h("input", { type: "range", class: "sbg-lb__audio-vol", min: "0", max: "1", step: "0.01" });
       volSlider.value = String(audio.volume);
@@ -1015,7 +1015,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
       // "Loading…" would wipe the diff header with no context.
       metaBody.innerHTML = "";
       if (_compareActive) metaBody.appendChild(_compareHeader(false));
-      metaBody.appendChild(h("div", { class: "sbg-lb__loading sbg-loading", text: "Loading metadata…" }));
+      metaBody.appendChild(h("div", { class: "sbg-lb__loading sbg-loading", text: "正在加载元数据…" }));
 
       _getSummaryMeta(it).then((m) => {
         if (!destroyed && _navGen === gen) {
@@ -1031,7 +1031,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
           meta = null;
           metaBody.innerHTML = "";
           if (_compareActive) metaBody.appendChild(_compareHeader(false));
-          metaBody.appendChild(h("div", { class: "sbg-lb__loading", text: `Error: ${e?.message || e}` }));
+          metaBody.appendChild(h("div", { class: "sbg-lb__loading", text: `错误：${e?.message || e}` }));
         }
       });
     }
@@ -1396,18 +1396,18 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
 
   loadWfBtn.addEventListener("click", async () => {
     try {
-      loadWfBtn.textContent = "Loading…";
+      loadWfBtn.textContent = "正在加载…";
       const m = await _fetchFullMeta();
-      if (!m?.workflow) { showToast("No workflow data"); return; }
+      if (!m?.workflow) { showToast("无工作流数据"); return; }
       let wf = m.workflow;
       if (typeof wf === "string") wf = JSON.parse(wf);
       app.loadGraphData(wf);
-      showToast("Workflow loaded!");
+      showToast("工作流已加载");
       destroy();
     } catch (e) {
-      showToast(`Failed: ${e?.message || e}`, 5000);
+      showToast(`失败：${e?.message || e}`, 5000);
     } finally {
-      loadWfBtn.textContent = "Load Workflow";
+      loadWfBtn.textContent = "加载工作流";
     }
   });
 
@@ -1418,14 +1418,14 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
 
   copyWfBtn.addEventListener("click", async () => {
     try {
-      copyWfBtn.textContent = "Loading…";
+      copyWfBtn.textContent = "正在加载…";
       const m = await _fetchFullMeta();
       if (m?.workflow) copyText(typeof m.workflow === "string" ? m.workflow : pj(m.workflow));
-      else showToast("No workflow data");
+      else showToast("无工作流数据");
     } catch (e) {
-      showToast(`Failed: ${e?.message || e}`);
+      showToast(`失败：${e?.message || e}`);
     } finally {
-      copyWfBtn.textContent = "Copy WF";
+      copyWfBtn.textContent = "复制工作流";
     }
   });
 
@@ -1454,7 +1454,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
     if (_compareActive) { closeCompareMode(); return; }
     const currentItem = items[idx];
     if (!currentItem) return;
-    if (items.length < 2) { showToast("Need at least 2 images to compare"); return; }
+    if (items.length < 2) { showToast("至少需要 2 张图像才能对比"); return; }
     _compareActive = true;
     _compareIdx = idx === 0 ? 1 : idx - 1;
     if (_compareIdx < 0 || _compareIdx >= items.length) _compareIdx = 0;
@@ -1470,20 +1470,20 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
     // the figure, i.e. to the image itself, so the two sides always line up.
     const leftHalf = h("div", { class: "sbg-compare__half" });
     const leftFig = h("div", { class: "sbg-compare__fig" });
-    const leftOverlay = h("div", { class: "sbg-compare__label", text: "CURRENT" });
+    const leftOverlay = h("div", { class: "sbg-compare__label", text: "当前" });
     const leftFilename = h("div", { class: "sbg-compare__filename", text: currentItem.filename || "" });
-    const leftPrevBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--prev sbg-compare__nav", text: "‹", title: `Previous current image${keyCmpCurPrev ? ` (${keyCmpCurPrev})` : ""}` });
-    const leftNextBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--next sbg-compare__nav", text: "›", title: `Next current image${keyCmpCurNext ? ` (${keyCmpCurNext})` : ""}` });
+    const leftPrevBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--prev sbg-compare__nav", text: "‹", title: `上一张当前图像${keyCmpCurPrev ? ` (${keyCmpCurPrev})` : ""}` });
+    const leftNextBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--next sbg-compare__nav", text: "›", title: `下一张当前图像${keyCmpCurNext ? ` (${keyCmpCurNext})` : ""}` });
     leftPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); goTo(idx - 1); });
     leftNextBtn.addEventListener("click", (e) => { e.stopPropagation(); goTo(idx + 1); });
 
     const rightHalf = h("div", { class: "sbg-compare__half" });
     const rightFig = h("div", { class: "sbg-compare__fig" });
     const rightImg = h("img", {});
-    const rightPrevBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--prev sbg-compare__nav", text: "‹", title: `Previous comparison image${keyPrev ? ` (${keyPrev})` : ""}` });
-    const rightNextBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--next sbg-compare__nav", text: "›", title: `Next comparison image${keyNext ? ` (${keyNext})` : ""}` });
+    const rightPrevBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--prev sbg-compare__nav", text: "‹", title: `上一张对比图像${keyPrev ? ` (${keyPrev})` : ""}` });
+    const rightNextBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--next sbg-compare__nav", text: "›", title: `下一张对比图像${keyNext ? ` (${keyNext})` : ""}` });
     const rightFilename = h("div", { class: "sbg-compare__filename", text: "" });
-    const rightLabel = h("div", { class: "sbg-compare__label", text: "COMPARED", style: `color:${CMP_RED};` });
+    const rightLabel = h("div", { class: "sbg-compare__label", text: "对比项", style: `color:${CMP_RED};` });
     rightPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); _navigateCompare(-1); });
     rightNextBtn.addEventListener("click", (e) => { e.stopPropagation(); _navigateCompare(1); });
 
@@ -1653,14 +1653,14 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
   function _compareHeader(withDiffLegend) {
     const compItem = items[_compareIdx];
     const header = h("div", { class: "sbg-compare-header" });
-    header.appendChild(h("div", { class: "sbg-compare-header__title", text: `⚖ Comparing: ${compItem?.filename || "?"}` }));
+    header.appendChild(h("div", { class: "sbg-compare-header__title", text: `⚖ 正在对比：${compItem?.filename || "?"}` }));
     const legend = h("div", { class: "sbg-compare-header__legend" });
     if (withDiffLegend) {
-      legend.appendChild(h("span", { text: "■ Same", style: "color:rgba(255,255,255,0.4)" }));
-      legend.appendChild(h("span", { text: "■ Changed", style: "color:#facc15;font-weight:700" }));
+      legend.appendChild(h("span", { text: "■ 相同", style: "color:rgba(255,255,255,0.4)" }));
+      legend.appendChild(h("span", { text: "■ 不同", style: "color:#facc15;font-weight:700" }));
     }
-    legend.appendChild(h("span", { text: withDiffLegend ? "■ Current only" : "■ Current", style: `color:${CMP_GREEN};font-weight:700` }));
-    legend.appendChild(h("span", { text: withDiffLegend ? "■ Compared only" : "■ Compared", style: `color:${CMP_RED};font-weight:700` }));
+    legend.appendChild(h("span", { text: withDiffLegend ? "■ 仅当前项" : "■ 当前项", style: `color:${CMP_GREEN};font-weight:700` }));
+    legend.appendChild(h("span", { text: withDiffLegend ? "■ 仅对比项" : "■ 对比项", style: `color:${CMP_RED};font-weight:700` }));
     header.appendChild(legend);
     return header;
   }
@@ -1682,7 +1682,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
       metaBody.appendChild(_compareHeader(false));
       metaBody.appendChild(h("div", {
         class: "sbg-lb__loading" + (compareSummary.__cmpPending ? " sbg-loading" : ""),
-        text: compareSummary.__cmpPending ? "Loading comparison metadata…" : "Comparison metadata unavailable",
+        text: compareSummary.__cmpPending ? "正在加载对比元数据…" : "无法获取对比元数据",
       }));
       return;
     }
@@ -1723,7 +1723,7 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
     const block = (label, color, s, rootId) => {
       const wrap = _sideBlock(label, color);
       if (sourceMediaList(s).length) wrap.appendChild(_getInitialContent(s, rootId));
-      else wrap.appendChild(note("No source media data"));
+      else wrap.appendChild(note("无源媒体数据"));
       return wrap;
     };
     // When both sides resolve to the same source-image set, say "same"
@@ -1732,14 +1732,14 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
     // so this is purely a UX choice with no DOM constraint behind it).
     const sameSource = sourceMediaList(curS).length && sourceMediaList(cmpS).length
       && _initialContentKey(curS, items[idx]?.root_id) === _initialContentKey(cmpS, items[_compareIdx]?.root_id);
-    metaBody.appendChild(block("Current", CMP_GREEN, curS, items[idx]?.root_id));
+    metaBody.appendChild(block("当前项", CMP_GREEN, curS, items[idx]?.root_id));
     metaBody.appendChild(_hairline());
     if (sameSource) {
-      const wrap = _sideBlock("Compared", CMP_RED);
-      wrap.appendChild(note("Same source image as the current side"));
+      const wrap = _sideBlock("对比项", CMP_RED);
+      wrap.appendChild(note("与当前项使用相同源图像"));
       metaBody.appendChild(wrap);
     } else {
-      metaBody.appendChild(block("Compared", CMP_RED, cmpS, items[_compareIdx]?.root_id));
+      metaBody.appendChild(block("对比项", CMP_RED, cmpS, items[_compareIdx]?.root_id));
     }
   }
 
@@ -1795,18 +1795,18 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
       });
       sectionHeader.appendChild(h("span", { style: "font-weight:600;font-size:11.5px;", text: section.title }));
       sectionHeader.appendChild(hasDiff
-        ? h("span", { text: "DIFF", style: "margin-left:8px;font-size:9px;font-weight:700;background:#facc15;color:#000;padding:1px 6px;border-radius:3px;" })
-        : h("span", { text: "SAME", style: "margin-left:8px;font-size:9px;color:rgba(255,255,255,0.3);" }));
+        ? h("span", { text: "不同", style: "margin-left:8px;font-size:9px;font-weight:700;background:#facc15;color:#000;padding:1px 6px;border-radius:3px;" })
+        : h("span", { text: "相同", style: "margin-left:8px;font-size:9px;color:rgba(255,255,255,0.3);" }));
       sectionWrap.appendChild(sectionHeader);
 
       if (hasDiff && hasCurrent && hasCompare) {
         // Stacked: Current on top, Compared below (panel is too narrow for side-by-side)
         const stack = h("div", { style: "display:flex;flex-direction:column;gap:0;" });
-        const topBlock = _sideBlock("Current", CMP_GREEN);
+        const topBlock = _sideBlock("当前项", CMP_GREEN);
         const tc = TL.renderSection(section, _curMerged, {}); if (tc) topBlock.appendChild(tc);
         stack.appendChild(topBlock);
         stack.appendChild(_hairline());
-        const bottomBlock = _sideBlock("Compared", CMP_RED);
+        const bottomBlock = _sideBlock("对比项", CMP_RED);
         const bc = TL.renderSection(section, _cmpMerged, {}); if (bc) bottomBlock.appendChild(bc);
         stack.appendChild(bottomBlock);
         sectionWrap.appendChild(stack);
@@ -1823,8 +1823,8 @@ export function openLightbox(_initialItems, startItemOrIndex, openEvent) {
         const single = hasCurrent ? TL.renderSection(section, _curMerged, {}) : TL.renderSection(section, _cmpMerged, {});
         if (single) {
           const wrapper = hasCurrent
-            ? _sideBlock("Current only", CMP_GREEN)
-            : _sideBlock("Compared only", CMP_RED);
+            ? _sideBlock("仅当前项", CMP_GREEN)
+            : _sideBlock("仅对比项", CMP_RED);
           wrapper.appendChild(single);
           sectionWrap.appendChild(wrapper);
         }

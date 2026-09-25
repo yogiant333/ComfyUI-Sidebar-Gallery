@@ -58,7 +58,7 @@ export function normalizeInitialEntry(entry) {
   const rawPath = entry.path || entry.filename || "";
   const { path, srcType } = _splitPathAnnotation(rawPath);
   const rawName = entry.filename || rawPath;
-  return { path, name: rawName ? _splitPathAnnotation(rawName).path : "Unknown", srcType };
+  return { path, name: rawName ? _splitPathAnnotation(rawName).path : "未知文件", srcType };
 }
 
 /** Next comparison index: step by dir, skip the current image's index, wrap at

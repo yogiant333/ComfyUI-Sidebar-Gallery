@@ -117,7 +117,7 @@ export function createColorPicker(options) {
   const opRow = h("div", { style: `display:flex;align-items:center;gap:8px;width:${SL_W}px;margin-bottom:10px;` });
   const opRange = h("input", { type: "range", min: "0", max: "100", value: String(Math.round(cA * 100)), class: "sbg-cp-opacity", style: "flex:1;" });
   const opVal = h("span", { style: "font-size:10px;opacity:0.7;min-width:30px;text-align:right;", text: Math.round(cA * 100) + "%" });
-  opRow.appendChild(h("span", { style: "font-size:10px;opacity:0.5;", text: "Opacity" }));
+  opRow.appendChild(h("span", { style: "font-size:10px;opacity:0.5;", text: "不透明度" }));
   opRow.appendChild(opRange); opRow.appendChild(opVal);
   opRange.addEventListener("input", () => { cA = (parseInt(opRange.value, 10) || 0) / 100; _apply(); });
   col.appendChild(opRow);
@@ -154,8 +154,8 @@ export function createColorPicker(options) {
   // Saved colours
   if (showSaved) {
     const savedCol = h("div", { class: "sbg-cp-saved", style: "display:flex;flex-direction:column;align-items:center;gap:5px;max-height:230px;overflow-y:auto;overflow-x:hidden;padding:2px;" });
-    const savedLabel = h("div", { style: "font-size:10px;opacity:0.5;text-align:center;", text: "Saved" });
-    const saveBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: "+", title: "Save current colour", style: "font-size:13px;line-height:1;padding:1px 7px;" });
+    const savedLabel = h("div", { style: "font-size:10px;opacity:0.5;text-align:center;", text: "已保存" });
+    const saveBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: "+", title: "保存当前颜色", style: "font-size:13px;line-height:1;padding:1px 7px;" });
     const chipsWrap = h("div", { style: `display:flex;flex-direction:column;align-items:center;gap:7px;min-height:${savedChipSize}px;` });
     function renderSaved() {
       chipsWrap.innerHTML = "";
@@ -163,7 +163,7 @@ export function createColorPicker(options) {
         const chip = h("div", { style: `position:relative;width:${savedChipSize}px;height:${savedChipSize}px;border-radius:4px;background:${withChecker(sc)};cursor:pointer;border:1px solid rgba(255,255,255,0.1);flex-shrink:0;`, title: sc });
         // The remove button sits inside the chip's top-right corner so the
         // saved-list scrollbar and overflow can't clip or hide it.
-        const x = h("span", { text: "×", title: "Remove", style: "position:absolute;top:0;right:0;width:14px;height:14px;line-height:13px;text-align:center;font-size:12px;border-radius:0 4px 0 4px;background:rgba(0,0,0,0.65);color:#fff;cursor:pointer;opacity:0;transition:opacity 0.1s;" });
+        const x = h("span", { text: "×", title: "移除", style: "position:absolute;top:0;right:0;width:14px;height:14px;line-height:13px;text-align:center;font-size:12px;border-radius:0 4px 0 4px;background:rgba(0,0,0,0.65);color:#fff;cursor:pointer;opacity:0;transition:opacity 0.1s;" });
         x.addEventListener("click", (e) => { e.stopPropagation(); saveSavedColors(getSavedColors().filter(v => v !== sc)); renderSaved(); });
         chip.addEventListener("mouseenter", () => { x.style.opacity = "1"; });
         chip.addEventListener("mouseleave", () => { x.style.opacity = "0"; });

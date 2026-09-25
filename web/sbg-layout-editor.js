@@ -21,9 +21,13 @@ import { initSortable } from "./sbg-sortable.js";
 import { createColorPicker } from "./sbg-color-picker.js";
 
 const MEDIA = TL.MEDIA_KEYS;
-const MEDIA_LABELS = { image: "Images", video: "Videos", audio: "Audio" };
+const MEDIA_LABELS = { image: "图像", video: "视频", audio: "音频" };
 const SECTION_STYLES = ["flat", "cards", "text", "nodes", "raw"];
 const PARAM_STYLES = ["kv", "pill", "detail", "title", "text", "hidden"];
+const STYLE_LABELS = {
+  flat: "平铺", cards: "卡片", text: "文本", nodes: "节点", raw: "原始数据",
+  kv: "键值", pill: "胶囊标签", detail: "详情", title: "标题", hidden: "隐藏",
+};
 const HIGHLOW_SOURCES = new Set(["loras", "samplers"]);
 // Common "cards" sources offered as autocomplete suggestions in the editor.
 const _CARD_SOURCES = ["samplers", "loras", "controlnet", "adetailer", "upscaling", "interpolation", "mmaudio"];
@@ -36,20 +40,20 @@ const labelize = (s) => String(s).split(".").pop()
 // first-match-wins (see forEachPathGroup), and the final catch-all keeps
 // every served path pickable even when no earlier group knows it.
 const PATH_GROUPS = [
-  { key: "file", label: "File Info", test: p => ["filename", "path", "filesize", "resolution", "generation_resolution", "width", "height", "modified", "duration", "duration_seconds", "codec", "fps", "total_frames", "sample_rate", "channels", "bitrate"].includes(p) },
-  { key: "models", label: "Models", test: p => ["model", "vae", "clip_skip", "clip_models", "model_hash", "text_projection", "audio_vae"].includes(p) },
-  { key: "prompts", label: "Prompts", test: p => !p.includes(".") && (/prompt/i.test(p) || p === "audio_tags" || p === "audio_lyrics") },
-  { key: "samplers", label: "Sampling", test: p => p.startsWith("samplers.") || p === "shift" || p === "sampling_type" },
+  { key: "file", label: "文件信息", test: p => ["filename", "path", "filesize", "resolution", "generation_resolution", "width", "height", "modified", "duration", "duration_seconds", "codec", "fps", "total_frames", "sample_rate", "channels", "bitrate"].includes(p) },
+  { key: "models", label: "模型", test: p => ["model", "vae", "clip_skip", "clip_models", "model_hash", "text_projection", "audio_vae"].includes(p) },
+  { key: "prompts", label: "提示词", test: p => !p.includes(".") && (/prompt/i.test(p) || p === "audio_tags" || p === "audio_lyrics") },
+  { key: "samplers", label: "采样", test: p => p.startsWith("samplers.") || p === "shift" || p === "sampling_type" },
   { key: "loras", label: "LoRAs", test: p => p.startsWith("loras.") },
   { key: "controlnet", label: "ControlNet", test: p => p.startsWith("controlnet.") },
   { key: "adetailer", label: "ADetailer", test: p => p.startsWith("adetailer.") },
-  { key: "upscaling", label: "Upscaling", test: p => p.startsWith("upscaling.") },
-  { key: "interpolation", label: "Interpolation", test: p => p.startsWith("interpolation.") },
+  { key: "upscaling", label: "放大", test: p => p.startsWith("upscaling.") },
+  { key: "interpolation", label: "插帧", test: p => p.startsWith("interpolation.") },
   { key: "mmaudio", label: "MMAudio", test: p => p.startsWith("mmaudio.") },
-  { key: "track", label: "Track", test: p => p.startsWith("track.") },
-  { key: "extra", label: "Extra", test: p => p.startsWith("extra") },
-  { key: "nodes", label: "Workflow Nodes", test: p => p.startsWith("workflow_nodes.") },
-  { key: "other", label: "Other", test: () => true },
+  { key: "track", label: "音轨", test: p => p.startsWith("track.") },
+  { key: "extra", label: "其他", test: p => p.startsWith("extra") },
+  { key: "nodes", label: "工作流节点", test: p => p.startsWith("workflow_nodes.") },
+  { key: "other", label: "其他", test: () => true },
 ];
 
 // Human node titles keyed by class_type, from /meta_keys, so the tray reads
@@ -74,7 +78,7 @@ function prettyPathLabel(path, inst) {
 /** Human label for one node instance: title, else upstream context, else #N. */
 function instanceLabel(ct, inst) {
   if (inst.title) return `${ct}: “${inst.title}”`;
-  if (inst.from) return `${ct} (from ${inst.from})`;
+  if (inst.from) return `${ct}（来源：${inst.from}）`;
   return `${ct} #${(inst.index || 0) + 1}`;
 }
 
@@ -139,7 +143,7 @@ const _matchKey = (pth, match) => pth + "|" + JSON.stringify(match || null);
 function matchChipText(match) {
   if (!match) return "";
   if (match.title) return `“${match.title}”`;
-  if (match.from) return `from ${match.from}`;
+  if (match.from) return `来源：${match.from}`;
   return `#${(match.index || 0) + 1}`;
 }
 
@@ -210,13 +214,13 @@ function _attachOptionsPopup(inp, getOptions) {
 }
 
 function _buildCardSourceUI(obj, body, onChange, extraEl) {
-  const help = "What each card represents. Choose a list to get one card per entry (e.g. loras = one card per LoRA), and the fields below are read from each entry. Leave EMPTY for a single card built from the whole image. You can also type workflow_nodes.<NodeType> (e.g. workflow_nodes.KSampler).";
+  const help = "设置每张卡片代表的内容。选择列表后，每个条目生成一张卡片（例如 loras 中每个 LoRA 一张），下方字段从对应条目读取。留空则整个图像生成一张卡片。也可输入 workflow_nodes.<节点类型>（例如 workflow_nodes.KSampler）。";
   const wrap = h("div", { class: "sbg-ly3-src" });
-  wrap.appendChild(h("span", { text: "Cards from:", title: help }));
-  const inp = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm", placeholder: "(empty = whole image) · loras · samplers …", value: obj.source || "", title: help });
+  wrap.appendChild(h("span", { text: "卡片来源：", title: help }));
+  const inp = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm", placeholder: "（留空＝整个图像）· loras · samplers …", value: obj.source || "", title: help });
   inp.addEventListener("change", () => { obj.source = inp.value.trim() || undefined; onChange(); });
   _attachOptionsPopup(inp, () => [
-    { value: "", label: "(empty: one card from the whole image)" },
+    { value: "", label: "（留空：整个图像生成一张卡片）" },
     ..._CARD_SOURCES.map(s => ({ value: s, label: s })),
   ]);
   wrap.appendChild(inp);
@@ -229,20 +233,20 @@ function _buildCardSourceUI(obj, body, onChange, extraEl) {
 // ControlNet. "always" disables the gate; any summary path shows the tab only
 // when that path has data.
 function _buildShowWhenUI(obj, body, onChange) {
-  const help = "When should this tab appear? Auto = only when the data its fields mostly read from exists. Always = whenever any field has a value (old behaviour). Or type a data source (controlnet, upscaling, mmaudio, … or workflow_nodes.<NodeType>) to show it only when that exists.";
+  const help = "此标签页何时显示？自动：仅当其大多数字段所依赖的数据存在时显示。始终：只要任一字段有值就显示（旧版行为）。也可输入数据源（controlnet、upscaling、mmaudio 或 workflow_nodes.<节点类型>），仅在该数据源存在时显示。";
   const wrap = h("div", { class: "sbg-ly3-src" });
-  wrap.appendChild(h("span", { text: "Show when:", title: help }));
+  wrap.appendChild(h("span", { text: "显示条件：", title: help }));
   const auto = TL.autoAnchorFor(obj && Array.isArray(obj.params) ? obj : { params: [] });
   const inp = h("input", {
     type: "text", class: "sbg-gs-input sbg-gs-input--sm",
-    placeholder: auto ? `(auto: when ${auto} exists)` : "(auto)",
+    placeholder: auto ? `（自动：当 ${auto} 存在时）` : "（自动）",
     value: obj.showWhen || "", title: help,
   });
   inp.addEventListener("change", () => { obj.showWhen = inp.value.trim() || undefined; onChange(); });
   _attachOptionsPopup(inp, () => [
-    { value: "", label: auto ? `Auto (when ${auto} exists)` : "Auto" },
-    { value: "always", label: "Always" },
-    ...[...TL.AUTO_ANCHOR_KEYS, "samplers"].map(s => ({ value: s, label: `when ${s} exists` })),
+    { value: "", label: auto ? `自动（当 ${auto} 存在时）` : "自动" },
+    { value: "always", label: "始终" },
+    ...[...TL.AUTO_ANCHOR_KEYS, "samplers"].map(s => ({ value: s, label: `当 ${s} 存在时` })),
   ]);
   wrap.appendChild(inp);
   body.appendChild(wrap);
@@ -378,13 +382,13 @@ export function renderLayout(content, galleryCtx, closeGS) {
   function makeAbsorbTab(sec, label) {
     // copyRenderProps like the sibling converters, so an explicit high/low
     // setting (and the other shared render properties) survives absorption.
-    const t = copyRenderProps(sec, { id: TL.uid("tab"), label: label || sec.title || "Tab", style: sec.style || "flat", params: sec.params });
+    const t = copyRenderProps(sec, { id: TL.uid("tab"), label: label || sec.title || "标签页", style: sec.style || "flat", params: sec.params });
     expanded.add(t.id);
     return t;
   }
   // Append a tab to a section. A section gaining its FIRST tab may still hold
   // loose fields; wrap them into a leading tab so they stay visible (same
-  // behaviour as "+ Tab" and cross-section tab drags).
+  // behaviour as "+ 标签页" and cross-section tab drags).
   function appendTabToSection(sec, tab) {
     if (!Array.isArray(sec.tabs)) sec.tabs = [];
     if (!sec.tabs.length && (sec.params || []).length) {
@@ -399,10 +403,10 @@ export function renderLayout(content, galleryCtx, closeGS) {
   // no hide control, so a hidden section merged in surfaces as a visible tab
   // rather than an invisible, unrecoverable one.
   function tabFromSection(sec) {
-    return copyRenderProps(sec, { id: TL.uid("tab"), label: sec.title || "Tab", style: sec.style || "flat", params: sec.params || [] });
+    return copyRenderProps(sec, { id: TL.uid("tab"), label: sec.title || "标签页", style: sec.style || "flat", params: sec.params || [] });
   }
   function sectionFromTab(tab) {
-    return copyRenderProps(tab, { id: TL.uid(), title: tab.label || "New Section", style: tab.style || "flat", open: true, params: tab.params || [] });
+    return copyRenderProps(tab, { id: TL.uid(), title: tab.label || "新区块", style: tab.style || "flat", open: true, params: tab.params || [] });
   }
 
   // Drag-conversion drop handlers
@@ -448,7 +452,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
     expanded.delete(src.id);
     expanded.add(tgt.id);
     persist(); render();
-    showToast("Merged “" + (src.title || "section") + "” into “" + (tgt.title || "section") + "” as tabs");
+    showToast("已将“" + (src.title || "区块") + "”合并到“" + (tgt.title || "区块") + "”并转为标签页");
   }
 
   function moveTabIntoSection(srcSec, tab, tgt) {
@@ -456,7 +460,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
     appendTabToSection(tgt, tab);
     expanded.add(tgt.id);
     persist(); render();
-    showToast("Moved tab “" + (tab.label || "tab") + "” into “" + (tgt.title || "section") + "”");
+    showToast("已将标签页“" + (tab.label || "标签页") + "”移到“" + (tgt.title || "区块") + "”");
   }
 
   function promoteTabToSection(srcSec, tab, index) {
@@ -466,7 +470,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
     l.splice(index, 0, ns);
     expanded.add(ns.id);
     persist(); render();
-    showToast("“" + ns.title + "” is now its own section");
+    showToast("“" + ns.title + "”已成为独立区块");
   }
 
   function moveFieldIntoSection(owner, p, tgt) {
@@ -475,7 +479,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
     tgt.params.push(p);
     expanded.add(tgt.id);
     persist(); render();
-    showToast("Moved field to “" + (tgt.title || "section") + "”");
+    showToast("已将字段移到“" + (tgt.title || "区块") + "”");
   }
 
   function promoteFieldToSection(owner, p, index) {
@@ -485,10 +489,10 @@ export function renderLayout(content, galleryCtx, closeGS) {
     l.splice(index, 0, ns);
     expanded.add(ns.id);
     persist(); render();
-    showToast("“" + ns.title + "” is now its own section");
+    showToast("“" + ns.title + "”已成为独立区块");
   }
 
-  // "Copy between layouts" dialog
+  // "跨布局复制" dialog
   // Copies whole sections, sections with a subset of their tabs, or lone tabs
   // from one (app × media) layout into another. Lone tabs land in the target's
   // section with the same name as their source section, created when missing.
@@ -523,19 +527,19 @@ export function renderLayout(content, galleryCtx, closeGS) {
     overlay.addEventListener("mousedown", (e) => { if (e.target === overlay) close(); });
 
     const head = h("div", { class: "sbg-ly3-xfer-head" });
-    head.appendChild(h("span", { class: "sbg-ly3-xfer-title", text: "Copy between layouts" }));
-    const closeBtn = h("button", { class: "sbg-iconbtn", title: "Close", text: "✕" });
+    head.appendChild(h("span", { class: "sbg-ly3-xfer-title", text: "跨布局复制" }));
+    const closeBtn = h("button", { class: "sbg-iconbtn", title: "关闭", text: "✕" });
     closeBtn.addEventListener("click", close);
     head.appendChild(closeBtn);
     dlg.appendChild(head);
 
     const fromRow = h("div", { class: "sbg-ly3-xfer-row" });
-    fromRow.appendChild(h("span", { text: "From" }));
+    fromRow.appendChild(h("span", { text: "从" }));
     fromRow.appendChild(mkSelect(keys, fromKey, (v) => { fromKey = v; renderChecklist(); }, undefined, layoutLabel));
-    fromRow.appendChild(h("span", { text: "to" }));
+    fromRow.appendChild(h("span", { text: "到" }));
     fromRow.appendChild(mkSelect(keys, toKey, (v) => { toKey = v; updateCount(); }, undefined, layoutLabel));
     dlg.appendChild(fromRow);
-    dlg.appendChild(h("div", { class: "sbg-ly3-xfer-dim", text: "Tick sections (or single tabs) to copy. Picking the same layout twice duplicates in place." }));
+    dlg.appendChild(h("div", { class: "sbg-ly3-xfer-dim", text: "勾选要复制的区块或单个标签页。两次选择相同布局会在原位置创建副本。" }));
 
     const listEl = h("div", { class: "sbg-ly3-xfer-list" });
     dlg.appendChild(listEl);
@@ -552,12 +556,12 @@ export function renderLayout(content, galleryCtx, closeGS) {
         const cb = h("input", { type: "checkbox" });
         r.cb = cb;
         item.appendChild(cb);
-        item.appendChild(h("span", { text: sec.title || "(untitled)" }));
-        const bits = [sec.style || "flat"];
+        item.appendChild(h("span", { text: sec.title || "（未命名）" }));
+        const bits = [STYLE_LABELS[sec.style || "flat"] || sec.style];
         const tabs = Array.isArray(sec.tabs) ? sec.tabs : [];
-        if (tabs.length) bits.push(tabs.length + " tab" + (tabs.length > 1 ? "s" : ""));
-        else if ((sec.params || []).length) bits.push(sec.params.length + " field" + (sec.params.length > 1 ? "s" : ""));
-        if (sec.hidden) bits.push("hidden");
+        if (tabs.length) bits.push(tabs.length + " 个标签页");
+        else if ((sec.params || []).length) bits.push(sec.params.length + " 个字段");
+        if (sec.hidden) bits.push("隐藏");
         item.appendChild(h("span", { class: "sbg-ly3-xfer-dim", text: bits.join(" · ") }));
         listEl.appendChild(item);
         cb.addEventListener("change", () => {
@@ -568,7 +572,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
           const ti = h("label", { class: "sbg-ly3-xfer-item sbg-ly3-xfer-item--tab" });
           const tcb = h("input", { type: "checkbox" });
           ti.appendChild(tcb);
-          ti.appendChild(h("span", { text: tab.label || (tab.path ? labelize(tab.path) : "Tab") }));
+          ti.appendChild(h("span", { text: tab.label || (tab.path ? labelize(tab.path) : "标签页") }));
           listEl.appendChild(ti);
           const tr = { tab, cb: tcb };
           r.tabRows.push(tr);
@@ -582,7 +586,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
         }
         rows.push(r);
       }
-      if (!rows.length) listEl.appendChild(h("div", { class: "sbg-ly3-empty", text: "This layout has no sections." }));
+      if (!rows.length) listEl.appendChild(h("div", { class: "sbg-ly3-empty", text: "此布局没有区块。" }));
       updateCount();
     }
     // Indeterminate marks "tabs ticked inside an unticked section", the lone
@@ -604,7 +608,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
     }
 
     const ruleRow = h("div", { class: "sbg-ly3-xfer-row" });
-    ruleRow.appendChild(h("span", { class: "sbg-ly3-xfer-dim", text: "If the target already has a section with the same name:" }));
+    ruleRow.appendChild(h("span", { class: "sbg-ly3-xfer-dim", text: "如果目标布局中已有同名区块：" }));
     const mkRule = (val, lbl, chk) => {
       const l = h("label", { class: "sbg-ly3-xfer-radio" });
       const rb = h("input", { type: "radio", name: "sbg-xfer-clash", value: val });
@@ -613,14 +617,14 @@ export function renderLayout(content, galleryCtx, closeGS) {
       l.appendChild(document.createTextNode(lbl));
       return l;
     };
-    ruleRow.appendChild(mkRule("add", "Add as a copy", true));
-    ruleRow.appendChild(mkRule("replace", "Replace it", false));
+    ruleRow.appendChild(mkRule("add", "添加副本", true));
+    ruleRow.appendChild(mkRule("replace", "替换原区块", false));
     dlg.appendChild(ruleRow);
 
     const foot = h("div", { class: "sbg-ly3-xfer-foot" });
-    const cancel = h("button", { class: "sbg-btn sbg-btn--sm", text: "Cancel" });
+    const cancel = h("button", { class: "sbg-btn sbg-btn--sm", text: "取消" });
     cancel.addEventListener("click", close);
-    const go = h("button", { class: "sbg-btn sbg-btn--sm sbg-btn--primary", text: "Copy 0 selected" });
+    const go = h("button", { class: "sbg-btn sbg-btn--sm sbg-btn--primary", text: "复制已选 0 项" });
     go.disabled = true;
     go.addEventListener("click", commit);
     foot.appendChild(cancel);
@@ -629,7 +633,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
 
     function updateCount() {
       const { count } = selection();
-      go.textContent = "Copy " + count + " selected";
+      go.textContent = "复制已选 " + count + " 项";
       go.disabled = !count;
     }
 
@@ -699,7 +703,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
       for (const [srcSec, tabs] of groups) {
         let host = findHost(srcSec.title);
         if (!host) {
-          host = { id: TL.uid(), title: srcSec.title || "Section", style: srcSec.style || "flat", open: true, params: [] };
+          host = { id: TL.uid(), title: srcSec.title || "区块", style: srcSec.style || "flat", open: true, params: [] };
           if (srcSec.color) host.color = JSON.parse(JSON.stringify(srcSec.color));
           target.push(host);
         }
@@ -720,7 +724,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
       }
 
       persist();
-      showToast("Copied " + count + " item" + (count > 1 ? "s" : "") + " to " + layoutLabel(toKey));
+      showToast("已复制 " + count + " 项到 " + layoutLabel(toKey));
       close();
       if (toActive) render();
     }
@@ -759,26 +763,26 @@ export function renderLayout(content, galleryCtx, closeGS) {
 
     const actions = h("div", { class: "sbg-ly3-actions" });
     if (activeMedia !== "image") {
-      const clone = h("button", { class: "sbg-btn sbg-btn--sm", text: "⇐ Clone Images" });
+      const clone = h("button", { class: "sbg-btn sbg-btn--sm", text: "⇐ 克隆图像布局" });
       clone.addEventListener("click", () => {
         // Materialise the image layout the same way every other reader does, so an
         // emptied-but-stored image profile clones its real effective layout rather
         // than an empty array (which would then reseed as this media's default).
         const src = layoutFor(activeApp, "image");
         profiles[activeKey()] = JSON.parse(JSON.stringify(src));
-        persist(); render(); showToast(`Cloned image layout to ${MEDIA_LABELS[activeMedia].toLowerCase()}`);
+        persist(); render(); showToast(`已将图像布局克隆到${MEDIA_LABELS[activeMedia]}`);
       });
       actions.appendChild(clone);
     }
     const xfer = h("button", {
-      class: "sbg-btn sbg-btn--sm", text: "⧉ Copy between layouts",
-      title: "Copy sections or tabs from one layout into another",
+      class: "sbg-btn sbg-btn--sm", text: "⧉ 跨布局复制",
+      title: "将区块或标签页从一个布局复制到另一个布局",
     });
     xfer.addEventListener("click", openTransferDialog);
     actions.appendChild(xfer);
-    const reset = h("button", { class: "sbg-btn sbg-btn--sm", text: "↺ Reset" });
+    const reset = h("button", { class: "sbg-btn sbg-btn--sm", text: "↺ 重置" });
     confirmClick(reset, () => {
-      delete profiles[activeKey()]; persist(); render(); showToast("Profile reset to default");
+      delete profiles[activeKey()]; persist(); render(); showToast("布局配置已重置为默认值");
     }, { armClass: "sbg-btn--danger" });
     actions.appendChild(reset);
     topBar.appendChild(actions);
@@ -792,15 +796,15 @@ export function renderLayout(content, galleryCtx, closeGS) {
 
   function renderEditor() {
     leftPane.innerHTML = "";
-    leftPane.appendChild(h("div", { class: "sbg-ly3-hint", text: "Drag ⋮⋮ to reorder. Expand a section to edit its fields, or drag fields in from the tray below. The right pane previews your panel live." }));
+    leftPane.appendChild(h("div", { class: "sbg-ly3-hint", text: "拖动 ⋮⋮ 可调整顺序。展开区块以编辑字段，或从下方列表拖入字段。右侧会实时预览面板。" }));
 
     const list = h("div", { class: "sbg-ly3-seclist" });
     leftPane.appendChild(list);
     for (const sec of activeLayout()) list.appendChild(buildSectionEditor(sec, list));
 
-    const addSec = h("button", { class: "sbg-btn sbg-btn--sm sbg-ly3-addsec", text: "+ Add Section" });
+    const addSec = h("button", { class: "sbg-btn sbg-btn--sm sbg-ly3-addsec", text: "+ 添加区块" });
     addSec.addEventListener("click", () => {
-      const sec = { id: TL.uid(), title: "New Section", style: "flat", open: true, params: [] };
+      const sec = { id: TL.uid(), title: "新区块", style: "flat", open: true, params: [] };
       expanded.add(sec.id);
       activeLayout().push(sec); persist(); render();
     });
@@ -816,25 +820,25 @@ export function renderLayout(content, galleryCtx, closeGS) {
     card._section = sec;
 
     const head = h("div", { class: "sbg-ly3-sechead" });
-    const grip = h("span", { class: "sbg-grip", text: "⋮⋮", title: "Drag to reorder section" });
+    const grip = h("span", { class: "sbg-grip", text: "⋮⋮", title: "拖动以调整区块顺序" });
     head.appendChild(grip);
 
-    const exp = h("button", { class: "sbg-ly3-exp", text: isOpen ? "▼" : "▶", title: "Expand / collapse fields" });
+    const exp = h("button", { class: "sbg-ly3-exp", text: isOpen ? "▼" : "▶", title: "展开／收起字段" });
     exp.addEventListener("click", () => { if (isOpen) expanded.delete(sec.id); else expanded.add(sec.id); renderEditor(); });
     head.appendChild(exp);
 
-    const eye = h("button", { class: "sbg-iconbtn sbg-eyebtn" + (sec.hidden ? " sbg-iconbtn--off" : ""), title: sec.hidden ? "Hidden from panel. Click to show" : "Shown in panel. Click to hide", text: "👁" });
+    const eye = h("button", { class: "sbg-iconbtn sbg-eyebtn" + (sec.hidden ? " sbg-iconbtn--off" : ""), title: sec.hidden ? "已在面板中隐藏。点击显示" : "已在面板中显示。点击隐藏", text: "👁" });
     eye.addEventListener("click", () => { sec.hidden = !sec.hidden; persist(); render(); });
     head.appendChild(eye);
 
-    const title = h("input", { type: "text", class: "sbg-ly3-title", value: sec.title || "", placeholder: "Section title" });
+    const title = h("input", { type: "text", class: "sbg-ly3-title", value: sec.title || "", placeholder: "区块标题" });
     title.addEventListener("input", () => { sec.title = title.value || "Untitled"; persist(); refreshPreview(); });
     head.appendChild(title);
 
-    head.appendChild(mkSelect(SECTION_STYLES, sec.style || "flat", (v) => { sec.style = v; persist(); renderEditor(); refreshPreview(); }, "Section render style"));
+    head.appendChild(mkSelect(SECTION_STYLES, sec.style || "flat", (v) => { sec.style = v; persist(); renderEditor(); refreshPreview(); }, "区块显示样式", v => STYLE_LABELS[v] || v));
 
     // Seeding the default colour makes the picker open on the real current colour.
-    const secColorBtn = h("button", { class: "sbg-iconbtn", title: "Section background / colours", text: "🎨" });
+    const secColorBtn = h("button", { class: "sbg-iconbtn", title: "区块背景／颜色", text: "🎨" });
     _paintSwatch(secColorBtn, sec.color, _swatchDefaults("section", sec));
     secColorBtn.addEventListener("click", () => {
       if (!sec.color) { const d = TL.defaultSectionColor(sec); if (d) sec.color = { ...d }; }
@@ -842,13 +846,13 @@ export function renderLayout(content, galleryCtx, closeGS) {
     });
     head.appendChild(secColorBtn);
 
-    const openLbl = h("label", { class: "sbg-ly3-openlbl", title: "Expanded by default in the panel" });
+    const openLbl = h("label", { class: "sbg-ly3-openlbl", title: "在面板中默认展开" });
     const openCb = h("input", { type: "checkbox" }); openCb.checked = sec.open !== false;
     openCb.addEventListener("change", () => { sec.open = openCb.checked; persist(); refreshPreview(); });
-    openLbl.appendChild(openCb); openLbl.appendChild(document.createTextNode("open"));
+    openLbl.appendChild(openCb); openLbl.appendChild(document.createTextNode("展开"));
     head.appendChild(openLbl);
 
-    const del = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", title: "Delete section", text: "🗑" });
+    const del = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", title: "删除区块", text: "🗑" });
     confirmClick(del, () => {
       const l = activeLayout(); const i = l.indexOf(sec); if (i >= 0) l.splice(i, 1); expanded.delete(sec.id); persist(); render();
     });
@@ -866,12 +870,12 @@ export function renderLayout(content, galleryCtx, closeGS) {
       // When tabs are in use they own the content (each tab has its own source /
       // fields), so hide the section-level source row and field list.
       if (sec.style === "cards" && !hasTabs) {
-        const hlLbl = h("label", { class: "sbg-ly3-openlbl", title: "Pair high-noise / low-noise models side-by-side (Wan2.2-style MoE)" });
+        const hlLbl = h("label", { class: "sbg-ly3-openlbl", title: "并排显示高噪声／低噪声模型（Wan2.2 风格 MoE）" });
         const hlCb = h("input", { type: "checkbox" });
         const autoOn = sec.highlow == null && HIGHLOW_SOURCES.has(sec.source);
         hlCb.checked = sec.highlow === true || autoOn;
         hlCb.addEventListener("change", () => { sec.highlow = hlCb.checked; persist(); refreshPreview(); });
-        hlLbl.appendChild(hlCb); hlLbl.appendChild(document.createTextNode("pair high/low"));
+        hlLbl.appendChild(hlCb); hlLbl.appendChild(document.createTextNode("配对高／低噪声"));
         _buildCardSourceUI(sec, body, () => { persist(); renderEditor(); refreshPreview(); }, hlLbl);
       }
 
@@ -880,14 +884,14 @@ export function renderLayout(content, galleryCtx, closeGS) {
       }
 
       if (sec.style === "nodes" || sec.style === "raw") {
-        body.appendChild(h("div", { class: "sbg-ly3-auto", text: sec.style === "nodes" ? "Auto-renders every workflow node (no fields to configure)." : "Dumps the raw prompt / workflow JSON." }));
+        body.appendChild(h("div", { class: "sbg-ly3-auto", text: sec.style === "nodes" ? "自动显示每个工作流节点（无需配置字段）。" : "显示原始提示词／工作流 JSON。" }));
       } else if (!hasTabs) {
         const fields = h("div", { class: "sbg-ly3-fields" });
         fields.dataset.secId = sec.id;
         for (const p of (sec.params || [])) fields.appendChild(buildFieldRow(sec, p, fields));
-        if (!(sec.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: "No fields yet. Drag from the tray below or click + field." }));
+        if (!(sec.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: "尚无字段。从下方列表拖入，或点击“+ 字段”。" }));
         body.appendChild(fields);
-        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ field" });
+        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ 字段" });
         addField.addEventListener("click", () => openAddFieldPicker(addField, sec));
         body.appendChild(addField);
       } else {
@@ -896,21 +900,21 @@ export function renderLayout(content, galleryCtx, closeGS) {
         // into each tab (which would make every tab appear whenever that node exists).
         const ofHead = h("div", { class: "sbg-ly3-outerfields-head" });
         ofHead.appendChild(h("span", {
-          class: "sbg-ly3-tabsed-label", text: "Fields outside tabs",
-          title: "Section-level fields shown alongside EVERY tab. Use for content that isn't tab-specific (e.g. one 'show output' field). Drag fields in from the tray, or between here and the tabs.",
+          class: "sbg-ly3-tabsed-label", text: "标签页外的字段",
+          title: "这些区块级字段会随每个标签页显示。适用于不属于特定标签页的内容（例如“显示输出”字段）。可从下方列表拖入，或在此处与标签页之间拖动。",
         }));
-        const posLbl = h("label", { class: "sbg-ly3-openlbl", title: "Show these fields above or below the tab pills" });
+        const posLbl = h("label", { class: "sbg-ly3-openlbl", title: "在标签页按钮上方或下方显示这些字段" });
         const posCb = h("input", { type: "checkbox" }); posCb.checked = !!sec.fieldsAbove;
         posCb.addEventListener("change", () => { sec.fieldsAbove = posCb.checked || undefined; persist(); refreshPreview(); });
-        posLbl.appendChild(posCb); posLbl.appendChild(document.createTextNode("above tabs"));
+        posLbl.appendChild(posCb); posLbl.appendChild(document.createTextNode("位于标签页上方"));
         ofHead.appendChild(posLbl);
         body.appendChild(ofHead);
         const fields = h("div", { class: "sbg-ly3-fields" });
         fields.dataset.secId = sec.id;
         for (const p of (sec.params || [])) fields.appendChild(buildFieldRow(sec, p, fields));
-        if (!(sec.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: "No fields outside tabs. Drag one here from the tray, or click + field." }));
+        if (!(sec.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: "标签页外尚无字段。从下方列表拖入，或点击“+ 字段”。" }));
         body.appendChild(fields);
-        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ field" });
+        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ 字段" });
         addField.addEventListener("click", () => openAddFieldPicker(addField, sec));
         body.appendChild(addField);
       }
@@ -941,7 +945,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
     row.dataset.type = "param";
     row._param = p;
 
-    row.appendChild(h("span", { class: "sbg-grip sbg-ly3-fieldgrip", text: "⋮⋮", title: "Drag to move / reorder" }));
+    row.appendChild(h("span", { class: "sbg-grip sbg-ly3-fieldgrip", text: "⋮⋮", title: "拖动以移动／调整顺序" }));
 
     const lbl = h("input", { type: "text", class: "sbg-ly3-fieldlabel", value: p.label || "", placeholder: labelize(p.path) });
     lbl.title = p.path;
@@ -958,10 +962,10 @@ export function renderLayout(content, galleryCtx, closeGS) {
     if (p.match) {
       const chip = h("span", {
         class: "sbg-ly3-matchchip",
-        title: "Bound to one node instance: " + matchChipText(p.match) + ". Click × to match every instance again.",
+        title: "已绑定到一个节点实例：" + matchChipText(p.match) + "。点击 × 可恢复匹配所有实例。",
       });
       chip.appendChild(h("span", { class: "sbg-ly3-matchchip__txt", text: matchChipText(p.match) }));
-      const clearX = h("span", { class: "sbg-ly3-matchchip__x", text: "×", title: "Clear instance binding and match every instance again" });
+      const clearX = h("span", { class: "sbg-ly3-matchchip__x", text: "×", title: "清除实例绑定并恢复匹配所有实例" });
       clearX.addEventListener("click", (e) => { e.stopPropagation(); delete p.match; persist(); renderEditor(); refreshPreview(); });
       chip.appendChild(clearX);
       row.appendChild(chip);
@@ -971,14 +975,14 @@ export function renderLayout(content, galleryCtx, closeGS) {
       if (v === "hidden") { if (p.style !== "hidden") p._prevStyle = p.style || "kv"; p.style = "hidden"; }
       else { p.style = v; delete p._prevStyle; }
       persist(); renderEditor(); refreshPreview();
-    }, "Field display style");
+    }, "字段显示样式", v => STYLE_LABELS[v] || v);
     row.appendChild(styleSel);
 
     const tools = h("div", { class: "sbg-ly3-fieldtools" });
     const effStyle = hidden ? (p._prevStyle || "kv") : (p.style || "kv");
     // Format string is pill-specific.
     if (effStyle === "pill") {
-      const fmt = h("input", { type: "text", class: "sbg-ly3-fmt", value: p.format || "", placeholder: "fmt e.g. CFG {v}" });
+      const fmt = h("input", { type: "text", class: "sbg-ly3-fmt", value: p.format || "", placeholder: "格式，例如 CFG {v}" });
       fmt.addEventListener("input", () => { p.format = fmt.value.trim() || undefined; persist(); refreshPreview(); });
       tools.appendChild(fmt);
     }
@@ -986,14 +990,14 @@ export function renderLayout(content, galleryCtx, closeGS) {
       // Pass the actual style so the picker's default colours probe the kind's
       // real rendered element.
       const _ckind = effStyle === "text" && (p.variant === "neg" || /negative/i.test(p.path)) ? "text-neg" : effStyle;
-      const colorBtn = h("button", { class: "sbg-iconbtn", title: "Colours", text: "🎨" });
+      const colorBtn = h("button", { class: "sbg-iconbtn", title: "颜色", text: "🎨" });
       _paintSwatch(colorBtn, p.color, _swatchDefaults(_ckind, hostSec, hostTab));
       colorBtn.addEventListener("click", () => openPillColorPicker(colorBtn, p, hostSec, "color", _ckind, hostTab));
       tools.appendChild(colorBtn);
     }
     const { field: searchField, value: searchValue } = pathToSearch(p.path);
     if (searchField !== "prompt" && searchField !== "app") {
-      const findBtn = h("button", { class: "sbg-iconbtn", title: "Find all items with this field", text: "🔍" });
+      const findBtn = h("button", { class: "sbg-iconbtn", title: "查找包含此字段的所有项目", text: "🔍" });
       findBtn.addEventListener("click", () => {
         const raw = sec.title ? `${sec.title}: ${p.label || labelize(p.path)}` : (p.label || labelize(p.path));
         if (closeGS) closeGS();
@@ -1001,14 +1005,14 @@ export function renderLayout(content, galleryCtx, closeGS) {
       });
       tools.appendChild(findBtn);
     }
-    const eyeBtn = h("button", { class: "sbg-iconbtn sbg-eyebtn" + (hidden ? " sbg-iconbtn--off" : ""), title: hidden ? "Hidden. Click to show" : "Click to hide", text: "👁" });
+    const eyeBtn = h("button", { class: "sbg-iconbtn sbg-eyebtn" + (hidden ? " sbg-iconbtn--off" : ""), title: hidden ? "已隐藏。点击显示" : "点击隐藏", text: "👁" });
     eyeBtn.addEventListener("click", () => {
       if (p.style === "hidden") { p.style = p._prevStyle || "kv"; delete p._prevStyle; }
       else { p._prevStyle = p.style || "kv"; p.style = "hidden"; }
       persist(); renderEditor(); refreshPreview();
     });
     tools.appendChild(eyeBtn);
-    const delBtn = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", title: "Remove field", text: "🗑" });
+    const delBtn = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", title: "移除字段", text: "🗑" });
     delBtn.addEventListener("click", () => { detachParam(sec, p); persist(); renderEditor(); refreshPreview(); });
     tools.appendChild(delBtn);
     row.appendChild(tools);
@@ -1056,10 +1060,10 @@ export function renderLayout(content, galleryCtx, closeGS) {
 
     const head = h("div", { class: "sbg-ly3-tabsed-head" });
     head.appendChild(h("span", {
-      class: "sbg-ly3-tabsed-label", text: "Tabs",
-      title: "Split this section into pill-switchable sub-sections (e.g. Original / Enhanced prompt). Each tab has its own fields, style and colour. Drag ⋮⋮ to reorder.",
+      class: "sbg-ly3-tabsed-label", text: "标签页",
+      title: "将区块分成可切换的标签页（例如原始／增强提示词）。每个标签页有独立的字段、样式和颜色。拖动 ⋮⋮ 可调整顺序。",
     }));
-    const add = h("button", { class: "sbg-ly3-tabadd", text: "+ Tab", title: "Add a tab" });
+    const add = h("button", { class: "sbg-ly3-tabadd", text: "+ 标签页", title: "添加标签页" });
     add.addEventListener("click", () => {
       if (!sec.tabs) sec.tabs = [];
       let nt;
@@ -1069,7 +1073,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
         nt = makeAbsorbTab(sec, sec.title || "Tab 1");
         sec.params = [];
       } else {
-        nt = { id: TL.uid("tab"), label: "Tab " + (sec.tabs.length + 1), style: "text", params: [] };
+        nt = { id: TL.uid("tab"), label: "标签页 " + (sec.tabs.length + 1), style: "text", params: [] };
         expanded.add(nt.id);
       }
       sec.tabs.push(nt);
@@ -1094,27 +1098,27 @@ export function renderLayout(content, galleryCtx, closeGS) {
     const row = h("div", { class: "sbg-ly3-tabrow" });
     row._tab = t;
     const head = h("div", { class: "sbg-ly3-tabrow-head" });
-    const grip = h("span", { class: "sbg-grip", text: "⋮⋮", title: "Drag to reorder tab" });
+    const grip = h("span", { class: "sbg-grip", text: "⋮⋮", title: "拖动以调整标签页顺序" });
     head.appendChild(grip);
-    const exp = h("button", { class: "sbg-ly3-exp", text: isOpen ? "▼" : "▶", title: "Expand / collapse fields" });
+    const exp = h("button", { class: "sbg-ly3-exp", text: isOpen ? "▼" : "▶", title: "展开／收起字段" });
     exp.addEventListener("click", () => { if (isOpen) expanded.delete(t.id); else expanded.add(t.id); renderEditor(); });
     head.appendChild(exp);
-    const name = h("input", { type: "text", class: "sbg-ly3-title", value: t.label || "", placeholder: "Tab name" });
+    const name = h("input", { type: "text", class: "sbg-ly3-title", value: t.label || "", placeholder: "标签页名称" });
     name.addEventListener("input", () => { t.label = name.value || undefined; persist(); refreshPreview(); });
     head.appendChild(name);
-    head.appendChild(mkSelect(SECTION_STYLES, t.style || "text", (v) => { t.style = v; persist(); renderEditor(); refreshPreview(); }, "Tab render style"));
+    head.appendChild(mkSelect(SECTION_STYLES, t.style || "text", (v) => { t.style = v; persist(); renderEditor(); refreshPreview(); }, "标签页显示样式", v => STYLE_LABELS[v] || v));
     // Pill colour. The tab's pill in the panel renders as .sbg-prompt-pill
     // rather than .sbg-badge, so probe the right element for its defaults.
-    const pillBtn = h("button", { class: "sbg-iconbtn", title: "Tab pill colour", text: "🔵" });
+    const pillBtn = h("button", { class: "sbg-iconbtn", title: "标签页按钮颜色", text: "🔵" });
     _paintSwatch(pillBtn, t.pillColor, _swatchDefaults("tabpill", sec));
     pillBtn.addEventListener("click", () => openPillColorPicker(pillBtn, t, sec, "pillColor", "tabpill"));
     head.appendChild(pillBtn);
     // Content background colour (applies to the .sbg-tab-body host).
-    const bgBtn = h("button", { class: "sbg-iconbtn", title: "Tab content background", text: "🎨" });
+    const bgBtn = h("button", { class: "sbg-iconbtn", title: "标签页内容背景", text: "🎨" });
     _paintSwatch(bgBtn, t.color, _swatchDefaults("tabbody", sec));
     bgBtn.addEventListener("click", () => openPillColorPicker(bgBtn, t, sec, "color", "tabbody"));
     head.appendChild(bgBtn);
-    const del = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", title: "Delete tab", text: "🗑" });
+    const del = h("button", { class: "sbg-iconbtn sbg-iconbtn--danger", title: "删除标签页", text: "🗑" });
     del.addEventListener("click", () => { detachTab(sec, t); expanded.delete(t.id); persist(); renderEditor(); refreshPreview(); });
     head.appendChild(del);
     row.appendChild(head);
@@ -1129,9 +1133,9 @@ export function renderLayout(content, galleryCtx, closeGS) {
         // Tab-only class (NOT .sbg-ly3-fields) so syncFromDOM never overwrites sec.params.
         const fields = h("div", { class: "sbg-ly3-tabfields" });
         for (const p of (t.params || [])) fields.appendChild(buildFieldRow(t, p, fields, { inSec: sec, dropContainerSelector: ".sbg-ly3-fields, .sbg-ly3-tabfields", onDrop: () => syncFromDOM() }));
-        if (!(t.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: "No fields in this tab. Drag from the tray or click + field." }));
+        if (!(t.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: "此标签页尚无字段。从下方列表拖入，或点击“+ 字段”。" }));
         body.appendChild(fields);
-        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ field" });
+        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ 字段" });
         addField.addEventListener("click", () => openAddFieldPicker(addField, t));
         body.appendChild(addField);
       }
@@ -1180,12 +1184,12 @@ export function renderLayout(content, galleryCtx, closeGS) {
   // Field tray ("All Fields / Nodes")
   function buildTray() {
     const tray = h("div", { class: "sbg-ly3-tray" + (trayOpen ? " sbg-ly3-tray--open" : "") });
-    const head = h("button", { class: "sbg-ly3-trayhead", text: (trayOpen ? "▼ " : "▶ ") + "All Fields / Nodes (drag into a section)" });
+    const head = h("button", { class: "sbg-ly3-trayhead", text: (trayOpen ? "▼ " : "▶ ") + "所有字段／节点（拖入区块）" });
     head.addEventListener("click", () => { trayOpen = !trayOpen; _viewMemory.trayOpen = trayOpen; renderEditor(); });
     tray.appendChild(head);
     if (!trayOpen) return tray;
 
-    const search = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm sbg-ly3-traysearch", placeholder: "Filter fields…" });
+    const search = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm sbg-ly3-traysearch", placeholder: "筛选字段…" });
     const body = h("div", { class: "sbg-ly3-traybody" });
     tray.appendChild(search); tray.appendChild(body);
 
@@ -1207,7 +1211,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
           body.appendChild(item);
         }
       });
-      if (!shown) body.appendChild(h("div", { class: "sbg-ly3-empty", text: "No fields match." }));
+      if (!shown) body.appendChild(h("div", { class: "sbg-ly3-empty", text: "没有匹配的字段。" }));
     }
     search.addEventListener("input", renderTrayList);
     renderTrayList();
@@ -1227,12 +1231,12 @@ export function renderLayout(content, galleryCtx, closeGS) {
   }
 
   function addPathToSection(pth, sec, match) {
-    if (!sec) { showToast("No section to add to"); return; }
+    if (!sec) { showToast("没有可添加字段的区块"); return; }
     if (!sec.params) sec.params = [];
-    if (sec.params.some(p => _matchKey(p.path, p.match) === _matchKey(pth, match))) { showToast("Already in “" + (sec.title || "section") + "”"); return; }
+    if (sec.params.some(p => _matchKey(p.path, p.match) === _matchKey(pth, match))) { showToast("已在“" + (sec.title || "区块") + "”中"); return; }
     sec.params.push(_mkParam(pth, match));
     expanded.add(sec.id);
-    persist(); render(); showToast("Added to “" + (sec.title || "section") + "”");
+    persist(); render(); showToast("已添加到“" + (sec.title || "区块") + "”");
   }
 
   function onTrayDrop(movedItem) {
@@ -1267,7 +1271,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
   function openAddFieldPicker(anchor, sec, onPick) {
     closePopovers();
     const pop = h("div", { class: "sbg-ly3-pop sbg-ly3-pop--picker" });
-    const search = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm", placeholder: "Search fields…" });
+    const search = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm", placeholder: "搜索字段…" });
     const list = h("div", { class: "sbg-ly3-picklist" });
     pop.appendChild(search); pop.appendChild(list);
 
@@ -1290,7 +1294,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
           list.appendChild(item);
         }
       });
-      if (!shown) list.appendChild(h("div", { class: "sbg-ly3-empty", text: "No more fields match." }));
+      if (!shown) list.appendChild(h("div", { class: "sbg-ly3-empty", text: "没有更多匹配的字段。" }));
     }
     search.addEventListener("input", renderList);
     renderList();
@@ -1328,7 +1332,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
     }
     const clearRow = h("div", { class: "sbg-ly3-colrow" });
     if (col.bg || col.text || col.border) {
-      const clr = h("button", { class: "sbg-btn sbg-btn--sm", text: "Clear colours" });
+      const clr = h("button", { class: "sbg-btn sbg-btn--sm", text: "清除颜色" });
       clr.addEventListener("click", () => { delete p[colorKey]; persist(); refreshPreview(); _paintSwatch(anchor, null, d); closePopovers(); });
       clearRow.appendChild(clr);
     }
@@ -1375,8 +1379,8 @@ export function renderLayout(content, galleryCtx, closeGS) {
   function refreshPreview() {
     rightPane.innerHTML = "";
     const m = mock();
-    rightPane.appendChild(h("div", { class: "sbg-ly3-prevhint", text: "Live preview" }));
-    if (!m) { rightPane.appendChild(h("div", { class: "sbg-ly3-empty", text: "Loading sample metadata…" })); return; }
+    rightPane.appendChild(h("div", { class: "sbg-ly3-prevhint", text: "实时预览" }));
+    if (!m) { rightPane.appendChild(h("div", { class: "sbg-ly3-empty", text: "正在加载示例元数据…" })); return; }
     const panel = h("div", { class: "sbg-meta-panel sbg-ly3-panel" });
     let any = false;
     for (const sec of activeLayout()) {
@@ -1391,10 +1395,10 @@ export function renderLayout(content, galleryCtx, closeGS) {
       panel.appendChild(makePreviewSection(sec, contentEl));
       any = true;
     }
-    if (!any) rightPane.appendChild(h("div", { class: "sbg-ly3-empty", text: "No sections configured. Add a section to preview it here." }));
+    if (!any) rightPane.appendChild(h("div", { class: "sbg-ly3-empty", text: "尚未配置区块。添加区块后可在此预览。" }));
     else rightPane.appendChild(panel);
     const hiddenCount = activeLayout().filter(s => s.hidden).length;
-    if (hiddenCount) rightPane.appendChild(h("div", { class: "sbg-ly3-prevnote", text: `${hiddenCount} hidden section${hiddenCount > 1 ? "s" : ""} not shown.` }));
+    if (hiddenCount) rightPane.appendChild(h("div", { class: "sbg-ly3-prevnote", text: `${hiddenCount} 个隐藏区块未显示。` }));
   }
 
   // Dim placeholder for a section the sample data doesn't cover, so every
@@ -1402,14 +1406,14 @@ export function renderLayout(content, galleryCtx, closeGS) {
   function buildPlaceholderSection(sec) {
     const wrap = h("div", { class: "sbg-meta-group sbg-ly3-placeholder" });
     const labels = [];
-    if (Array.isArray(sec.tabs) && sec.tabs.length) sec.tabs.forEach(t => labels.push(t.label || (t.path && labelize(t.path)) || "Tab"));
+    if (Array.isArray(sec.tabs) && sec.tabs.length) sec.tabs.forEach(t => labels.push(t.label || (t.path && labelize(t.path)) || "标签页"));
     for (const p of (sec.params || [])) {
       if (p.style === "hidden") continue;
       labels.push(p.label || labelize(p.path));
     }
-    if (sec.style === "nodes") labels.push("(workflow nodes)");
-    if (sec.style === "raw") labels.push("(raw metadata)");
-    if (!labels.length) labels.push("(no fields)");
+    if (sec.style === "nodes") labels.push("（工作流节点）");
+    if (sec.style === "raw") labels.push("（原始元数据）");
+    if (!labels.length) labels.push("（无字段）");
     for (const l of labels) {
       wrap.appendChild(h("div", { class: "sbg-meta-row" }, [
         h("span", { class: "sbg-meta-label", text: l }),
@@ -1489,7 +1493,7 @@ export function renderLayout(content, galleryCtx, closeGS) {
       if (tabs.length) {
         // A section that just gained its FIRST tab may still hold loose
         // section-level fields. Wrap them into a leading tab so they aren't
-        // hidden under the tab UI (same idea as the "+ Tab" absorb behaviour).
+        // hidden under the tab UI (same idea as the "+ 标签页" absorb behaviour).
         // Skip when the section already had tabs: its loose params, if any, were
         // already hidden, and surfacing them as a surprise tab would be wrong.
         if (!hadTabs && sec.params && sec.params.length) {

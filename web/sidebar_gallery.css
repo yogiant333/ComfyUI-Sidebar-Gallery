@@ -2928,7 +2928,7 @@ body.sbg-dragging-tab .sbg-ly3-tablist--empty {
   min-height: 26px;
 }
 .sbg-sortable-placeholder--promote::after {
-  content: "Drops here as its own section";
+  content: "拖到此处可创建独立分区";
   font-size: 10.5px;
   color: var(--sbg-accent, #7c6aef);
 }

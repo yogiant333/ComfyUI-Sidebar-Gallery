@@ -111,7 +111,7 @@ app.registerExtension({
     async function _loadImageIntoNode(node, root_id, relpath) {
       const name = relpath.replace(/\\/g, "/").split("/").pop();
       const fileResp = await fetch(`/sidebar_gallery/file?root_id=${encodeURIComponent(root_id)}&relpath=${encodeURIComponent(relpath)}`);
-      if (!fileResp.ok) throw new Error("could not read source image");
+      if (!fileResp.ok) throw new Error("无法读取原图");
       const blob = await fileResp.blob();
       const file = new File([blob], name, { type: blob.type || "image/png" });
       const fd = new FormData();
@@ -120,7 +120,7 @@ app.registerExtension({
       const up = comfyApi?.fetchApi
         ? await comfyApi.fetchApi("/upload/image", { method: "POST", body: fd })
         : await fetch("/upload/image", { method: "POST", body: fd });
-      if (!up.ok) throw new Error("upload failed");
+      if (!up.ok) throw new Error("上传失败");
       const data = await up.json();
       const uploaded = data.subfolder ? `${data.subfolder}/${data.name}` : data.name;
       const widget = (node.widgets || []).find(w => w && w.name === "image");
@@ -132,7 +132,7 @@ app.registerExtension({
         try { widget.callback?.(uploaded); } catch { }
       }
       app.graph?.setDirtyCanvas?.(true, true);
-      showToast(`Loaded image into ${node.title || node.type}`);
+      showToast(`已将图片加载到 ${node.title || node.type}`);
     }
 
     document.body.addEventListener("drop", async (e) => {
@@ -166,13 +166,13 @@ app.registerExtension({
         }
 
         const m = await api("/sidebar_gallery/metadata", { root_id, relpath });
-        if (!m?.workflow) { showToast("No workflow data in this file"); return; }
+        if (!m?.workflow) { showToast("此文件没有工作流数据"); return; }
         let wf = m.workflow;
         if (typeof wf === "string") wf = JSON.parse(wf);
         app.loadGraphData(wf);
-        showToast("Workflow loaded from drag & drop!");
+        showToast("已通过拖放加载工作流！");
       } catch (err) {
-        showToast(`Failed to load: ${err?.message || err}`, 5000);
+        showToast(`加载失败：${err?.message || err}`, 5000);
       }
     }, true);
 
@@ -189,8 +189,8 @@ app.registerExtension({
     app.extensionManager.registerSidebarTab({
       id: "sidebarGallery",
       icon: "pi pi-images",
-      title: "Gallery",
-      tooltip: "Sidebar Gallery",
+      title: "图库",
+      tooltip: "侧边栏图库",
       type: "custom",
       render: (mountEl) => {
         ensureCss();
@@ -238,13 +238,13 @@ app.registerExtension({
     // as the last resort.
     function _toggleGallery() {
       try {
-        const tabBtns = document.querySelectorAll('button[aria-label="Sidebar Gallery"], [id*="sidebarGallery"], [data-tooltip*="Gallery"], [data-tooltip*="Sidebar Gallery"]');
+        const tabBtns = document.querySelectorAll('button[aria-label="侧边栏图库"], button[aria-label="Sidebar Gallery"], [id*="sidebarGallery"], [data-tooltip*="侧边栏图库"], [data-tooltip*="Gallery"]');
         for (const btn of tabBtns) {
           if (btn.click) { btn.click(); return; }
         }
         const allTabs = document.querySelectorAll('.p-tablist .p-tab, [class*="sidebar"] button');
         for (const tab of allTabs) {
-          if (tab.querySelector('.pi-images') || tab.textContent?.includes('Gallery')) {
+          if (tab.querySelector('.pi-images') || tab.textContent?.includes('图库') || tab.textContent?.includes('Gallery')) {
             tab.click(); return;
           }
         }
