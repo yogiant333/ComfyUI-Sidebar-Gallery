@@ -78,7 +78,7 @@ function _refocus(root, focus) {
 }
 
 function _deleteButton(key) {
-  return _control(h("button", { class: "sbg-btn sbg-btn--danger sbg-btn--delete sbg-btn--sm", text: "Delete" }), key, "delete");
+  return _control(h("button", { class: "sbg-btn sbg-btn--danger sbg-btn--delete sbg-btn--sm", text: "删除" }), key, "delete");
 }
 
 // The folder dropdown splits the chevron off because its row also picks a
@@ -110,7 +110,7 @@ function _rowShell({ key, open = false, label, onToggle, classes = "", role = "l
     strip = _control(h("button", {
       type: "button", tabindex: "-1",
       class: `sbg-tree-strip${open ? " sbg-tree-strip--open" : ""}`,
-      "aria-label": `${open ? "Close" : "Open"} ${label}`,
+      "aria-label": `${open ? "收起" : "展开"} ${label}`,
       "aria-expanded": open ? "true" : "false",
     }, [h("span", { class: "sbg-tree-chev", html: CHEVRON_RIGHT_ICON, "aria-hidden": "true" })]), key, "strip");
     strip.addEventListener("click", onToggle);
@@ -203,7 +203,7 @@ function _damagedFile(ref, storedName) {
   return file ? { ref, name: name || file.filename.slice(0, -THEME_FILE_SUFFIX.length) } : null;
 }
 
-const _copiedNote = (into, from) => `The colors were saved to a new theme named "${into}" because theme "${from}" can't be read.`;
+const _copiedNote = (into, from) => `主题“${from}”无法读取，配色已保存至新主题“${into}”。`;
 
 // The named fields and the block can hold the same id, and the block wins.
 // Older versions painted the Custom base colours only while Custom was the
@@ -307,12 +307,12 @@ export function loadMessage(name, plan, notes, skipped, unticked = false, themeN
   // A preset that stored no theme name has none to quote.
   const quoted = shown && shown !== MISSING_THEME_NAME ? `"${shown}" ` : "";
   if (!planWritesAnything(plan)) {
-    const nothing = unticked ? `what's ticked in "${name}" already matches the current settings, so nothing changed`
-      : shown ? `the rest of "${name}" already matches the current settings, so nothing changed`
-        : `"${name}" already matches the current settings, so nothing changed`;
-    return sentences([shown ? `theme ${quoted}not found` : "", nothing, ...reasons]);
+    const nothing = unticked ? `“${name}”中勾选的内容与当前设置相同，无需更改`
+      : shown ? `“${name}”的其余内容与当前设置相同，无需更改`
+        : `“${name}”与当前设置相同，无需更改`;
+    return sentences([shown ? `未找到主题 ${quoted}` : "", nothing, ...reasons]);
   }
-  return sentences([shown ? `preset "${name}" loaded, but its theme ${quoted}couldn't be found` : `preset "${name}" loaded`, ...reasons]);
+  return sentences([shown ? `已加载预设“${name}”，但未找到其主题 ${quoted}` : `已加载预设“${name}”`, ...reasons]);
 }
 
 export function entryText(id, value, current, changes) {
@@ -362,9 +362,9 @@ export function describeSkipped(entries) {
     const n = names.length;
     const [one, many] = _SKIPPED_NOUNS[[...blocks][0]] || _SKIPPED_NOUNS.settings;
     const noun = blocks.size > 1 ? "settings and keybindings" : n === 1 ? one : many;
-    const which = why === "text" ? (n === 1 ? "with an invalid value" : "with invalid values")
+    const which = why === "text" ? (n === 1 ? "with an invalid value" : "值无效")
       : why === "class" ? "that presets can't change"
-        : "this version doesn't recognize";
+        : "此版本无法识别";
     return `${n} ${noun} ${which} ${n === 1 ? "was" : "were"} skipped (${names.join(", ")})`;
   }).join(". ");
 }
@@ -420,7 +420,7 @@ let _applying = Promise.resolve();
 // above all, can end after its own draw was replaced.
 let _redrawLive = null;
 
-const _SAVE_FIRST = "the latest settings changes couldn't be saved first";
+const _SAVE_FIRST = "无法先保存最新设置更改";
 
 // Another tab can have changed the settings or the themes since this tab read
 // them, and a Load, a Restore or an Undo must plan, copy and compare against the
@@ -501,7 +501,7 @@ function _leftOutCaveat(out) {
   if (!out) return null;
   const name = themeDisplayName(out.ref, out.name);
   const theme = name === MISSING_THEME_NAME ? "their theme" : `theme "${name}"`;
-  return `The colors weren't restored because ${theme} ${out.why === "damaged" ? "can't be read" : "was deleted"}.`;
+  return `The colors weren't restored because ${theme} ${out.why === "damaged" ? "can't be read" : "已删除"}.`;
 }
 
 const _unreadCaveat = (e) => `The colors weren't restored because the theme list couldn't be loaded: ${reasonOf(e)}.`;
@@ -510,7 +510,7 @@ const _unreadCaveat = (e) => `The colors weren't restored because the theme list
 // that Custom, brings it back from the colours it carries, selected.
 function _customPart(read, doc, choice) {
   if (doc.theme !== "custom" || choice.theme === false || !_carriesCustom(read)) return null;
-  return { create: { name: "Custom", values: themeValuesFromColours(_customColours(read), "custom"), origin: CUSTOM_ORIGIN, select: true } };
+  return { create: { name: "自定义", values: themeValuesFromColours(_customColours(read), "custom"), origin: CUSTOM_ORIGIN, select: true } };
 }
 
 // An action that got no answer may have landed, so nothing is sent again and
@@ -562,7 +562,7 @@ export function changeCounts(st, isCopy) {
   };
 }
 
-const _KIND_LABELS = [["layouts", "Layouts"], ["colors", "Colors"], ["settings", "Settings"], ["keys", "Keybindings"]];
+const _KIND_LABELS = [["layouts", "布局"], ["colors", "配色"], ["settings", "设置"], ["keys", "快捷键"]];
 
 // A count that couldn't be worked out, shown as the empty-value dash.
 const NOT_COMPARED = "—";
@@ -573,18 +573,18 @@ export function changePills(counts) {
 
 export function undoSentence(row) {
   const { kind, name } = undoKind(row);
-  const what = name ? `"${name}"` : "a preset";
-  const did = kind === "load" ? `Loaded ${what}` : kind === "undid" ? `Undid loading ${what}`
-    : kind === "unrestored" ? "Undid restoring a backup" : "Restored a backup";
+  const what = name ? `"${name}"` : "预设";
+  const did = kind === "load" ? `已加载${what}` : kind === "undid" ? `已撤销加载${what}`
+    : kind === "unrestored" ? "已撤销恢复备份" : "已恢复备份";
   return `${did} · ${whenText(row.created)}`;
 }
 
 export function undoOffer(row) {
   const { kind } = undoKind(row);
-  if (kind === "load") return { button: "Undo", done: "The load was undone.", none: "Nothing to undo. The settings already match how they were before the load." };
-  if (kind === "undid") return { button: "Redo", done: "The preset was loaded again.", none: "Nothing to redo. The settings already match the preset." };
-  if (kind === "unrestored") return { button: "Redo", done: "The backup was restored again.", none: "Nothing to redo. The settings already match the backup." };
-  return { button: "Undo", done: "The restore was undone.", none: "Nothing to undo. The settings already match how they were before the restore." };
+  if (kind === "load") return { button: "撤销", done: "已撤销加载。", none: "无需撤销，设置已经与加载前一致。" };
+  if (kind === "undid") return { button: "重做", done: "已重新加载预设。", none: "无需重做，设置已经与预设一致。" };
+  if (kind === "unrestored") return { button: "重做", done: "已重新恢复备份。", none: "无需重做，设置已经与备份一致。" };
+  return { button: "撤销", done: "已撤销恢复。", none: "无需撤销，设置已经与恢复前一致。" };
 }
 
 // What a copy of the whole settings file holds beyond a preset.
@@ -742,7 +742,7 @@ async function _restoreWholeFile(bk, backup) {
   if (!keys.length && out && out.why === "missing") return { keys, caveat: null, goneTheme: themeDisplayName(out.ref, out.name) };
   // The step keeps colours it could not save in the settings for the next start.
   const waiting = !themesUnreadReason() && keys.some((k) => settingClass(k) === "color" && storedSetting(k) !== undefined);
-  if (!caveat && waiting) caveat = "The colors couldn't be saved to the current theme yet. Retrying at the next browser refresh.";
+  if (!caveat && waiting) caveat = "配色尚未保存至当前主题，将在下次刷新浏览器时重试。";
   if (!caveat) caveat = _leftOutCaveat(answer.colors_left_out);
   const unreadThemes = themesUnreadReason();
   if (!caveat && unreadThemes && keys.some((k) => settingClass(k) === "color")) {
@@ -791,7 +791,7 @@ async function _renamePreset(filename, to) {
   try {
     info = await apiPost("/sidebar_gallery/presets", { action: "rename", filename, name: to });
   } catch (e) {
-    if (e.data && e.data.error === "conflict") throw new Error(`A preset named "${e.data.existing || to}" already exists`);
+    if (e.data && e.data.error === "conflict") throw new Error(`名为“${e.data.existing || to}”的预设已存在`);
     throw e;
   }
   return info.filename || filename;
@@ -803,7 +803,7 @@ async function _renamePreset(filename, to) {
 // twice. Import passes an empty `from`, since its file says nothing about a
 // browser, and gets a number as its suffix. `persist` is handed what is still
 // to move after each entry, so a page closed partway never moves one twice.
-export async function migrateBrowserPresets({ list, rows, save, read, persist, from = "from browser", nameMax = null }) {
+export async function migrateBrowserPresets({ list, rows, save, read, persist, from = "来自浏览器", nameMax = null }) {
   // With no limit known nothing is cut, and the server refuses a name too long.
   const most = Number.isInteger(nameMax) ? nameMax : Infinity;
   const moved = [];
@@ -999,10 +999,10 @@ export function renderPresets(ctx, refocus = null) {
   // search that walks section titles still finds it.
   const head = h("div", { class: "sbg-ptree__head" });
   wrap.appendChild(head);
-  sectionTitle(head, "Presets");
+  sectionTitle(head, "预设");
   const headSlot = h("span");
   head.appendChild(headSlot);
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Saves the settings, layouts, keybindings and which theme is in use." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "保存设置、布局、快捷键和当前主题。" }));
 
   function capture() {
     return presetCapture({ profiles: getProfiles(), valueOf: (id) => storedSetting(id) ?? null, themeKey: S.THEME, theme: activeThemeId() });
@@ -1023,17 +1023,17 @@ export function renderPresets(ctx, refocus = null) {
       if (!custom && !planWritesAnything(plan)) { say(plan); return false; }
       let answer;
       try {
-        answer = await _sendPlan(plan, custom, { cause: `preset-load-${name}`, title: `Before loading the preset "${name}"`, subject: name, undo_kind: "load" });
+        answer = await _sendPlan(plan, custom, { cause: `preset-load-${name}`, title: `加载预设“${name}”之前`, subject: name, undo_kind: "load" });
       } catch (e) {
         if (!unconfirmed(e)) throw e;
         await _rereadUnconfirmed();
-        showFailure("tell if the preset loaded", e);
+        showFailure("确认预设是否已加载", e);
         return true;
       }
       say(custom && answer.theme ? { ...plan, theme: userThemeId(answer.theme.id) } : plan);
       return true;
     } catch (e) {
-      showFailure("load the preset", e);
+      showFailure("加载预设", e);
       return false;
     }
   }
@@ -1041,20 +1041,20 @@ export function renderPresets(ctx, refocus = null) {
   async function _loadWhole(sp) {
     try {
       const read = readPreset(await api("/sidebar_gallery/preset", { filename: sp.filename }), READ_OPTS);
-      if (!read.ok) { showFailure("load the preset", read.error); return false; }
+      if (!read.ok) { showFailure("加载预设", read.error); return false; }
       await ensureThemesLoaded();
       const { doc, skipped } = _loadDocument(read);
       return await _runLoad(read, doc, {}, skipped);
-    } catch (e) { showFailure("load the preset", e); return false; }
+    } catch (e) { showFailure("加载预设", e); return false; }
   }
 
-  const nameInput = _control(h("input", { type: "text", class: "sbg-gs-input", placeholder: "Preset name", "aria-label": "Preset name" }), "current", "name");
+  const nameInput = _control(h("input", { type: "text", class: "sbg-gs-input", placeholder: "预设名称", "aria-label": "预设名称" }), "current", "name");
   // The tab is drawn again after every Load, Rename and Delete, so a name typed
   // before one of them carries over to the box the redraw builds.
   nameInput.value = _typedName;
   nameInput.addEventListener("input", () => { _typedName = nameInput.value; });
   _liveNameInput = nameInput;
-  const saveBtn = _control(h("button", { class: "sbg-btn sbg-btn--accent sbg-btn--sm sbg-ptree__save", text: "Save" }), "current", "save");
+  const saveBtn = _control(h("button", { class: "sbg-btn sbg-btn--accent sbg-btn--sm sbg-ptree__save", text: "保存" }), "current", "save");
   // A name already in use answers 409, and the next press carries the
   // overwrite for that name alone, since the box stays editable while the
   // button is armed and a question asked about one preset must not be
@@ -1063,7 +1063,7 @@ export function renderPresets(ctx, refocus = null) {
   const _disarm = () => {
     if (_armedFor === null) return;
     _armedFor = null;
-    saveBtn.textContent = "Save";
+    saveBtn.textContent = "保存";
   };
   nameInput.addEventListener("input", _disarm);
 
@@ -1074,7 +1074,7 @@ export function renderPresets(ctx, refocus = null) {
   });
   saveBtn.addEventListener("click", async () => {
     const name = nameInput.value.trim();
-    if (!name) { showToast("Enter a preset name."); return; }
+    if (!name) { showToast("请输入预设名称。"); return; }
     // With the settings unread every value reads as unset, which a load of the
     // preset would turn into a reset of every setting to its default.
     if (settingsUnread()) { showSettingsUnread(); return; }
@@ -1092,15 +1092,15 @@ export function renderPresets(ctx, refocus = null) {
     }
     const blocks = pickPresetBlocks(from.blocks, picks);
     const theme = from.choice && from.choice.theme === false ? null : from.theme;
-    if (!Object.keys(blocks).length && !theme) { showToast("Nothing is ticked, so there is nothing to save."); return; }
+    if (!Object.keys(blocks).length && !theme) { showToast("尚未勾选任何内容，无法保存。"); return; }
     const themeName = userThemeKey(theme) && themeExists(theme) ? themeDisplayName(theme) : undefined;
     try {
       await _savePreset(name, cleanPresetColors(wrapPreset({ name, created: Date.now(), savedBy: _serverVersion, blocks, theme, themeName })), armed);
     } catch (e) {
       if (e.status === 409) {
         _armedFor = name;
-        saveBtn.textContent = "Overwrite?";
-      } else showFailure("save the preset", e);
+        saveBtn.textContent = "确认覆盖？";
+      } else showFailure("保存预设", e);
       return;
     }
     _disarm();
@@ -1112,8 +1112,8 @@ export function renderPresets(ctx, refocus = null) {
   });
   const moveSlot = h("div", { class: "sbg-ptree-note" });
   wrap.appendChild(moveSlot);
-  const list = h("div", { class: "sbg-ptree", role: "list", "aria-label": "Presets", tabindex: "0" });
-  if (!indexOnly) list.textContent = "Loading…";
+  const list = h("div", { class: "sbg-ptree", role: "list", "aria-label": "预设", tabindex: "0" });
+  if (!indexOnly) list.textContent = "正在加载…";
   wrap.appendChild(list);
   _drawMoveNote(moveSlot, list);
   // With no filter box to hand the arrow keys to, as the folder dropdown has,
@@ -1134,7 +1134,7 @@ export function renderPresets(ctx, refocus = null) {
   function _renameRow(nameEl, sp) {
     if (_renaming) return;
     _renaming = true;
-    const input = h("input", { type: "text", class: "sbg-gs-input", value: sp.name, "aria-label": `Rename the preset ${sp.name}` });
+    const input = h("input", { type: "text", class: "sbg-gs-input", value: sp.name, "aria-label": `重命名预设 ${sp.name}` });
     nameEl.replaceWith(input);
     input.focus();
     input.select();
@@ -1148,7 +1148,7 @@ export function renderPresets(ctx, refocus = null) {
       const next = input.value.trim();
       let filename = sp.filename;
       try { if (commit && next && next !== sp.name) filename = await _renamePreset(sp.filename, next); }
-      catch (e) { showFailure("rename the preset", e); }
+      catch (e) { showFailure("重命名预设", e); }
       finally { _renaming = false; rerender(keepFocus ? `p:${filename}#strip` : undefined); }
     };
     input.addEventListener("keydown", (e) => {
@@ -1233,20 +1233,20 @@ export function renderPresets(ctx, refocus = null) {
       });
       redraw();
     };
-    const { item, body } = _rowShell({ key: "current", open: !!save, label: "the current settings", onToggle: toggle });
-    body.appendChild(h("span", { class: "sbg-ptree__name", text: "Current" }));
+    const { item, body } = _rowShell({ key: "current", open: !!save, label: "当前设置", onToggle: toggle });
+    body.appendChild(h("span", { class: "sbg-ptree__name", text: "当前项" }));
     const changed = settingsChangedAt();
-    if (changed) body.appendChild(h("span", { class: "sbg-ptree__when", text: whenText(changed), title: "Last changed" }));
+    if (changed) body.appendChild(h("span", { class: "sbg-ptree__when", text: whenText(changed), title: "上次更改" }));
     if (!save) { body.appendChild(nameInput); body.appendChild(saveBtn); return item; }
     item.appendChild(treeStem(0));
     const box = h("div", { class: "sbg-ptree__box" }, [item]);
     const row = { st: save, key: "current", redraw };
-    const parts = [["layouts", "Metadata Panel layouts"], ["settings", "Settings"], ["keys", "Keybindings"]]
+    const parts = [["layouts", "元数据面板布局"], ["settings", "设置"], ["keys", "快捷键"]]
       .map(([part, title]) => ({ part, title, entries: _saveEntries(save, part) }))
       .filter((p) => p.entries.length);
     parts.forEach((p, i) => _partRow(box, row, { ...p, count: save.choice[p.part].size }, i === parts.length - 1));
     if (save.theme) {
-      box.appendChild(_offerTick(`Theme: ${themeDisplayName(save.theme)}`, save.choice.theme !== false, (on) => { save.choice.theme = on; }, "current", "theme"));
+      box.appendChild(_offerTick(`主题：${themeDisplayName(save.theme)}`, save.choice.theme !== false, (on) => { save.choice.theme = on; }, "current", "theme"));
     }
     box.appendChild(h("div", { class: "sbg-ptree__foot" }, [nameInput, saveBtn]));
     return box;
@@ -1258,7 +1258,7 @@ export function renderPresets(ctx, refocus = null) {
       type: "button",
       class: "sbg-ptree__eye",
       html: st.showAll ? EYE_ICON : EYE_OFF_ICON,
-      title: st.showAll ? "Hide what already matches" : "Show what already matches",
+      title: st.showAll ? "Hide what already matches" : "显示相同内容",
       "aria-pressed": st.showAll ? "true" : "false",
     }), row.key, "eye");
     eye.addEventListener("click", () => { st.showAll = !st.showAll; row.redraw(); });
@@ -1281,7 +1281,7 @@ export function renderPresets(ctx, refocus = null) {
         says: L.replaces.includes(k) ? "changed" : L.adds.includes(k) ? "new" : L.removes.includes(k) ? "removed" : "same",
         changes: !L.same.includes(k),
       }));
-      if (entries.length) parts.push({ part: "layouts", title: "Metadata Panel layouts", entries });
+      if (entries.length) parts.push({ part: "layouts", title: "元数据面板布局", entries });
       if (L.keeps.length) {
         after.push(_offerTick(`Remove layouts not in this ${isCopy ? "backup" : "preset"}: ${L.keeps.map(profileLabel).join(", ")}`,
           !!st.choice.removeUncarried, (on) => { st.choice.removeUncarried = on; }, key, "remove"));
@@ -1289,7 +1289,7 @@ export function renderPresets(ctx, refocus = null) {
     }
 
     if (isCopy && st.library) after.push(_offerTick(LIBRARY_LINE, !!st.choice.library, (on) => { st.choice.library = on; }, key, "library"));
-    for (const [part, title] of [["settings", "Settings"], ["keys", "Keybindings"]]) {
+    for (const [part, title] of [["settings", "设置"], ["keys", "快捷键"]]) {
       const d = D[part];
       if (!d || !d.total) continue;
       const names = entryNames(d.entries.map((e) => e.id));
@@ -1297,7 +1297,7 @@ export function renderPresets(ctx, refocus = null) {
     }
     if (isCopy) {
       const entries = colourEntries(st);
-      if (entries.length) parts.push({ part: "colors", title: "Colors", entries });
+      if (entries.length) parts.push({ part: "colors", title: "配色", entries });
     }
     const order = _KIND_LABELS.map(([k]) => k);
     parts.sort((a, b) => order.indexOf(a.part) - order.indexOf(b.part));
@@ -1311,7 +1311,7 @@ export function renderPresets(ctx, refocus = null) {
     const changing = parts.reduce((n, p) => n + p.count, 0) + (themeChanges || remade ? 1 : 0) + (isCopy && st.library ? 1 : 0);
     let drawn = 0;
     if (!changing && !st.showAll) {
-      box.appendChild(_offerLine("No changes"));
+      box.appendChild(_offerLine("无更改"));
     } else {
       const shown = st.showAll ? parts : parts.filter((p) => p.count);
       drawn = shown.length;
@@ -1323,8 +1323,8 @@ export function renderPresets(ctx, refocus = null) {
       const themeName = remade ? "Custom" : themeDisplayName(D.theme.id, st.read.preset.themeName);
       // A copy's colours go into the theme a restore leaves in use, so this
       // tick redraws the row for the colour counts to follow.
-      box.appendChild(!D.theme.exists && !remade ? _offerLine(`Theme: ${themeName} (missing)`)
-        : _offerTick(`Theme: ${themeDisplayName(D.theme.current || activeThemeId())} → ${themeName}`, st.choice.theme !== false, (on) => { st.choice.theme = on; row.redraw(); }, key, "theme"));
+      box.appendChild(!D.theme.exists && !remade ? _offerLine(`主题：${themeName}（缺失）`)
+        : _offerTick(`主题：${themeDisplayName(D.theme.current || activeThemeId())} → ${themeName}`, st.choice.theme !== false, (on) => { st.choice.theme = on; row.redraw(); }, key, "theme"));
     }
     // Offered only when the colours differ from what the theme in use paints,
     // since otherwise the new theme is a second copy of it. An unset badge
@@ -1333,8 +1333,8 @@ export function renderPresets(ctx, refocus = null) {
     const inUse = activeColours();
     const differ = !!st.old && Object.entries(st.old).some(([id, v]) => v !== (inUse[id] || sheetBadgeColor(id)));
     if (differ && !isCopy && !remade) {
-      const line = _offerLine("This preset has its own colors", "Loading this preset won't apply these colors. Save them as a theme to use them.");
-      const keep = _control(h("button", { class: "sbg-btn sbg-btn--sm", type: "button", text: "Save as a theme" }), key, "keep");
+      const line = _offerLine("此预设包含独立配色", "加载此预设不会应用这些配色。请先将其保存为主题。");
+      const keep = _control(h("button", { class: "sbg-btn sbg-btn--sm", type: "button", text: "另存为主题" }), key, "keep");
       keep.addEventListener("click", async () => {
         try {
           const from = st.read.preset.theme;
@@ -1344,8 +1344,8 @@ export function renderPresets(ctx, refocus = null) {
           const made = answer.theme.doc.name;
           // The server answers a theme already holding that name and those
           // colours instead of making another.
-          showToast(answer.theme.existing ? `"${made}" is already in the theme list.` : `Theme "${made}" created from the preset's colors.`);
-        } catch (e) { showFailure("save the theme", e); }
+          showToast(answer.theme.existing ? `“${made}”已在主题列表中。` : `已使用预设配色创建主题“${made}”。`);
+        } catch (e) { showFailure("保存主题", e); }
       });
       line.appendChild(h("span", { class: "sbg-ptree__spacer" }));
       line.appendChild(keep);
@@ -1387,7 +1387,7 @@ export function renderPresets(ctx, refocus = null) {
 
   function _unreadableRow(key, filename, remove) {
     const { item, body } = _rowShell({ key });
-    body.appendChild(h("span", { class: "sbg-ptree__name", text: `${filename} (can't be read)` }));
+    body.appendChild(h("span", { class: "sbg-ptree__name", text: `${filename}（无法读取）` }));
     const del = _deleteButton(key);
     confirmClick(del, remove);
     body.appendChild(del);
@@ -1400,7 +1400,7 @@ export function renderPresets(ctx, refocus = null) {
       if (await _stillOlderServer()) throw new Error(RESTART_FIRST);
       const data = await apiPost("/sidebar_gallery/presets", { action: "delete", name: sp.name, filename: sp.filename });
       if (data.where) showToast(`${unreadable ? `"${sp.filename}"` : `Preset "${sp.name}"`} moved to ${data.where}.`);
-    } catch (e) { showFailure("delete the preset", e); }
+    } catch (e) { showFailure("删除预设", e); }
     rerender();
   }
 
@@ -1412,13 +1412,13 @@ export function renderPresets(ctx, refocus = null) {
       if (st) { _openRows.delete(key); redraw(); return; }
       try {
         const read = readPreset(await api("/sidebar_gallery/preset", { filename: sp.filename }), READ_OPTS);
-        if (!read.ok) { showFailure("open the preset", read.error); return; }
+        if (!read.ok) { showFailure("打开预设", read.error); return; }
         // The opened row's lines promise what its Load does, which compares
         // against the files.
         await _readTruth({ forRow: true });
         _openRows.set(key, stateFor(read));
         redraw();
-      } catch (e) { showFailure("open the preset", e); }
+      } catch (e) { showFailure("打开预设", e); }
     };
     // Quoted, since a screen reader says the label as one phrase and a bare
     // name runs into the Open or Close before it.
@@ -1434,11 +1434,11 @@ export function renderPresets(ctx, refocus = null) {
     const whenEl = h("span", { class: "sbg-ptree__when", text: Number.isFinite(sp.created) ? whenText(sp.created) : "" });
     body.appendChild(whenEl);
     const on = !!sp.pinned;
-    const pin = _pinButton(key, on, { on: "Pin to the top of this list", off: "Unpin", aria: (on ? "Unpin " : "Pin ") + sp.name }, () => repin(
+    const pin = _pinButton(key, on, { on: "置顶到此列表", off: "取消置顶", aria: (on ? "Unpin " : "置顶：") + sp.name }, () => repin(
       () => apiPost("/sidebar_gallery/presets", { action: "pin", filename: sp.filename, created: sp.created ?? null, pinned: !on }),
-      "/sidebar_gallery/presets", list, (data) => { presetRows = data.presets || []; _renderRows(presetRows); }, on ? "unpin the preset" : "pin the preset"));
+      "/sidebar_gallery/presets", list, (data) => { presetRows = data.presets || []; _renderRows(presetRows); }, on ? "unpin the preset" : "置顶预设"));
 
-    const loadBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "Load" }), key, "load");
+    const loadBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "加载" }), key, "load");
     if (!st) {
       loadBtn.addEventListener("click", () => busy(loadBtn, () => _loadWhole(sp)));
       body.appendChild(loadBtn);
@@ -1447,18 +1447,18 @@ export function renderPresets(ctx, refocus = null) {
     }
     body.appendChild(pin);
     loadBtn.addEventListener("click", () => busy(loadBtn, () => _runLoad(st.read, st.doc, st.choice, st.skipped)));
-    const renBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "Rename" }), key, "rename");
+    const renBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "重命名" }), key, "rename");
     renBtn.addEventListener("click", () => _renameRow(nameEl, sp));
-    const expBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "Export" }), key, "export");
+    const expBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "导出" }), key, "export");
     expBtn.addEventListener("click", async () => {
       try {
         const raw = await api("/sidebar_gallery/preset", { filename: sp.filename });
         const read = readPreset(raw, READ_OPTS);
-        if (!read.ok) { showFailure("export the preset", read.error); return; }
+        if (!read.ok) { showFailure("导出预设", read.error); return; }
         // The stored file's own name holds no character a browser would change
         // on the way to the disk. The browser shows the download, so nothing more is said.
         downloadJson(presetExport(raw, read.preset), sp.filename);
-      } catch (e) { showFailure("export the preset", e); }
+      } catch (e) { showFailure("导出预设", e); }
     });
     const delBtn = _deleteButton(key);
     confirmClick(delBtn, () => _deletePreset(sp));
@@ -1474,8 +1474,8 @@ export function renderPresets(ctx, refocus = null) {
     list.appendChild(_currentRow(redraw));
     const reads = new Map(rows.map((sp) => [sp.filename, sp.readable !== false && sp.doc ? readListing(sp.doc, READ_OPTS) : null]));
 
-    if (!rows.length) list.appendChild(h("div", { class: "sbg-gs-desc", text: "No presets yet." }));
-    else if (_olderServer) list.appendChild(h("div", { class: "sbg-gs-desc", text: "Presets open once ComfyUI restarts to finish the update." }));
+    if (!rows.length) list.appendChild(h("div", { class: "sbg-gs-desc", text: "暂无预设。" }));
+    else if (_olderServer) list.appendChild(h("div", { class: "sbg-gs-desc", text: "请重启 ComfyUI 完成更新后打开预设。" }));
     for (const sp of sortPresets(rows)) {
       const read = reads.get(sp.filename);
       list.appendChild(read && read.ok ? _presetRow(sp, read, rows)
@@ -1507,7 +1507,7 @@ export function renderPresets(ctx, refocus = null) {
 
     if (!_readBrowserPresets().length) return;
     if (_olderServer) {
-      if (!_waitNoted) { _moveNote = "Presets kept by this browser move over once ComfyUI restarts."; _drawMoveNote(moveSlot, list); }
+      if (!_waitNoted) { _moveNote = "重启 ComfyUI 后会迁移此浏览器保存的预设。"; _drawMoveNote(moveSlot, list); }
       _waitNoted = true;
       return;
     }
@@ -1534,25 +1534,25 @@ export function renderPresets(ctx, refocus = null) {
     if (result.moved.length) rerender();
   }).catch((e) => {
     if (!list.isConnected) return;
-    if (listed) { _moveNote = `${failureText("move browser presets to files", e)}. Retrying the next time the Presets tab opens.`; _drawMoveNote(moveSlot, list); return; }
-    _failIn(list, failureText("load the presets", e));
+    if (listed) { _moveNote = `${failureText("将浏览器预设迁移为文件", e)}. Retrying the next time the Presets tab opens.`; _drawMoveNote(moveSlot, list); return; }
+    _failIn(list, failureText("加载预设列表", e));
     settle(list, null, inPresets);
   });
 
-  sectionTitle(wrap, "Backups");
+  sectionTitle(wrap, "备份");
 
   const backupsDesc = h("div", { class: "sbg-gs-desc" });
   const describeBackups = (n) => {
     backupsDesc.textContent = Number.isFinite(n)
-      ? `Saved before a load, a restore or a version change. The newest ${n} are kept, plus any pinned.`
-      : "Saved before a load, a restore or a version change. Pinned ones are kept.";
+      ? `在加载、恢复或版本更改前自动保存。保留最新 ${n} 份以及全部置顶备份。`
+      : "在加载、恢复或版本更改前自动保存。置顶备份会保留。";
   };
   if (indexOnly) describeBackups();
   wrap.appendChild(backupsDesc);
   const undoSlot = h("div");
   wrap.appendChild(undoSlot);
-  const backupList = h("div", { class: "sbg-ptree", role: "list", "aria-label": "Backups", tabindex: "0" });
-  if (!indexOnly) backupList.textContent = "Loading…";
+  const backupList = h("div", { class: "sbg-ptree", role: "list", "aria-label": "备份", tabindex: "0" });
+  if (!indexOnly) backupList.textContent = "正在加载…";
   wrap.appendChild(backupList);
   const _resyncBackupKeys = indexOnly ? null : listKeys(backupList);
 
@@ -1573,8 +1573,8 @@ export function renderPresets(ctx, refocus = null) {
   async function _deleteBackup(bk) {
     try {
       const data = await postBackups({ action: "delete", filename: bk.filename });
-      if (data.where) showToast(`Backup moved to ${data.where}.`);
-    } catch (e) { showFailure("delete the backup", e); }
+      if (data.where) showToast(`备份已移至 ${data.where}。`);
+    } catch (e) { showFailure("删除备份", e); }
     rerender();
   }
 
@@ -1600,7 +1600,7 @@ export function renderPresets(ctx, refocus = null) {
         } else {
           _openRows.set(key, _wholeState(await _readWholeCopy(bk)));
         }
-      } catch (e) { showFailure("read the backup", e); return; }
+      } catch (e) { showFailure("读取备份", e); return; }
       redraw();
     };
     const { item, body } = _rowShell({ key, open: !!st, label: `"${label}"`, onToggle: toggle });
@@ -1617,22 +1617,22 @@ export function renderPresets(ctx, refocus = null) {
     body.appendChild(whenEl);
     // Restore acts on the first press, since a copy of what it changes is taken
     // first and the Undo line offers it back.
-    const restoreBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "Restore" }), key, "restore");
+    const restoreBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "恢复" }), key, "restore");
     // A closed whole copy's Restore does what the opened row does with nothing
     // unticked, which leaves the library alone.
     const choice = st ? st.choice : bk.whole ? { library: false } : undefined;
     restoreBtn.addEventListener("click", () => busy(restoreBtn, () => _runRestore(bk, choice, {
-      done: () => sentences(["backup restored"]),
-      none: "This backup already matches the current settings, so nothing changed.",
-      failed: "restore the backup",
+      done: () => sentences(["备份已恢复"]),
+      none: "此备份与当前设置相同，无需更改。",
+      failed: "恢复备份",
       what: "restore",
     })));
     if (!st) body.appendChild(restoreBtn);
     const pinned = !!bk.pinned;
 
-    body.appendChild(_pinButton(key, pinned, { on: "Pin to always keep this backup", off: "Unpin", aria: (pinned ? "Unpin " : "Pin ") + label }, () => repin(
+    body.appendChild(_pinButton(key, pinned, { on: "置顶以永久保留此备份", off: "取消置顶", aria: (pinned ? "Unpin " : "置顶：") + label }, () => repin(
       () => postBackups({ action: "pin", filename: bk.filename, pinned: !pinned }),
-      "/sidebar_gallery/settings_backups", backupList, (data) => _renderBackups(data.backups || []), pinned ? "unpin the backup" : "pin the backup")));
+      "/sidebar_gallery/settings_backups", backupList, (data) => _renderBackups(data.backups || []), pinned ? "unpin the backup" : "置顶备份")));
     if (!st) return item;
     const delBtn = _deleteButton(key);
     confirmClick(delBtn, () => _deleteBackup(bk));
@@ -1643,7 +1643,7 @@ export function renderPresets(ctx, refocus = null) {
   function _renderBackups(rows) {
     const focus = _focusOf(backupList);
     backupList.innerHTML = "";
-    if (!rows.length) backupList.appendChild(h("div", { class: "sbg-gs-desc", text: "No backups yet." }));
+    if (!rows.length) backupList.appendChild(h("div", { class: "sbg-gs-desc", text: "暂无备份。" }));
     for (const bk of rows) backupList.appendChild(_backupRow(bk, rows));
     if (_resyncBackupKeys) _resyncBackupKeys(true);
     settle(backupList, focus, inBackups);
@@ -1678,11 +1678,11 @@ export function renderPresets(ctx, refocus = null) {
   }).catch((e) => {
     describeBackups();
     // A server that has not restarted since the update has no such route.
-    _failIn(backupList, failureText("load the backups", e && e.status === 404 ? RESTART_FIRST : e));
+    _failIn(backupList, failureText("加载备份列表", e && e.status === 404 ? RESTART_FIRST : e));
     settle(backupList, null, (k) => inBackups(k) || k.startsWith("undo"));
   });
 
-  const importBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "Import", title: "Import a preset file" }), "head", "import");
+  const importBtn = _control(h("button", { class: "sbg-btn sbg-btn--sm", text: "导入", title: "导入预设文件" }), "head", "import");
   importBtn.addEventListener("click", () => {
     const fi = h("input", { type: "file", accept: ".json" });
     fi.addEventListener("change", async () => {
@@ -1699,13 +1699,13 @@ export function renderPresets(ctx, refocus = null) {
           list: [raw], rows: presetRows, save: _savePreset, from: "", nameMax: _nameMax,
           read: (filename) => api("/sidebar_gallery/preset", { filename }).catch(() => null),
         });
-        if (result.skipped.length) { showFailure("import the file", result.skipped[0].error); return; }
-        if (result.merged.length) { showToast(`"${result.merged[0]}" is already in the preset list.`); return; }
-        if (!result.moved.length) { showFailure("import the file", result.errors[0]); return; }
+        if (result.skipped.length) { showFailure("导入文件", result.skipped[0].error); return; }
+        if (result.merged.length) { showToast(`“${result.merged[0]}”已在预设列表中。`); return; }
+        if (!result.moved.length) { showFailure("导入文件", result.errors[0]); return; }
         // The new row shows in the list, so only the reader's notes on the file are said.
-        if (result.notes.length) showToast(sentences([`preset "${result.moved[0]}" imported`, ...result.notes]));
+        if (result.notes.length) showToast(sentences([`已导入预设“${result.moved[0]}”`, ...result.notes]));
         rerender();
-      } catch (e) { showFailure("import the file", e); }
+      } catch (e) { showFailure("导入文件", e); }
     });
     fi.click();
   });

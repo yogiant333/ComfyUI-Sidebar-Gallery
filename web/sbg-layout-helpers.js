@@ -1,7 +1,7 @@
 import { h } from "./sbg-core.js";
 import { uid } from "./sbg-translation-layer.js";
 
-const SECTION_STYLE_LABELS = { flat: "List", cards: "Cards", text: "Text", nodes: "Workflow nodes", raw: "Raw metadata" };
+const SECTION_STYLE_LABELS = { flat: "列表", cards: "卡片", text: "文本", nodes: "工作流节点", raw: "原始元数据" };
 export const SECTION_STYLES = Object.keys(SECTION_STYLE_LABELS);
 export const sectionStyleLabel = (s) => SECTION_STYLE_LABELS[s] || s;
 

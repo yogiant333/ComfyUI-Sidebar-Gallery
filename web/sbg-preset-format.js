@@ -21,7 +21,7 @@ const _BLOCK_OK = {
   keys: _isObj,
 };
 
-const _BLOCK_NAMES = { layouts: "Metadata Panel layouts", colors: "colors", settings: "settings", keys: "keybindings" };
+const _BLOCK_NAMES = { layouts: "元数据面板布局", colors: "colors", settings: "settings", keys: "keybindings" };
 
 // A file with no `format` key is version 1. The release that wrote these two
 // keys of it never used them, so they are skipped without a note.
@@ -99,8 +99,8 @@ export function copyDocument({ ids, valueOf, created, cause, subject, classOf, t
 // the settings, where that version kept them, and they are read as colours of
 // no named theme.
 export function readCopy(raw, opts = {}) {
-  if (!_isObj(raw)) return _refuse("the backup is damaged");
-  return readListing({ ..._copyFromFlat(raw, opts), name: "Backup" }, opts);
+  if (!_isObj(raw)) return _refuse("备份已损坏");
+  return readListing({ ..._copyFromFlat(raw, opts), name: "备份" }, opts);
 }
 
 // A copy that names its theme beside a colours map holds that theme's colours
@@ -143,17 +143,17 @@ function _copyFromFlat(raw, opts) {
 // load.
 export function readPreset(raw, opts = {}) {
   const notes = [];
-  if (!_isObj(raw)) return _refuse("this file isn't a preset");
+  if (!_isObj(raw)) return _refuse("此文件不是预设文件");
   const hasFormat = raw.format !== undefined;
-  if (hasFormat && raw.format !== PRESET_FORMAT) return _refuse("this file isn't a preset");
-  if (typeof raw.name !== "string" || !raw.name.trim()) return _refuse("the preset has no name");
+  if (hasFormat && raw.format !== PRESET_FORMAT) return _refuse("此文件不是预设文件");
+  if (typeof raw.name !== "string" || !raw.name.trim()) return _refuse("预设没有名称");
 
   let version;
   if (!hasFormat) version = 1;
   else {
     version = _versionOf(raw.version);
     if (version === null) {
-      notes.push("the preset's version number isn't valid, so it was read as a current preset");
+      notes.push("预设版本号无效，已按当前版本读取");
       version = PRESET_VERSION;
     }
   }
@@ -164,7 +164,7 @@ export function readPreset(raw, opts = {}) {
   } else {
     if (version > PRESET_VERSION) {
       const by = typeof raw.saved_by === "string" && raw.saved_by ? ` (${raw.saved_by})` : "";
-      notes.push(`this preset was saved by a newer version of the gallery${by}, so some parts might not load`);
+      notes.push(`此预设由较新版本的图库${by}保存，部分内容可能无法加载`);
     }
     source = raw;
     _noteUnknown(raw, _OWN, notes);
@@ -182,7 +182,7 @@ export function readPreset(raw, opts = {}) {
   if (malformed.length) {
     const names = malformed.map((b) => _BLOCK_NAMES[b]);
     const listed = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0];
-    notes.push(`the ${listed} in the file aren't in a usable format, so they were skipped`);
+    notes.push(`文件中的${listed}格式不可用，已跳过`);
   }
   if (typeof opts.classOf === "function") _sortByClass(blocks, opts.classOf);
   // An older file spells an untouched binding as an empty string, which this

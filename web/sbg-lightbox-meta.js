@@ -86,8 +86,8 @@ export function sourceMediaKey(s, rootId) {
 }
 
 export function sourceTabLabel(imgs, auds) {
-  if (imgs && auds) return "Source Media";
-  return auds ? "Source Audio" : "Source Image";
+  if (imgs && auds) return "源媒体";
+  return auds ? "源音频" : "源图像";
 }
 
 export function createSourceMediaBuilder({ newStaleCheck }) {
@@ -100,11 +100,11 @@ export function createSourceMediaBuilder({ newStaleCheck }) {
     const audios = initialAudioList(s);
     const el = h("div", {});
     images.forEach((entry, i) => {
-      const label = images.length > 1 ? `Source Image ${i + 1} of ${images.length}` : "Source Image";
+      const label = images.length > 1 ? `源图像 ${i + 1}／${images.length}` : "源图像";
       el.appendChild(_buildSourceEntry(entry, rootId, label, "image"));
     });
     audios.forEach((entry, i) => {
-      const label = audios.length > 1 ? `Source Audio ${i + 1} of ${audios.length}` : "Source Audio";
+      const label = audios.length > 1 ? `源音频 ${i + 1}／${audios.length}` : "源音频";
       el.appendChild(_buildSourceEntry(entry, rootId, label, "audio"));
     });
     return el;
@@ -124,7 +124,7 @@ export function createSourceMediaBuilder({ newStaleCheck }) {
         ? h("audio", { controls: "true", preload: "metadata", class: "sbg-meta-preview" })
         : h("img", { class: "sbg-initial-image-preview" });
 
-      const noPreview = () => h("div", { class: "sbg-meta-note sbg-meta-note--failed", text: failureText("load the source file") });
+      const noPreview = () => h("div", { class: "sbg-meta-note sbg-meta-note--failed", text: failureText("加载源文件") });
       if (known === "none") {
         wrap.appendChild(noPreview());
       } else if (known) {
@@ -158,7 +158,7 @@ export function createSourceMediaBuilder({ newStaleCheck }) {
     wrap.appendChild(infoGroup);
 
     if (path) {
-      const note = h("div", { class: "sbg-meta-note sbg-meta-note--dim sbg-loading", text: "Loading source metadata…" });
+      const note = h("div", { class: "sbg-meta-note sbg-meta-note--dim sbg-loading", text: "正在加载源文件元数据…" });
       wrap.appendChild(note);
       const isStale = newStaleCheck();
       (async () => {
@@ -166,7 +166,7 @@ export function createSourceMediaBuilder({ newStaleCheck }) {
         try { m = await _resolveSourceMeta(path, rootId, srcType); }
         catch (e) {
           if (isStale()) return;
-          note.textContent = failureText("read the source file's metadata", e);
+          note.textContent = failureText("读取源文件元数据", e);
           note.classList.remove("sbg-loading", "sbg-meta-note--dim");
           note.classList.add("sbg-meta-note--failed");
           return;
@@ -183,7 +183,7 @@ export function createSourceMediaBuilder({ newStaleCheck }) {
             wrap.appendChild(makeSection(section, contentEl));
           }
         } else {
-          note.textContent = "No metadata found for this source file";
+          note.textContent = "此源文件中未找到元数据";
           note.classList.remove("sbg-loading");
         }
       })();

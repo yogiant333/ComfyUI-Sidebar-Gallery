@@ -115,7 +115,7 @@ export function endedEntry(progress, slot, seen) {
 }
 
 function _counts(entry) {
-  if (entry.phase === "scanning") return { counts: `Scanning folder… ${(entry.total || 0).toLocaleString()} found`, pct: -1 };
+  if (entry.phase === "scanning") return { counts: `正在扫描文件夹…已发现 ${(entry.total || 0).toLocaleString()} 个文件`, pct: -1 };
   const total = entry.total || 0;
   const done = entry.done || 0;
   return {
@@ -136,21 +136,21 @@ export function progressKind(progress, entry) {
 const _KIND_TEXT = {
   first: {
     counted: true,
-    running: (count) => `Indexing · ${count}`,
-    done: (count) => `Indexing done, ${count.toLocaleString()} ${count === 1 ? "file" : "files"}`,
-    tooltip: "This scan only runs the first time a folder is indexed. After it finishes, the gallery loads instantly.",
+    running: (count) => `正在建立索引 · ${count}`,
+    done: (count) => `索引完成，共 ${count.toLocaleString()} 个文件`,
+    tooltip: "仅在首次为文件夹建立索引时执行此扫描。完成后，画廊即可快速加载。",
   },
   full: {
     counted: true,
-    running: (count) => `Rebuilding metadata index… ${count}`,
-    done: () => "Metadata index rebuilt",
-    tooltip: "The index is being rebuilt. You can still use the gallery while it runs.",
+    running: (count) => `正在重建元数据索引… ${count}`,
+    done: () => "元数据索引已重建",
+    tooltip: "正在重建索引，期间仍可使用画廊。",
   },
   facts: {
     counted: false,
-    running: () => "Rebuilding search index…",
-    done: () => "Search index rebuilt",
-    tooltip: "The fast search index is being rebuilt. Searching still works during the rebuild.",
+    running: () => "正在重建搜索索引…",
+    done: () => "搜索索引已重建",
+    tooltip: "正在重建快速搜索索引，期间仍可搜索。",
   },
 };
 
@@ -175,9 +175,9 @@ export function indexTooltip(kind) {
 }
 
 export function indexFailedText(kind, error, label) {
-  if (kind === "full") return failureText("rebuild the metadata index", error);
-  if (kind === "facts") return `${failureText("build the search index", error)}. Search still works, but may be slower.`;
-  return `${failureText(`index ${label || "the folder"}`, error)}. Some files may be missing.`;
+  if (kind === "full") return failureText("重建元数据索引", error);
+  if (kind === "facts") return `${failureText("建立搜索索引", error)}。仍可搜索，但速度可能较慢。`;
+  return `${failureText(`为${label || "文件夹"}建立索引`, error)}。部分文件可能无法显示。`;
 }
 
 // Index runs are followed for the whole page instead of by each panel, so a run

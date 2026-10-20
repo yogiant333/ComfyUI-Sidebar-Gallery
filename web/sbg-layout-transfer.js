@@ -44,7 +44,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
   const overlay = h("div", { class: "sbg-ly3-xfer-overlay" });
   const dlg = h("div", {
     class: "sbg-ly3-xfer", role: "dialog", "aria-modal": "true",
-    "aria-label": "Copy between layouts",
+    "aria-label": "跨布局复制",
   });
   overlay.appendChild(dlg);
 
@@ -62,19 +62,19 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
   overlay.addEventListener("mousedown", (e) => { if (e.target === overlay) close(); });
 
   const head = h("div", { class: "sbg-ly3-xfer-head" });
-  head.appendChild(h("span", { class: "sbg-ly3-xfer-title", text: "Copy between layouts" }));
-  const closeBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "Close", "aria-label": "Close", html: CLOSE_ICON });
+  head.appendChild(h("span", { class: "sbg-ly3-xfer-title", text: "跨布局复制" }));
+  const closeBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "关闭", "aria-label": "关闭", html: CLOSE_ICON });
   closeBtn.addEventListener("click", close);
   head.appendChild(closeBtn);
   dlg.appendChild(head);
 
   const fromRow = h("div", { class: "sbg-ly3-xfer-row" });
-  fromRow.appendChild(h("span", { text: "From" }));
-  fromRow.appendChild(mkSelect(keys, fromKey, (v) => { fromKey = v; renderChecklist(); }, layoutLabel, { "aria-label": "Copy from" }));
-  fromRow.appendChild(h("span", { text: "to" }));
-  fromRow.appendChild(mkSelect(keys, toKey, (v) => { toKey = v; updateCount(); }, layoutLabel, { "aria-label": "Copy to" }));
+  fromRow.appendChild(h("span", { text: "从" }));
+  fromRow.appendChild(mkSelect(keys, fromKey, (v) => { fromKey = v; renderChecklist(); }, layoutLabel, { "aria-label": "复制来源" }));
+  fromRow.appendChild(h("span", { text: "到" }));
+  fromRow.appendChild(mkSelect(keys, toKey, (v) => { toKey = v; updateCount(); }, layoutLabel, { "aria-label": "复制目标" }));
   dlg.appendChild(fromRow);
-  dlg.appendChild(h("div", { class: "sbg-ly3-xfer-dim", text: "Select the sections or tabs to copy. If From and to are the same layout, the copies are added to it." }));
+  dlg.appendChild(h("div", { class: "sbg-ly3-xfer-dim", text: "选择要复制的区块或标签页。如果来源和目标为同一布局，副本将添加到该布局中。" }));
 
   const listEl = h("div", { class: "sbg-ly3-xfer-list" });
   attachOverlayThumb(listEl);
@@ -90,12 +90,12 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
       const cb = h("input", { type: "checkbox" });
       r.cb = cb;
       item.appendChild(cb);
-      item.appendChild(h("span", { text: sec.title || "(untitled)" }));
+      item.appendChild(h("span", { text: sec.title || "（未命名）" }));
       const bits = [sectionStyleLabel(sec.style || "flat")];
       const tabs = sec.tabs || [];
-      if (tabs.length) bits.push(tabs.length + " tab" + (tabs.length > 1 ? "s" : ""));
-      else if ((sec.params || []).length) bits.push(sec.params.length + " field" + (sec.params.length > 1 ? "s" : ""));
-      if (sec.hidden) bits.push("hidden");
+      if (tabs.length) bits.push(tabs.length + " 个标签页");
+      else if ((sec.params || []).length) bits.push(sec.params.length + " 个字段");
+      if (sec.hidden) bits.push("已隐藏");
       item.appendChild(h("span", { class: "sbg-ly3-xfer-dim", text: bits.join(" · ") }));
       listEl.appendChild(item);
       cb.addEventListener("change", () => {
@@ -106,7 +106,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
         const ti = h("label", { class: "sbg-ly3-xfer-item sbg-ly3-xfer-item--tab" });
         const tcb = h("input", { type: "checkbox" });
         ti.appendChild(tcb);
-        ti.appendChild(h("span", { text: tab.label || "Tab" }));
+        ti.appendChild(h("span", { text: tab.label || "标签页" }));
         listEl.appendChild(ti);
         const tr = { tab, cb: tcb };
         r.tabRows.push(tr);
@@ -117,7 +117,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
       }
       rows.push(r);
     }
-    if (!rows.length) listEl.appendChild(h("div", { class: "sbg-ly3-empty", text: "This layout has no sections." }));
+    if (!rows.length) listEl.appendChild(h("div", { class: "sbg-ly3-empty", text: "此布局没有区块。" }));
     updateCount();
   }
 
@@ -141,7 +141,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
   const wholeLabel = h("label", { class: "sbg-ly3-xfer-check" });
   const wholeCb = h("input", { type: "checkbox" });
   wholeLabel.appendChild(wholeCb);
-  wholeLabel.appendChild(document.createTextNode("Copy the whole layout, replacing everything already there"));
+  wholeLabel.appendChild(document.createTextNode("复制整个布局并替换目标布局的全部内容"));
   wholeRow.appendChild(wholeLabel);
   dlg.appendChild(wholeRow);
   wholeCb.addEventListener("change", () => {
@@ -150,7 +150,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
   });
 
   const ruleRow = h("div", { class: "sbg-ly3-xfer-row" });
-  ruleRow.appendChild(h("span", { class: "sbg-ly3-xfer-dim", text: "If a section or tab with the same name is already there:" }));
+  ruleRow.appendChild(h("span", { class: "sbg-ly3-xfer-dim", text: "如果目标布局中已有同名区块或标签页：" }));
   const mkRule = (val, lbl, chk) => {
     const l = h("label", { class: "sbg-ly3-xfer-radio" });
     const rb = h("input", { type: "radio", name: "sbg-xfer-clash", value: val });
@@ -159,22 +159,22 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
     l.appendChild(document.createTextNode(lbl));
     return l;
   };
-  ruleRow.appendChild(mkRule("add", "Keep both", true));
-  ruleRow.appendChild(mkRule("replace", "Replace it", false));
+  ruleRow.appendChild(mkRule("add", "保留两者", true));
+  ruleRow.appendChild(mkRule("replace", "替换原项", false));
   dlg.appendChild(ruleRow);
 
   const foot = h("div", { class: "sbg-ly3-xfer-foot" });
-  const cancel = h("button", { class: "sbg-btn sbg-btn--sm", text: "Cancel" });
+  const cancel = h("button", { class: "sbg-btn sbg-btn--sm", text: "取消" });
   cancel.addEventListener("click", close);
-  const go = h("button", { class: "sbg-btn sbg-btn--sm sbg-btn--accent", text: "Copy 0 selected" });
+  const go = h("button", { class: "sbg-btn sbg-btn--sm sbg-btn--accent", text: "复制已选 0 项" });
   go.disabled = true;
   go.addEventListener("click", commit);
 
   // Replacing a whole layout cannot be undone, so it takes two clicks. It has
   // its own button because `updateCount` rewrites the copy button's label.
-  const replaceBtn = h("button", { class: "sbg-btn sbg-btn--sm sbg-btn--accent sbg-hidden", text: "Replace whole layout" });
+  const replaceBtn = h("button", { class: "sbg-btn sbg-btn--sm sbg-btn--accent sbg-hidden", text: "替换整个布局" });
   const disarmReplace = confirmClick(replaceBtn, commitWhole, {
-    label: () => "Replace " + layoutLabel(toKey) + "?", armClass: "sbg-btn--danger",
+    label: () => "替换“" + layoutLabel(toKey) + "”？", armClass: "sbg-btn--danger",
   });
   foot.appendChild(cancel);
   foot.appendChild(go);
@@ -192,7 +192,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
       return;
     }
     const { count } = selection();
-    go.textContent = "Copy " + count + " selected";
+    go.textContent = "复制已选 " + count + " 项";
     go.disabled = !count;
   }
 
@@ -204,7 +204,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
     target.splice(0, target.length, ...JSON.parse(JSON.stringify(src)));
     if (persistKeys([toKey])) {
       forgetPromptTabs(replacedIds);
-      showToast("Replaced " + layoutLabel(toKey) + " with a copy of " + layoutLabel(fromKey));
+      showToast("已用“" + layoutLabel(fromKey) + "”的副本替换“" + layoutLabel(toKey) + "”");
     }
     close();
     if (toKey === activeKey()) render();
@@ -266,7 +266,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
         // A section with tabs can still carry a `source` and a `highlow` that do
         // nothing, and the copied tabs keep their own, so the new section takes
         // neither.
-        host = newSection(srcSec.title || "Section", []);
+        host = newSection(srcSec.title || "区块", []);
         host.style = srcSec.style || "flat";
         if (srcSec.color) host.color = { ...srcSec.color };
         if (srcSec.showWhen) host.showWhen = srcSec.showWhen;
@@ -287,7 +287,7 @@ export function openTransferDialog({ activeKey, layoutFor, persistKeys, appendTa
       if (toActive) expanded.add(host.id);
     }
 
-    if (persistKeys([toKey])) showToast("Copied " + count + " item" + (count > 1 ? "s" : "") + " to " + layoutLabel(toKey));
+    if (persistKeys([toKey])) showToast("已复制 " + count + " 项到“" + layoutLabel(toKey) + "”");
     close();
     if (toActive) render();
   }

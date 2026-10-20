@@ -38,28 +38,28 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
 
   const _held = (cfg) => !cfg || !!cfg.unreadable;
 
-  sectionTitle(wrap, "Sorting");
+  sectionTitle(wrap, "排序");
   wrap.appendChild(comboInput(S.SORT,
-    "The sort order the gallery opens with. Once you pick a sort in the sort dropdown, the gallery reopens with that one until the page is refreshed."));
+    "图库打开时使用的排序。手动选择排序后，在刷新页面前会保留该排序。"));
 
-  sectionTitle(wrap, "Deleting");
+  sectionTitle(wrap, "删除");
   wrap.appendChild(toggle(S.DELETE_CONFIRM,
-    "Delete in the lightbox or a card's right-click menu needs a second press before the file goes to the Recycle Bin or Trash. With this off, one press deletes."));
+    "在查看器或卡片右键菜单中删除文件时，需要再次点击确认后才移至回收站。关闭后单击即可删除。"));
 
-  sectionTitle(wrap, "Lightbox zoom and pan");
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Zoom and pan on the image or video in the lightbox. Pinch always zooms, and drag pans when zoomed in." }));
+  sectionTitle(wrap, "查看器缩放和平移");
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "在查看器中缩放和平移图片或视频。双指捏合始终缩放；放大后可拖动平移。" }));
   wrap.appendChild(comboInput(S.LB_ZOOM_SCROLL_MODE,
-    "What scrolling over the image does. With Mouse, scrolling zooms. With Touchpad, a two-finger scroll pans when zoomed in. Auto works out which one you're using."));
-  wrap.appendChild(comboInput(S.LB_ZOOM_ANCHOR, "Zoom towards the mouse cursor or towards the center of the view."));
-  wrap.appendChild(numberInput(S.LB_ZOOM_SENSITIVITY, "How fast zooming is, from 0.1 to 5. 1 is the default."));
-  wrap.appendChild(comboInput(S.LB_COMPARE_ZOOM, "In compare, zoom and pan only the side under the cursor, or both sides together."));
+    "在图片上滚动时的行为。“鼠标”滚动缩放；“触控板”在放大后双指滚动平移；“自动”识别输入设备。"));
+  wrap.appendChild(comboInput(S.LB_ZOOM_ANCHOR, "朝向鼠标指针或视图中心缩放。"));
+  wrap.appendChild(numberInput(S.LB_ZOOM_SENSITIVITY, "缩放速度为 0.1 至 5，默认值为 1。"));
+  wrap.appendChild(comboInput(S.LB_COMPARE_ZOOM, "在对比模式中，仅缩放和平移鼠标所在一侧，或两侧同步操作。"));
   wrap.appendChild(toggle(S.LB_ZOOM_KEEP_ON_NAV,
-    "Keep the zoom and position when you move to the next or previous file. With this off, each file opens fitted to the screen."));
+    "切换上一个或下一个文件时保持缩放和位置。关闭后，每个文件打开时均适合屏幕。"));
 
-  sectionTitle(wrap, "Lightbox metadata panel");
-  wrap.appendChild(toggle(S.META_TAB_PERSIST, "When you move to another file, keep the tab you're on instead of going back to Generated."));
+  sectionTitle(wrap, "查看器元数据面板");
+  wrap.appendChild(toggle(S.META_TAB_PERSIST, "切换文件时保留当前标签页。"));
 
-  sectionTitle(wrap, "Library");
+  sectionTitle(wrap, "媒体库");
 
   let arSaved = "";
   const arInput = h("input", { type: "number", class: "sbg-gs-input", min: "0", step: "5", value: "" });
@@ -78,7 +78,7 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
     } catch (e) {
       arInput.value = arSaved;
       _hold([arInput], false);
-      showFailure("save this setting", e);
+      showFailure("保存此设置", e);
       return;
     }
     // The server clamps the interval, so the box takes the value it saved and
@@ -87,11 +87,11 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
     arInput.value = arSaved = String(eff);
     _hold([arInput], false);
 
-    if (eff > 0 && eff !== n) showToast(`Auto-Refresh Interval is set to ${eff} seconds, the ${eff > n ? "shortest" : "longest"} allowed.`);
+    if (eff > 0 && eff !== n) showToast(`自动刷新间隔已设为 ${eff} 秒，这是允许的${eff > n ? "最短" : "最长"}间隔。`);
     await _reloadGallery();
   });
-  wrap.appendChild(settingRow("Auto-Refresh Interval (seconds)", arInput,
-    "How often the open gallery checks the disk for added, removed or renamed files. The minimum is 5, and 0 turns it off, though the gallery still checks when you come back to it. Applies right away."));
+  wrap.appendChild(settingRow("自动刷新间隔（秒）", arInput,
+    "图库检查磁盘中文件新增、删除或重命名的间隔，最短 5 秒，0 表示关闭。返回图库时仍会检查。立即生效。"));
 
   const noticeSlot = h("div", { class: "sbg-notices sbg-gs-notices" });
   wrap.appendChild(noticeSlot);
@@ -100,13 +100,13 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
     noticeSlot.innerHTML = "";
     if (!_held(cfg)) return;
     const text = cfg
-      ? `${failureText("open the folder settings file", cfg.unreadable)}. The folders below can't be edited until the file can be opened.`
-      : `${failureText("load the folders below", failure)}. They can't be edited until they load.`;
-    const line = noticeRow(retried ? `${text} Tried again.` : text, () => { noticeSlot.innerHTML = ""; content.focus(); }, { failure: true });
-    const again = h("button", { class: "sbg-btn sbg-btn--sm", text: "Try again" });
+      ? `${failureText("打开文件夹设置文件", cfg.unreadable)}。打开该文件后才能编辑下方文件夹。`
+      : `${failureText("加载下方文件夹", failure)}。加载完成后才能编辑。`;
+    const line = noticeRow(retried ? `${text} 已重试。` : text, () => { noticeSlot.innerHTML = ""; content.focus(); }, { failure: true });
+    const again = h("button", { class: "sbg-btn sbg-btn--sm", text: "重试" });
     again.addEventListener("click", async () => {
       again.disabled = true;
-      again.textContent = "Trying…";
+      again.textContent = "重试中…";
       await _loadAll(true);
     });
     line.insertBefore(again, line.querySelector(".sbg-notice__x"));
@@ -123,16 +123,16 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
   };
   const trashButton = (title) => h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger", html: TRASH_ICON, title });
 
-  sectionTitle(wrap, "Folders");
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Extra folders to browse and index alongside ComfyUI's output folder. Paths are on the machine running ComfyUI." }));
-  const outputRow = listRow("Output", "ComfyUI's output folder");
-  outputRow.appendChild(h("span", { class: "sbg-gs-desc--inline", text: "Always included" }));
+  sectionTitle(wrap, "文件夹");
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "除 ComfyUI 输出文件夹外，可浏览和建立索引的其他文件夹。路径位于运行 ComfyUI 的机器上。" }));
+  const outputRow = listRow("输出", "ComfyUI 输出文件夹");
+  outputRow.appendChild(h("span", { class: "sbg-gs-desc--inline", text: "始终包含" }));
   wrap.appendChild(outputRow);
   const addHint = h("div", { class: "sbg-gs-desc sbg-gs-desc--top-gap" });
   addHint.appendChild(document.createTextNode(
-    "To add a folder, open sidebar_gallery_config.json and put the path in its extra_roots list, for example "));
+    "要添加文件夹，请打开 sidebar_gallery_config.json，在 extra_roots 列表中填入路径，例如 "));
   addHint.appendChild(h("code", { text: '{"extra_roots": ["C:/Renders"]}' }));
-  addHint.appendChild(document.createTextNode(". The gallery picks the change up within a few seconds."));
+  addHint.appendChild(document.createTextNode("。图库将在几秒内识别此更改。"));
   wrap.appendChild(addHint);
   const configPath = h("div", { class: "sbg-gs-path sbg-hidden" });
   wrap.appendChild(configPath);
@@ -150,7 +150,7 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
     folderBins = [];
     for (const p of (cfg && cfg.extra_roots) || []) {
       const el = listRow(p.split(/[\\/]/).pop() || p, p);
-      const del = trashButton("Remove this folder from the gallery (files on disk are not touched)");
+      const del = trashButton("从图库中移除此文件夹（不会删除磁盘上的文件）");
       del.disabled = held;
       confirmClick(del, async () => {
         if (foldersBusy) return;
@@ -158,14 +158,14 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
         _hold(folderBins, true);
         let next;
         try { next = await _postConfig({ extra_roots_remove: [p] }); }
-        catch (e) { showFailure("remove the folder", e); return; }
+        catch (e) { showFailure("移除文件夹", e); return; }
         finally { foldersBusy = false; _hold(folderBins, false); }
         const had = document.activeElement === del;
         const at = folderBins.indexOf(del);
         _renderFolders(next);
         if (had) (folderBins[at] || folderBins[at - 1] || inp).focus();
         await _reloadGallery();
-      }, { label: "Remove?", busy: () => foldersBusy });
+      }, { label: "确认移除？", busy: () => foldersBusy });
       el.appendChild(del);
       folderRows.push(el);
       folderBins.push(del);
@@ -177,8 +177,8 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
     configPath.classList.toggle("sbg-hidden", !path);
   }
 
-  sectionTitle(wrap, "Excluded folders");
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Folder names to skip when scanning, such as thumbnails or backup. A name matches a folder at any depth, in any letter case. Changes apply on the next scan." }));
+  sectionTitle(wrap, "排除的文件夹");
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "扫描时跳过的文件夹名称，例如 thumbnails 或 backup。匹配任意深度的同名文件夹，不区分大小写。下次扫描时生效。" }));
 
   let excludedBusy = false;
   let excluded = [];
@@ -196,17 +196,17 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
     try { await _postConfig({ index_hidden_dirs: hiddenChk.checked }); }
     catch (e) {
       hiddenChk.checked = !hiddenChk.checked;
-      showFailure("save this setting", e);
+      showFailure("保存此设置", e);
       return;
     } finally { setBusy(false); }
     await _reloadGallery();
   });
-  wrap.appendChild(settingRow("Include Hidden Folders", hiddenChk,
-    "Also scan folders whose names start with a dot, such as .thumbs."));
+  wrap.appendChild(settingRow("包含隐藏文件夹", hiddenChk,
+    "同时扫描名称以点开头的文件夹，例如 .thumbs。"));
 
   const addRow = h("div", { class: "sbg-gs-row sbg-gs-row--gap" });
   const inp = h("input", { type: "text", class: "sbg-gs-input sbg-gs-grow", placeholder: "thumbnails" });
-  const addBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "+ Add" });
+  const addBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "+ 添加" });
   inp.disabled = true;
   addBtn.disabled = true;
   addRow.append(inp, addBtn);
@@ -227,14 +227,14 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
     for (const el of [hiddenChk, inp, addBtn]) el.disabled = held;
     for (const name of excluded) {
       const el = listRow(name);
-      const del = trashButton("Stop excluding this folder (its files reappear on the next scan)");
+      const del = trashButton("停止排除此文件夹（其中的文件将在下次扫描后重新显示）");
       del.disabled = held;
       del.addEventListener("click", async () => {
         if (excludedBusy) return;
         setBusy(true);
         let next;
         try { next = await _postConfig({ excluded_dirs_remove: [name] }); }
-        catch (e) { showFailure("save this setting", e); return; }
+        catch (e) { showFailure("保存此设置", e); return; }
         finally { setBusy(false); }
         const had = document.activeElement === del;
         const at = excludedBins.indexOf(del);
@@ -246,7 +246,7 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
       excludedRows.push(el);
       excludedBins.push(del);
     }
-    if (!excluded.length) excludedRows.push(h("div", { class: "sbg-gs-row sbg-gs-desc--inline", text: "No extra folders excluded." }));
+    if (!excluded.length) excludedRows.push(h("div", { class: "sbg-gs-row sbg-gs-desc--inline", text: "没有额外排除的文件夹。" }));
     for (const el of excludedRows) wrap.insertBefore(el, addRow);
   }
 
@@ -255,12 +255,12 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
 
     // An exclude matches a folder name, so a pasted path keeps only its last segment.
     const name = (inp.value.split(/[\\/]/).filter(Boolean).pop() || "").trim().toLowerCase();
-    if (!name || name === "." || name === "..") { showToast("Enter a folder name to exclude"); return; }
-    if (excluded.includes(name)) { showToast(`"${name}" is already excluded.`); inp.value = ""; return; }
+    if (!name || name === "." || name === "..") { showToast("请输入要排除的文件夹名称"); return; }
+    if (excluded.includes(name)) { showToast(`“${name}”已被排除。`); inp.value = ""; return; }
     setBusy(true);
     let next;
     try { next = await _postConfig({ excluded_dirs_add: [name] }); }
-    catch (e) { showFailure("exclude the folder", e); return; }
+    catch (e) { showFailure("排除文件夹", e); return; }
     finally { setBusy(false); }
     inp.value = "";
     _renderExcluded(next);
@@ -269,10 +269,10 @@ export function renderSettings({ content, galleryCtx, indexOnly }) {
   addBtn.addEventListener("click", doAdd);
   inp.addEventListener("keydown", (ev) => { if (ev.key === "Enter") doAdd(); });
 
-  sectionTitle(wrap, "Performance");
-  wrap.appendChild(numberInput(S.VSCROLL_BUFFER, "How many rows of cards are built above and below what's on screen, from 1 to 30. More rows let thumbnails you haven't viewed yet load before they scroll into view, but mean more work for the browser."));
+  sectionTitle(wrap, "性能");
+  wrap.appendChild(numberInput(S.VSCROLL_BUFFER, "在屏幕上下方预先创建的卡片行数，范围为 1 至 30。行数越多，缩略图加载越提前，浏览器负担也越大。"));
   wrap.appendChild(numberInput(S.GRID_WHEEL_SPEED,
-    "How far one scroll step moves the gallery, for mouse wheels and touchpads alike, from 25 to 400. 100 is the browser's normal speed. Applies right away."));
+    "鼠标滚轮及触控板每次滚动的距离，范围为 25 至 400。100 为浏览器正常速度。立即生效。"));
 
   function _show(cfg, failure = "", retried = false) {
     _applyAr(cfg);

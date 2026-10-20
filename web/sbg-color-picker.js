@@ -86,7 +86,7 @@ export function createColorPicker({ initialColor, onChange }) {
   const opRange = h("input", { type: "range", min: "0", max: "100", value: String(Math.round(cA * 100)), class: "sbg-cp-opacity" });
   const opVal = h("span", { class: "sbg-cp-opval", text: Math.round(cA * 100) + "%" });
   opRange.addEventListener("input", () => { cA = (parseInt(opRange.value, 10) || 0) / 100; _apply(); });
-  col.appendChild(h("div", { class: "sbg-cp-oprow" }, [h("span", { class: "sbg-cp-oplabel", text: "Opacity" }), opRange, opVal]));
+  col.appendChild(h("div", { class: "sbg-cp-oprow" }, [h("span", { class: "sbg-cp-oplabel", text: "不透明度" }), opRange, opVal]));
 
   const preview = h("div", { class: "sbg-cp-preview" });
   preview.style.background = checkerBg(currentColor);
@@ -125,7 +125,7 @@ export function createColorPicker({ initialColor, onChange }) {
       chip.addEventListener("click", () => { const pc = parseColor(sc); if (pc) { take(pc); drawSL(); drawHue(); } _apply(); });
       // Beside the chip instead of inside it, since a button cannot hold
       // another, and inside the wrapper so the saved list cannot clip it.
-      const x = h("button", { type: "button", class: "sbg-cp-chipx", html: sizedIcon(CLOSE_ICON, 9), title: "Remove", "aria-label": `Remove the saved color ${sc}` });
+      const x = h("button", { type: "button", class: "sbg-cp-chipx", html: sizedIcon(CLOSE_ICON, 9), title: "移除", "aria-label": `Remove the saved color ${sc}` });
       x.addEventListener("click", (e) => {
         e.stopPropagation();
         if (!saveSavedColors(getSavedColors().filter(v => v !== sc))) showFailure("remove the saved color", _STORE_REFUSED);
@@ -142,7 +142,7 @@ export function createColorPicker({ initialColor, onChange }) {
     if (!saveSavedColors(arr)) showFailure("save the color", _STORE_REFUSED);
     renderSaved();
   });
-  savedCol.append(h("div", { class: "sbg-cp-savedlabel", text: "Saved" }), saveBtn, chipsWrap);
+  savedCol.append(h("div", { class: "sbg-cp-savedlabel", text: "已保存" }), saveBtn, chipsWrap);
   panel.appendChild(savedCol);
 
   function _apply() {

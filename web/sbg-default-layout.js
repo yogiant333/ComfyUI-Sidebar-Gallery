@@ -3,7 +3,7 @@
 export const DEFAULT_IMAGE_LAYOUT = [
   {
     "id": "file_info",
-    "title": "File Info",
+    "title": "文件信息",
     "style": "flat",
     "open": true,
     "params": [
@@ -14,13 +14,13 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "path": "path",
-        "label": "Path",
+        "label": "路径",
         "_prevStyle": "kv",
         "style": "hidden"
       },
       {
         "path": "filesize",
-        "label": "Size",
+        "label": "大小",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -28,7 +28,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "path": "resolution",
-        "label": "Resolution",
+        "label": "分辨率",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -36,13 +36,13 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "path": "modified",
-        "label": "Modified",
+        "label": "修改时间",
         "_prevStyle": "kv",
         "style": "hidden"
       },
       {
         "path": "codec",
-        "label": "Codec",
+        "label": "编码格式",
         "style": "hidden",
         "_prevStyle": "kv"
       }
@@ -50,13 +50,13 @@ export const DEFAULT_IMAGE_LAYOUT = [
   },
   {
     "id": "models",
-    "title": "Models",
+    "title": "模型",
     "style": "cards",
     "open": true,
     "params": [
       {
         "path": "model",
-        "label": "Model",
+        "label": "模型",
         "style": "title",
         "color": {
           "text": "rgba(254, 196, 62, 1)"
@@ -69,7 +69,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "path": "text_projection",
-        "label": "Text Projection",
+        "label": "文本投影",
         "style": "detail"
       },
       {
@@ -79,12 +79,12 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "path": "audio_vae",
-        "label": "Audio VAE",
+        "label": "音频 VAE",
         "style": "detail"
       },
       {
         "path": "clip_skip",
-        "label": "Clip Skip",
+        "label": "CLIP 跳过层数",
         "_prevStyle": "detail",
         "style": "hidden"
       }
@@ -92,7 +92,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
   },
   {
     "id": "sampling",
-    "title": "Sampling",
+    "title": "采样",
     "style": "cards",
     "open": true,
     "source": "samplers",
@@ -100,7 +100,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
     "params": [
       {
         "path": "samplers.sampler_name",
-        "label": "Sampler",
+        "label": "采样器",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -108,7 +108,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "path": "samplers.scheduler",
-        "label": "Scheduler",
+        "label": "调度器",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -125,55 +125,55 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "path": "samplers.steps",
-        "label": "Steps",
+        "label": "步数",
         "style": "pill",
-        "format": "Steps: {v}",
+        "format": "步数：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "samplers.shift",
-        "label": "Shift",
+        "label": "偏移",
         "style": "pill",
-        "format": "Shift: {v}",
+        "format": "偏移：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "samplers.start_at_step",
-        "label": "Start At Step",
+        "label": "起始步数",
         "style": "detail"
       },
       {
         "path": "samplers.end_at_step",
-        "label": "End At Step",
+        "label": "结束步数",
         "style": "detail"
       },
       {
         "path": "samplers.denoise",
-        "label": "Denoise",
+        "label": "去噪强度",
         "style": "hidden",
-        "format": "Denoise: {v}",
+        "format": "去噪：{v}",
         "_prevStyle": "pill"
       },
       {
         "path": "samplers.add_noise",
-        "label": "Add Noise",
+        "label": "添加噪声",
         "style": "hidden",
-        "format": "Add Noise: {v}",
+        "format": "添加噪声：{v}",
         "_prevStyle": "detail"
       },
       {
         "path": "samplers.return_with_leftover_noise",
-        "label": "Return With Leftover Noise",
+        "label": "保留剩余噪声",
         "style": "hidden",
         "_prevStyle": "detail"
       },
       {
         "path": "samplers.seed",
-        "label": "Seed",
+        "label": "随机种子",
         "style": "detail"
       }
     ]
@@ -188,7 +188,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
     "params": [
       {
         "path": "loras.name",
-        "label": "LoRA Name",
+        "label": "LoRA 名称",
         "style": "title",
         "color": {
           "text": "rgba(255, 255, 255, 1)"
@@ -196,7 +196,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "path": "loras.strength_model",
-        "label": "Strength",
+        "label": "强度",
         "style": "detail",
         "color": {
           "text": "rgba(254, 196, 62, 1)"
@@ -206,7 +206,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
   },
   {
     "id": "s_mq7yjaqb_0",
-    "title": "Features",
+    "title": "功能",
     "style": "flat",
     "open": true,
     "params": [],
@@ -218,7 +218,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
         "params": [
           {
             "path": "controlnet.model",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -226,51 +226,51 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "controlnet.preprocessor",
-            "label": "Preprocessor",
+            "label": "预处理器",
             "style": "detail"
           },
           {
             "path": "controlnet.weight",
-            "label": "Weight",
+            "label": "权重",
             "style": "detail"
           },
           {
             "path": "controlnet.start_percent",
-            "label": "Start Percent",
+            "label": "起始比例",
             "style": "pill",
-            "format": "Start: {v}",
+            "format": "起始：{v}",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             }
           },
           {
             "path": "controlnet.end_percent",
-            "label": "End Percent",
+            "label": "结束比例",
             "style": "pill",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             },
-            "format": "End: {v}"
+            "format": "结束：{v}"
           },
           {
             "path": "controlnet.guidance_start",
-            "label": "Guidance Start",
+            "label": "引导起点",
             "style": "detail"
           },
           {
             "path": "controlnet.guidance_end",
-            "label": "Guidance End",
+            "label": "引导终点",
             "style": "detail"
           },
           {
             "path": "samplers.end_at_step",
-            "label": "End At Step",
+            "label": "结束步数",
             "style": "hidden",
             "_prevStyle": "detail"
           },
           {
             "path": "workflow_nodes.Primitive integer [Crystools].int",
-            "label": "Steps",
+            "label": "步数",
             "style": "pill",
             "match": {
               "title": "CN End Step"
@@ -278,13 +278,13 @@ export const DEFAULT_IMAGE_LAYOUT = [
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             },
-            "format": "{v} Steps"
+            "format": "{v} 步"
           },
           {
             "path": "controlnet.strength",
-            "label": "Strength",
+            "label": "强度",
             "style": "pill",
-            "format": "Strength: {v}",
+            "format": "强度：{v}",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             }
@@ -298,7 +298,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
         "params": [
           {
             "path": "adetailer.model",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -306,7 +306,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "adetailer.sampler_name",
-            "label": "Sampler",
+            "label": "采样器",
             "style": "pill",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
@@ -314,7 +314,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "adetailer.scheduler",
-            "label": "Scheduler",
+            "label": "调度器",
             "style": "pill",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
@@ -331,18 +331,18 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "adetailer.steps",
-            "label": "Steps",
+            "label": "步数",
             "style": "pill",
-            "format": "{v} Steps",
+            "format": "{v} 步",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             }
           },
           {
             "path": "adetailer.denoise",
-            "label": "Denoise",
+            "label": "去噪强度",
             "style": "pill",
-            "format": "Denoise: {v}",
+            "format": "去噪：{v}",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             }
@@ -351,12 +351,12 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "id": "tab_mq941cgi_1",
-        "label": "Upscaling",
+        "label": "放大",
         "style": "cards",
         "params": [
           {
             "path": "upscaling.model",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -374,64 +374,64 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "upscaling.type",
-            "label": "Type",
+            "label": "类型",
             "style": "hidden",
             "_prevStyle": "detail"
           },
           {
             "path": "upscaling.upscale_method",
-            "label": "Method",
+            "label": "方法",
             "style": "detail"
           },
           {
             "path": "upscaling.scale_by",
-            "label": "Scale",
+            "label": "缩放倍率",
             "style": "pill",
-            "format": "Scale: {v}",
+            "format": "倍率：{v}",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             }
           },
           {
             "path": "upscaling.width",
-            "label": "Width",
+            "label": "宽度",
             "style": "detail"
           },
           {
             "path": "upscaling.height",
-            "label": "Height",
+            "label": "高度",
             "style": "detail"
           },
           {
             "path": "upscaling.longer_edge",
-            "label": "Longer Edge",
+            "label": "长边",
             "style": "detail"
           },
           {
             "path": "upscaling.megapixels",
-            "label": "Megapixels",
+            "label": "百万像素",
             "style": "detail"
           },
           {
             "path": "upscaling.target_resolution",
-            "label": "Target Resolution",
+            "label": "目标分辨率",
             "style": "detail"
           },
           {
             "path": "upscaling.initial_resolution",
-            "label": "Initial Resolution",
+            "label": "初始分辨率",
             "style": "pill",
-            "format": "Initial: {v}"
+            "format": "初始：{v}"
           },
           {
             "path": "upscaling.final_resolution",
-            "label": "Final Resolution",
+            "label": "最终分辨率",
             "style": "pill",
-            "format": "Final: {v}"
+            "format": "最终：{v}"
           },
           {
             "path": "upscaling.prompt",
-            "label": "Prompt",
+            "label": "提示词",
             "style": "hidden",
             "_prevStyle": "text"
           }
@@ -443,7 +443,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
   },
   {
     "id": "s_mpusgpqo_0",
-    "title": "LLM",
+    "title": "大语言模型",
     "style": "flat",
     "open": true,
     "params": [],
@@ -456,7 +456,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
         "params": [
           {
             "path": "workflow_nodes.LLava Loader Simple.ckpt_name",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -469,41 +469,41 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.LLavaSamplerSimple.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "pill",
-            "format": "Tokens: {v}",
+            "format": "Token 数：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerSimple.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "pill",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Temp: {v}"
+            "format": "温度：{v}"
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.top_p",
@@ -535,42 +535,42 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.frequency_penalty",
-            "label": "Frequency Penalty",
+            "label": "频率惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.frequency_penalty",
-            "label": "Frequency Penalty",
+            "label": "频率惩罚",
             "style": "pill",
-            "format": "Frequency: {v}",
+            "format": "频率惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.presence_penalty",
-            "label": "Presence Penalty",
+            "label": "存在惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.presence_penalty",
-            "label": "Presence Penalty",
+            "label": "存在惩罚",
             "style": "pill",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Presence: {v}"
+            "format": "存在惩罚：{v}"
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.repeat_penalty",
-            "label": "Repeat Penalty",
+            "label": "重复惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.repeat_penalty",
-            "label": "Repeat Penalty",
+            "label": "重复惩罚",
             "style": "pill",
-            "format": "Repeat: {v}",
+            "format": "重复惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
@@ -585,7 +585,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.prompt",
-            "label": "Prompt",
+            "label": "提示词",
             "style": "text",
             "color": {
               "bg": "rgba(24, 52, 37, 0.75)"
@@ -593,7 +593,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.easy showAnything.text",
-            "label": "Output",
+            "label": "输出",
             "style": "text",
             "match": {
               "title": "Show Any"
@@ -604,7 +604,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.ShowText|pysssss.text",
-            "label": "Output",
+            "label": "输出",
             "style": "text",
             "match": {
               "title": "Output"
@@ -623,7 +623,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
         "params": [
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.model_name",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -631,9 +631,9 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "pill",
-            "format": "Tokens: {v}",
+            "format": "Token 数：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)",
               "border": "rgba(125, 107, 239, 0)"
@@ -641,9 +641,9 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "pill",
-            "format": "Temp: {v}",
+            "format": "温度：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)",
               "border": "rgba(125, 107, 239, 0)"
@@ -661,9 +661,9 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.repetition_penalty",
-            "label": "Repetition Penalty",
+            "label": "重复惩罚",
             "style": "pill",
-            "format": "Repetition: {v}",
+            "format": "重复惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)",
               "border": "rgba(125, 107, 239, 0)"
@@ -671,7 +671,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.custom_system_prompt",
-            "label": "System Prompt",
+            "label": "系统提示词",
             "style": "text",
             "color": {
               "bg": "rgba(255, 255, 255, 0.25)"
@@ -679,13 +679,13 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.prompt_text",
-            "label": "User Prompt",
+            "label": "用户提示词",
             "style": "hidden",
             "_prevStyle": "text"
           },
           {
             "path": "workflow_nodes.ShowText|pysssss.text",
-            "label": "Text",
+            "label": "文字",
             "style": "hidden",
             "_prevStyle": "kv"
           },
@@ -697,7 +697,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.easy showAnything.text",
-            "label": "Output",
+            "label": "输出",
             "style": "hidden",
             "_prevStyle": "text"
           }
@@ -710,7 +710,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
         "params": [
           {
             "path": "workflow_nodes.JC_GGUF_adv.model",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -718,21 +718,21 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.JC_GGUF_adv.max_new_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "pill",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Tokens: {v}"
+            "format": "Token 数：{v}"
           },
           {
             "path": "workflow_nodes.JC_GGUF_adv.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "pill",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Temp: {v}"
+            "format": "温度：{v}"
           },
           {
             "path": "workflow_nodes.JC_GGUF_adv.top_p",
@@ -754,7 +754,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.JC_GGUF_adv.custom_prompt",
-            "label": "System Prompt",
+            "label": "系统提示词",
             "style": "text",
             "color": {
               "bg": "rgba(255, 255, 255, 0.25)"
@@ -762,12 +762,12 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.easy showAnything.anything",
-            "label": "Output",
+            "label": "输出",
             "style": "text"
           },
           {
             "path": "workflow_nodes.easy showAnything.text",
-            "label": "Output",
+            "label": "输出",
             "style": "text",
             "match": {
               "title": "JoyCaption Output"
@@ -786,12 +786,12 @@ export const DEFAULT_IMAGE_LAYOUT = [
         "params": [
           {
             "path": "workflow_nodes.LLMPromptGenerator.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLMPromptGenerator.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "detail"
           },
           {
@@ -806,17 +806,17 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.LLMPromptGenerator.frequency_penalty",
-            "label": "Frequency Penalty",
+            "label": "频率惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLMPromptGenerator.presence_penalty",
-            "label": "Presence Penalty",
+            "label": "存在惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLMPromptGenerator.repeat_penalty",
-            "label": "Repeat Penalty",
+            "label": "重复惩罚",
             "style": "detail"
           }
         ]
@@ -836,19 +836,19 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.TextGenerate.max_length",
-            "label": "Max Length",
+            "label": "最大长度",
             "style": "pill",
             "color": {
               "text": "rgba(255, 255, 255, 1)",
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Max: {v}"
+            "format": "最大值：{v}"
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "pill",
-            "format": "Temp: {v}",
+            "format": "温度：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
@@ -882,18 +882,18 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode.repetition_penalty",
-            "label": "Repetition Penalty",
+            "label": "重复惩罚",
             "style": "pill",
-            "format": "Rep: {v}",
+            "format": "重复惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode.presence_penalty",
-            "label": "Presence Penalty",
+            "label": "存在惩罚",
             "style": "hidden",
-            "format": "Presence: {v}",
+            "format": "存在惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
@@ -901,19 +901,19 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode",
-            "label": "Sampling Mode",
+            "label": "采样模式",
             "style": "hidden",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Sampling: {v}",
+            "format": "采样：{v}",
             "_prevStyle": "pill"
           },
           {
             "path": "workflow_nodes.TextGenerate.thinking",
-            "label": "Thinking",
+            "label": "思考",
             "style": "hidden",
-            "format": "Thinking: {v}",
+            "format": "思考：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
@@ -921,19 +921,19 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.TextGenerate.use_default_template",
-            "label": "Use Default Template",
+            "label": "使用默认模板",
             "style": "hidden",
             "_prevStyle": "detail"
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode.seed",
-            "label": "Seed",
+            "label": "随机种子",
             "style": "hidden",
             "_prevStyle": "detail"
           },
           {
             "path": "workflow_nodes.TextGenerate.prompt",
-            "label": "Prompt",
+            "label": "提示词",
             "style": "text",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
@@ -941,7 +941,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
           },
           {
             "path": "workflow_nodes.easy showAnything.text",
-            "label": "Output",
+            "label": "输出",
             "style": "text",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
@@ -954,7 +954,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
   },
   {
     "id": "positive",
-    "title": "Positive Prompt",
+    "title": "正向提示词",
     "style": "text",
     "open": true,
     "params": [],
@@ -966,12 +966,12 @@ export const DEFAULT_IMAGE_LAYOUT = [
     "tabs": [
       {
         "id": "tab_mpwso1um_0",
-        "label": "Initial",
+        "label": "初始",
         "style": "text",
         "params": [
           {
             "path": "initial_prompt",
-            "label": "Initial Prompt",
+            "label": "初始提示词",
             "style": "text",
             "color": {
               "bg": "rgba(0, 0, 0, 0)"
@@ -981,12 +981,12 @@ export const DEFAULT_IMAGE_LAYOUT = [
       },
       {
         "id": "tab_mpwsoi7k_1",
-        "label": "Enhanced",
+        "label": "增强后",
         "style": "text",
         "params": [
           {
             "path": "positive_prompt",
-            "label": "Positive Prompt",
+            "label": "正向提示词",
             "style": "text",
             "color": {
               "bg": "rgba(0, 0, 0, 0)"
@@ -998,13 +998,13 @@ export const DEFAULT_IMAGE_LAYOUT = [
   },
   {
     "id": "negative",
-    "title": "Negative Prompt",
+    "title": "负向提示词",
     "style": "text",
     "open": true,
     "params": [
       {
         "path": "negative_prompt",
-        "label": "Negative Prompt",
+        "label": "负向提示词",
         "style": "text"
       }
     ],
@@ -1015,14 +1015,14 @@ export const DEFAULT_IMAGE_LAYOUT = [
   },
   {
     "id": "workflow_nodes",
-    "title": "Workflow Nodes",
+    "title": "工作流节点",
     "style": "nodes",
     "open": false,
     "params": []
   },
   {
     "id": "extra",
-    "title": "Extra Metadata",
+    "title": "附加元数据",
     "style": "flat",
     "open": false,
     "params": [
@@ -1034,7 +1034,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
   },
   {
     "id": "raw",
-    "title": "Raw Metadata",
+    "title": "原始元数据",
     "style": "raw",
     "open": false,
     "params": [],
@@ -1045,7 +1045,7 @@ export const DEFAULT_IMAGE_LAYOUT = [
 export const DEFAULT_AUDIO_LAYOUT = [
   {
     "id": "file_info",
-    "title": "File Info",
+    "title": "文件信息",
     "style": "flat",
     "open": true,
     "params": [
@@ -1056,13 +1056,13 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "path",
-        "label": "Path",
+        "label": "路径",
         "_prevStyle": "kv",
         "style": "hidden"
       },
       {
         "path": "filesize",
-        "label": "Size",
+        "label": "大小",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1070,7 +1070,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "duration",
-        "label": "Duration",
+        "label": "时长",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1078,7 +1078,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "codec",
-        "label": "Codec",
+        "label": "编码格式",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1086,7 +1086,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "sample_rate",
-        "label": "Sample Rate",
+        "label": "采样率",
         "style": "pill",
         "format": "{v} Hz",
         "color": {
@@ -1095,7 +1095,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "bitrate",
-        "label": "Bitrate",
+        "label": "比特率",
         "style": "pill",
         "format": "{v} kbps",
         "color": {
@@ -1104,13 +1104,13 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "channels",
-        "label": "Channels",
+        "label": "声道数",
         "style": "pill",
-        "format": "Channels: {v}"
+        "format": "声道数：{v}"
       },
       {
         "path": "modified",
-        "label": "Modified",
+        "label": "修改时间",
         "_prevStyle": "kv",
         "style": "hidden"
       }
@@ -1118,62 +1118,62 @@ export const DEFAULT_AUDIO_LAYOUT = [
   },
   {
     "id": "track",
-    "title": "Track",
+    "title": "音轨",
     "style": "flat",
     "open": true,
     "params": [
       {
         "path": "track.title",
-        "label": "Title",
+        "label": "标题",
         "style": "detail"
       },
       {
         "path": "track.artist",
-        "label": "Artist",
+        "label": "艺术家",
         "style": "detail"
       },
       {
         "path": "track.album",
-        "label": "Album",
+        "label": "专辑",
         "style": "detail"
       },
       {
         "path": "track.album_artist",
-        "label": "Album Artist",
+        "label": "专辑艺术家",
         "style": "detail",
         "color": {}
       },
       {
         "path": "track.genre",
-        "label": "Genre",
+        "label": "流派",
         "style": "detail"
       },
       {
         "path": "track.date",
-        "label": "Date",
+        "label": "日期",
         "style": "detail"
       },
       {
         "path": "track.track",
-        "label": "Track #",
+        "label": "音轨编号",
         "style": "detail"
       },
       {
         "path": "track.composer",
-        "label": "Composer",
+        "label": "作曲者",
         "style": "detail"
       }
     ]
   },
   {
     "id": "models",
-    "title": "Models",
+    "title": "模型",
     "style": "cards",
     "open": true,
     "params": [
       {
         "path": "model",
-        "label": "Model",
+        "label": "模型",
         "style": "title",
         "color": {
           "text": "rgba(254, 196, 62, 1)"
@@ -1186,7 +1186,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "text_projection",
-        "label": "Text Projection",
+        "label": "文本投影",
         "style": "detail"
       },
       {
@@ -1196,14 +1196,14 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "audio_vae",
-        "label": "Audio VAE",
+        "label": "音频 VAE",
         "style": "detail"
       }
     ]
   },
   {
     "id": "sampling",
-    "title": "Sampling",
+    "title": "采样",
     "style": "cards",
     "open": true,
     "source": "samplers",
@@ -1211,7 +1211,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
     "params": [
       {
         "path": "samplers.sampler_name",
-        "label": "Sampler",
+        "label": "采样器",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1219,7 +1219,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "samplers.scheduler",
-        "label": "Scheduler",
+        "label": "调度器",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1236,24 +1236,24 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "samplers.steps",
-        "label": "Steps",
+        "label": "步数",
         "style": "pill",
-        "format": "Steps: {v}",
+        "format": "步数：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "samplers.shift",
-        "label": "Shift",
+        "label": "偏移",
         "style": "pill",
-        "format": "Shift: {v}"
+        "format": "偏移：{v}"
       },
       {
         "path": "samplers.denoise",
-        "label": "Denoise",
+        "label": "去噪强度",
         "style": "hidden",
-        "format": "Denoise: {v}",
+        "format": "去噪：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         },
@@ -1261,7 +1261,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "samplers.seed",
-        "label": "Seed",
+        "label": "随机种子",
         "style": "detail"
       }
     ]
@@ -1276,7 +1276,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
     "params": [
       {
         "path": "loras.name",
-        "label": "LoRA Name",
+        "label": "LoRA 名称",
         "style": "title",
         "color": {
           "text": "rgba(255, 255, 255, 1)"
@@ -1284,7 +1284,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "loras.strength_model",
-        "label": "Strength",
+        "label": "强度",
         "style": "detail",
         "color": {
           "text": "rgba(254, 196, 62, 1)"
@@ -1294,7 +1294,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
   },
   {
     "id": "song",
-    "title": "Song",
+    "title": "歌曲",
     "style": "flat",
     "open": true,
     "params": [
@@ -1309,43 +1309,43 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "workflow_nodes.TextEncodeAceStepAudio1.5.keyscale",
-        "label": "Key",
+        "label": "调性",
         "style": "pill",
-        "format": "Key: {v}",
+        "format": "调性：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "workflow_nodes.TextEncodeAceStepAudio1.5.timesignature",
-        "label": "Time Signature",
+        "label": "拍号",
         "style": "pill",
-        "format": "Time Signature: {v}",
+        "format": "拍号：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "workflow_nodes.TextEncodeAceStepAudio1.5.language",
-        "label": "Language",
+        "label": "语言",
         "style": "detail"
       },
       {
         "path": "workflow_nodes.TextEncodeAceStepAudio1.5.cfg_scale",
         "label": "CFG Scale",
         "style": "pill",
-        "format": "CFG Scale: {v}"
+        "format": "CFG 系数：{v}"
       },
       {
         "path": "workflow_nodes.TextEncodeAceStepAudio1.5.generate_audio_codes",
-        "label": "Generate Audio Codes",
+        "label": "生成音频编码",
         "style": "detail"
       },
       {
         "path": "workflow_nodes.TextEncodeAceStepAudio1.5.temperature",
-        "label": "Temperature",
+        "label": "温度",
         "style": "pill",
-        "format": "Temperature: {v}"
+        "format": "温度：{v}"
       },
       {
         "path": "workflow_nodes.TextEncodeAceStepAudio1.5.top_p",
@@ -1367,47 +1367,47 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "workflow_nodes.TextEncodeAceStepAudio1.5.seed",
-        "label": "Seed",
+        "label": "随机种子",
         "style": "detail"
       }
     ]
   },
   {
     "id": "voice",
-    "title": "Voice",
+    "title": "语音",
     "style": "flat",
     "open": true,
     "params": [
       {
         "path": "workflow_nodes.ChatterBoxEngineNode.language",
-        "label": "Language",
+        "label": "语言",
         "style": "pill",
-        "format": "Lang: {v}",
+        "format": "语言：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "workflow_nodes.ChatterBoxEngineNode.exaggeration",
-        "label": "Exaggeration",
+        "label": "夸张程度",
         "style": "pill",
-        "format": "Exaggeration: {v}",
+        "format": "夸张程度：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "workflow_nodes.ChatterBoxEngineNode.temperature",
-        "label": "Temperature",
+        "label": "温度",
         "style": "pill",
-        "format": "Temp: {v}",
+        "format": "温度：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "workflow_nodes.ChatterBoxEngineNode.cfg_weight",
-        "label": "CFG Weight",
+        "label": "CFG 权重",
         "style": "pill",
         "format": "CFG: {v}",
         "color": {
@@ -1416,12 +1416,12 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "path": "workflow_nodes.CharacterVoicesNode.voice_name",
-        "label": "Voice",
+        "label": "语音",
         "style": "detail"
       },
       {
         "path": "workflow_nodes.UnifiedTTSTextNode.text",
-        "label": "Spoken Text",
+        "label": "朗读文本",
         "style": "text",
         "color": {
           "bg": "rgba(23, 43, 32, 1)"
@@ -1431,7 +1431,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
   },
   {
     "id": "positive",
-    "title": "Positive Prompt",
+    "title": "正向提示词",
     "style": "text",
     "open": true,
     "params": [],
@@ -1443,12 +1443,12 @@ export const DEFAULT_AUDIO_LAYOUT = [
     "tabs": [
       {
         "id": "tab_msaud1in_0",
-        "label": "Initial",
+        "label": "初始",
         "style": "text",
         "params": [
           {
             "path": "initial_prompt",
-            "label": "Initial Prompt",
+            "label": "初始提示词",
             "style": "text",
             "color": {
               "bg": "rgba(0, 0, 0, 0)"
@@ -1458,12 +1458,12 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "id": "tab_msaud1en_1",
-        "label": "Enhanced",
+        "label": "增强后",
         "style": "text",
         "params": [
           {
             "path": "positive_prompt",
-            "label": "Positive Prompt",
+            "label": "正向提示词",
             "style": "text",
             "color": {
               "bg": "rgba(0, 0, 0, 0)"
@@ -1473,12 +1473,12 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "id": "tab_msuu1nnh_0",
-        "label": "Tags",
+        "label": "标签",
         "style": "text",
         "params": [
           {
             "path": "audio_tags",
-            "label": "Tags",
+            "label": "标签",
             "style": "text",
             "color": {
               "bg": "rgba(0, 0, 0, 0)"
@@ -1489,12 +1489,12 @@ export const DEFAULT_AUDIO_LAYOUT = [
       },
       {
         "id": "tab_msuu1q52_1",
-        "label": "Lyrics",
+        "label": "歌词",
         "style": "text",
         "params": [
           {
             "path": "audio_lyrics",
-            "label": "Lyrics",
+            "label": "歌词",
             "style": "text",
             "color": {
               "bg": "rgba(0, 0, 0, 0)"
@@ -1507,13 +1507,13 @@ export const DEFAULT_AUDIO_LAYOUT = [
   },
   {
     "id": "negative",
-    "title": "Negative Prompt",
+    "title": "负向提示词",
     "style": "text",
     "open": true,
     "params": [
       {
         "path": "negative_prompt",
-        "label": "Negative Prompt",
+        "label": "负向提示词",
         "style": "text"
       }
     ],
@@ -1524,14 +1524,14 @@ export const DEFAULT_AUDIO_LAYOUT = [
   },
   {
     "id": "workflow_nodes",
-    "title": "Workflow Nodes",
+    "title": "工作流节点",
     "style": "nodes",
     "open": false,
     "params": []
   },
   {
     "id": "extra",
-    "title": "Extra Metadata",
+    "title": "附加元数据",
     "style": "flat",
     "open": false,
     "params": [
@@ -1543,7 +1543,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
   },
   {
     "id": "raw",
-    "title": "Raw Metadata",
+    "title": "原始元数据",
     "style": "raw",
     "open": false,
     "params": [],
@@ -1554,7 +1554,7 @@ export const DEFAULT_AUDIO_LAYOUT = [
 export const DEFAULT_VIDEO_LAYOUT = [
   {
     "id": "file_info",
-    "title": "File Info",
+    "title": "文件信息",
     "style": "flat",
     "open": true,
     "params": [
@@ -1565,13 +1565,13 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "path",
-        "label": "Path",
+        "label": "路径",
         "_prevStyle": "kv",
         "style": "hidden"
       },
       {
         "path": "filesize",
-        "label": "Size",
+        "label": "大小",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1579,7 +1579,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "resolution",
-        "label": "Resolution",
+        "label": "分辨率",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1587,7 +1587,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "duration",
-        "label": "Duration",
+        "label": "时长",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1595,7 +1595,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "codec",
-        "label": "Codec",
+        "label": "编码格式",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1612,9 +1612,9 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "total_frames",
-        "label": "Frames",
+        "label": "帧数",
         "style": "hidden",
-        "format": "{v}Frames",
+        "format": "{v} 帧",
         "_prevStyle": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1622,7 +1622,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "modified",
-        "label": "Modified",
+        "label": "修改时间",
         "_prevStyle": "kv",
         "style": "hidden"
       }
@@ -1630,13 +1630,13 @@ export const DEFAULT_VIDEO_LAYOUT = [
   },
   {
     "id": "models",
-    "title": "Models",
+    "title": "模型",
     "style": "cards",
     "open": true,
     "params": [
       {
         "path": "model",
-        "label": "Model",
+        "label": "模型",
         "style": "title",
         "color": {
           "text": "rgba(254, 196, 62, 1)"
@@ -1649,7 +1649,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "text_projection",
-        "label": "Text Projection",
+        "label": "文本投影",
         "style": "detail"
       },
       {
@@ -1659,7 +1659,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "audio_vae",
-        "label": "Audio VAE",
+        "label": "音频 VAE",
         "style": "detail"
       }
     ],
@@ -1667,7 +1667,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
   },
   {
     "id": "sampling",
-    "title": "Sampling",
+    "title": "采样",
     "style": "cards",
     "open": true,
     "source": "samplers",
@@ -1675,7 +1675,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
     "params": [
       {
         "path": "samplers.sampler_name",
-        "label": "Sampler",
+        "label": "采样器",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1683,7 +1683,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "samplers.scheduler",
-        "label": "Scheduler",
+        "label": "调度器",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
@@ -1700,55 +1700,55 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "samplers.steps",
-        "label": "Steps",
+        "label": "步数",
         "style": "pill",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         },
-        "format": "Steps: {v}"
+        "format": "步数：{v}"
       },
       {
         "path": "samplers.shift",
-        "label": "Shift",
+        "label": "偏移",
         "style": "pill",
-        "format": "Shift: {v}",
+        "format": "偏移：{v}",
         "color": {
           "bg": "rgba(255, 255, 255, 0.2)"
         }
       },
       {
         "path": "samplers.start_at_step",
-        "label": "Start At Step",
+        "label": "起始步数",
         "style": "detail"
       },
       {
         "path": "samplers.end_at_step",
-        "label": "End At Step",
+        "label": "结束步数",
         "style": "detail"
       },
       {
         "path": "samplers.denoise",
-        "label": "Denoise",
+        "label": "去噪强度",
         "style": "hidden",
-        "format": "Denoise: {v}",
+        "format": "去噪：{v}",
         "_prevStyle": "pill"
       },
       {
         "path": "samplers.add_noise",
-        "label": "Add Noise",
+        "label": "添加噪声",
         "style": "hidden",
-        "format": "Add Noise: {v}",
+        "format": "添加噪声：{v}",
         "_prevStyle": "detail"
       },
       {
         "path": "samplers.return_with_leftover_noise",
-        "label": "Return With Leftover Noise",
+        "label": "保留剩余噪声",
         "style": "hidden",
         "_prevStyle": "detail"
       },
       {
         "path": "samplers.seed",
-        "label": "Seed",
+        "label": "随机种子",
         "style": "detail"
       }
     ]
@@ -1763,7 +1763,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
     "params": [
       {
         "path": "loras.name",
-        "label": "LoRA Name",
+        "label": "LoRA 名称",
         "style": "title",
         "color": {
           "text": "rgba(255, 255, 255, 1)"
@@ -1771,7 +1771,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "path": "loras.strength_model",
-        "label": "Strength",
+        "label": "强度",
         "style": "detail",
         "color": {
           "text": "rgba(254, 196, 62, 1)"
@@ -1781,7 +1781,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
   },
   {
     "id": "s_mpxnozz4_0",
-    "title": "Features",
+    "title": "功能",
     "style": "flat",
     "open": true,
     "params": [],
@@ -1793,7 +1793,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
         "params": [
           {
             "path": "mmaudio.prompt",
-            "label": "Prompt",
+            "label": "提示词",
             "style": "text",
             "color": {
               "bg": "rgba(24, 52, 37, 1)"
@@ -1801,7 +1801,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "mmaudio.negative_prompt",
-            "label": "Negative Prompt",
+            "label": "负向提示词",
             "style": "text",
             "color": {
               "bg": "rgba(59, 28, 33, 1)"
@@ -1819,17 +1819,17 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "mmaudio.steps",
-            "label": "Steps",
+            "label": "步数",
             "style": "pill",
             "color": {
               "text": "rgba(255, 255, 255, 1)",
               "bg": "rgba(37, 213, 248, 0.3)"
             },
-            "format": "Steps: {v}"
+            "format": "步数：{v}"
           },
           {
             "path": "mmaudio.seed",
-            "label": "Seed",
+            "label": "随机种子",
             "style": "detail"
           }
         ],
@@ -1837,12 +1837,12 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "id": "tab_mpxnszr6_2",
-        "label": "Interpolation",
+        "label": "插帧",
         "style": "cards",
         "params": [
           {
             "path": "interpolation.type",
-            "label": "Type",
+            "label": "类型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -1850,7 +1850,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "interpolation.model_name",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -1858,7 +1858,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "interpolation.ckpt_name",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -1866,36 +1866,36 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "interpolation.multiplier",
-            "label": "Multiplier",
+            "label": "倍数",
             "style": "detail"
           },
           {
             "path": "interpolation.scale",
-            "label": "Scale",
+            "label": "缩放倍率",
             "style": "hidden",
             "_prevStyle": "kv"
           },
           {
             "path": "interpolation.source_fps",
-            "label": "Source FPS",
+            "label": "源帧率",
             "style": "pill",
-            "format": "Source FPS: {v}",
+            "format": "源帧率：{v}",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             }
           },
           {
             "path": "interpolation.target_fps",
-            "label": "Target FPS",
+            "label": "目标帧率",
             "style": "pill",
-            "format": "Final FPS: {v}",
+            "format": "最终帧率：{v}",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             }
           },
           {
             "path": "total_frames",
-            "label": "Total Frames",
+            "label": "总帧数",
             "style": "hidden",
             "_prevStyle": "detail"
           }
@@ -1903,12 +1903,12 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "id": "tab_mpxny7vj_3",
-        "label": "Upscaling",
+        "label": "放大",
         "style": "cards",
         "params": [
           {
             "path": "upscaling.model",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -1926,64 +1926,64 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "upscaling.type",
-            "label": "Type",
+            "label": "类型",
             "style": "hidden",
             "_prevStyle": "detail"
           },
           {
             "path": "upscaling.upscale_method",
-            "label": "Method",
+            "label": "方法",
             "style": "detail"
           },
           {
             "path": "upscaling.scale_by",
-            "label": "Scale",
+            "label": "缩放倍率",
             "style": "pill",
-            "format": "Scale: {v}",
+            "format": "倍率：{v}",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
             }
           },
           {
             "path": "upscaling.width",
-            "label": "Width",
+            "label": "宽度",
             "style": "detail"
           },
           {
             "path": "upscaling.height",
-            "label": "Height",
+            "label": "高度",
             "style": "detail"
           },
           {
             "path": "upscaling.longer_edge",
-            "label": "Longer Edge",
+            "label": "长边",
             "style": "detail"
           },
           {
             "path": "upscaling.megapixels",
-            "label": "Megapixels",
+            "label": "百万像素",
             "style": "detail"
           },
           {
             "path": "upscaling.target_resolution",
-            "label": "Target Resolution",
+            "label": "目标分辨率",
             "style": "detail"
           },
           {
             "path": "upscaling.initial_resolution",
-            "label": "Initial Resolution",
+            "label": "初始分辨率",
             "style": "pill",
-            "format": "Initial: {v}"
+            "format": "初始：{v}"
           },
           {
             "path": "upscaling.final_resolution",
-            "label": "Final Resolution",
+            "label": "最终分辨率",
             "style": "pill",
-            "format": "Final: {v}"
+            "format": "最终：{v}"
           },
           {
             "path": "upscaling.prompt",
-            "label": "Prompt",
+            "label": "提示词",
             "style": "hidden",
             "_prevStyle": "text"
           }
@@ -1994,7 +1994,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
   },
   {
     "id": "s_ms62waap_4",
-    "title": "LLM",
+    "title": "大语言模型",
     "style": "flat",
     "open": true,
     "params": [],
@@ -2007,7 +2007,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
         "params": [
           {
             "path": "workflow_nodes.LLava Loader Simple.ckpt_name",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -2020,41 +2020,41 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.LLavaSamplerSimple.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "pill",
-            "format": "Tokens: {v}",
+            "format": "Token 数：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerSimple.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "pill",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Temp: {v}"
+            "format": "温度：{v}"
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.top_p",
@@ -2086,42 +2086,42 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.frequency_penalty",
-            "label": "Frequency Penalty",
+            "label": "频率惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.frequency_penalty",
-            "label": "Frequency Penalty",
+            "label": "频率惩罚",
             "style": "pill",
-            "format": "Frequency: {v}",
+            "format": "频率惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.presence_penalty",
-            "label": "Presence Penalty",
+            "label": "存在惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.presence_penalty",
-            "label": "Presence Penalty",
+            "label": "存在惩罚",
             "style": "pill",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Presence: {v}"
+            "format": "存在惩罚：{v}"
           },
           {
             "path": "workflow_nodes.LLavaOptionalMemoryFreeAdvanced.repeat_penalty",
-            "label": "Repeat Penalty",
+            "label": "重复惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.repeat_penalty",
-            "label": "Repeat Penalty",
+            "label": "重复惩罚",
             "style": "pill",
-            "format": "Repeat: {v}",
+            "format": "重复惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
@@ -2136,7 +2136,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.LLavaSamplerAdvanced.prompt",
-            "label": "Prompt",
+            "label": "提示词",
             "style": "text",
             "color": {
               "bg": "rgba(24, 52, 37, 0.75)"
@@ -2144,7 +2144,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.easy showAnything.text",
-            "label": "Output",
+            "label": "输出",
             "style": "text",
             "match": {
               "title": "Show Any"
@@ -2155,7 +2155,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.ShowText|pysssss.text",
-            "label": "Output",
+            "label": "输出",
             "style": "text",
             "match": {
               "title": "Output"
@@ -2174,7 +2174,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
         "params": [
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.model_name",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -2182,9 +2182,9 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "pill",
-            "format": "Tokens: {v}",
+            "format": "Token 数：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)",
               "border": "rgba(125, 107, 239, 0)"
@@ -2192,9 +2192,9 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "pill",
-            "format": "Temp: {v}",
+            "format": "温度：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)",
               "border": "rgba(125, 107, 239, 0)"
@@ -2212,9 +2212,9 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.repetition_penalty",
-            "label": "Repetition Penalty",
+            "label": "重复惩罚",
             "style": "pill",
-            "format": "Repetition: {v}",
+            "format": "重复惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)",
               "border": "rgba(125, 107, 239, 0)"
@@ -2222,7 +2222,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.custom_system_prompt",
-            "label": "System Prompt",
+            "label": "系统提示词",
             "style": "text",
             "color": {
               "bg": "rgba(255, 255, 255, 0.25)"
@@ -2230,13 +2230,13 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.AILab_QwenVL_GGUF_PromptEnhancer.prompt_text",
-            "label": "User Prompt",
+            "label": "用户提示词",
             "style": "hidden",
             "_prevStyle": "text"
           },
           {
             "path": "workflow_nodes.ShowText|pysssss.text",
-            "label": "Text",
+            "label": "文字",
             "style": "hidden",
             "_prevStyle": "kv"
           },
@@ -2248,7 +2248,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.easy showAnything.text",
-            "label": "Output",
+            "label": "输出",
             "style": "hidden",
             "_prevStyle": "text"
           }
@@ -2261,7 +2261,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
         "params": [
           {
             "path": "workflow_nodes.JC_GGUF_adv.model",
-            "label": "Model",
+            "label": "模型",
             "style": "title",
             "color": {
               "text": "rgba(254, 196, 62, 1)"
@@ -2269,21 +2269,21 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.JC_GGUF_adv.max_new_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "pill",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Tokens: {v}"
+            "format": "Token 数：{v}"
           },
           {
             "path": "workflow_nodes.JC_GGUF_adv.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "pill",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Temp: {v}"
+            "format": "温度：{v}"
           },
           {
             "path": "workflow_nodes.JC_GGUF_adv.top_p",
@@ -2305,7 +2305,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.JC_GGUF_adv.custom_prompt",
-            "label": "System Prompt",
+            "label": "系统提示词",
             "style": "text",
             "color": {
               "bg": "rgba(255, 255, 255, 0.25)"
@@ -2313,12 +2313,12 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.easy showAnything.anything",
-            "label": "Output",
+            "label": "输出",
             "style": "text"
           },
           {
             "path": "workflow_nodes.easy showAnything.text",
-            "label": "Output",
+            "label": "输出",
             "style": "text",
             "match": {
               "title": "JoyCaption Output"
@@ -2337,12 +2337,12 @@ export const DEFAULT_VIDEO_LAYOUT = [
         "params": [
           {
             "path": "workflow_nodes.LLMPromptGenerator.max_tokens",
-            "label": "Max Tokens",
+            "label": "最大 Token 数",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLMPromptGenerator.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "detail"
           },
           {
@@ -2357,17 +2357,17 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.LLMPromptGenerator.frequency_penalty",
-            "label": "Frequency Penalty",
+            "label": "频率惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLMPromptGenerator.presence_penalty",
-            "label": "Presence Penalty",
+            "label": "存在惩罚",
             "style": "detail"
           },
           {
             "path": "workflow_nodes.LLMPromptGenerator.repeat_penalty",
-            "label": "Repeat Penalty",
+            "label": "重复惩罚",
             "style": "detail"
           }
         ]
@@ -2387,19 +2387,19 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.TextGenerate.max_length",
-            "label": "Max Length",
+            "label": "最大长度",
             "style": "pill",
             "color": {
               "text": "rgba(255, 255, 255, 1)",
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Max: {v}"
+            "format": "最大值：{v}"
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode.temperature",
-            "label": "Temperature",
+            "label": "温度",
             "style": "pill",
-            "format": "Temp: {v}",
+            "format": "温度：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
@@ -2433,18 +2433,18 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode.repetition_penalty",
-            "label": "Repetition Penalty",
+            "label": "重复惩罚",
             "style": "pill",
-            "format": "Rep: {v}",
+            "format": "重复惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             }
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode.presence_penalty",
-            "label": "Presence Penalty",
+            "label": "存在惩罚",
             "style": "hidden",
-            "format": "Presence: {v}",
+            "format": "存在惩罚：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
@@ -2452,19 +2452,19 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode",
-            "label": "Sampling Mode",
+            "label": "采样模式",
             "style": "hidden",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
-            "format": "Sampling: {v}",
+            "format": "采样：{v}",
             "_prevStyle": "pill"
           },
           {
             "path": "workflow_nodes.TextGenerate.thinking",
-            "label": "Thinking",
+            "label": "思考",
             "style": "hidden",
-            "format": "Thinking: {v}",
+            "format": "思考：{v}",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
             },
@@ -2472,19 +2472,19 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.TextGenerate.use_default_template",
-            "label": "Use Default Template",
+            "label": "使用默认模板",
             "style": "hidden",
             "_prevStyle": "detail"
           },
           {
             "path": "workflow_nodes.TextGenerate.sampling_mode.seed",
-            "label": "Seed",
+            "label": "随机种子",
             "style": "hidden",
             "_prevStyle": "detail"
           },
           {
             "path": "workflow_nodes.TextGenerate.prompt",
-            "label": "Prompt",
+            "label": "提示词",
             "style": "text",
             "color": {
               "bg": "rgba(255, 255, 255, 0.2)"
@@ -2492,7 +2492,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
           },
           {
             "path": "workflow_nodes.easy showAnything.text",
-            "label": "Output",
+            "label": "输出",
             "style": "text",
             "color": {
               "bg": "rgba(254, 196, 62, 0.25)"
@@ -2505,7 +2505,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
   },
   {
     "id": "positive",
-    "title": "Positive Prompt",
+    "title": "正向提示词",
     "style": "text",
     "open": true,
     "params": [],
@@ -2517,12 +2517,12 @@ export const DEFAULT_VIDEO_LAYOUT = [
     "tabs": [
       {
         "id": "tab_ms62r3v5_2",
-        "label": "Initial",
+        "label": "初始",
         "style": "text",
         "params": [
           {
             "path": "initial_prompt",
-            "label": "Initial Prompt",
+            "label": "初始提示词",
             "style": "text",
             "color": {
               "bg": "rgba(0, 0, 0, 0)"
@@ -2532,12 +2532,12 @@ export const DEFAULT_VIDEO_LAYOUT = [
       },
       {
         "id": "tab_ms62r3v5_3",
-        "label": "Enhanced",
+        "label": "增强后",
         "style": "text",
         "params": [
           {
             "path": "positive_prompt",
-            "label": "Positive Prompt",
+            "label": "正向提示词",
             "style": "text",
             "color": {
               "bg": "rgba(0, 0, 0, 0)"
@@ -2549,13 +2549,13 @@ export const DEFAULT_VIDEO_LAYOUT = [
   },
   {
     "id": "negative",
-    "title": "Negative Prompt",
+    "title": "负向提示词",
     "style": "text",
     "open": true,
     "params": [
       {
         "path": "negative_prompt",
-        "label": "Negative Prompt",
+        "label": "负向提示词",
         "style": "text"
       }
     ],
@@ -2566,14 +2566,14 @@ export const DEFAULT_VIDEO_LAYOUT = [
   },
   {
     "id": "workflow_nodes",
-    "title": "Workflow Nodes",
+    "title": "工作流节点",
     "style": "nodes",
     "open": false,
     "params": []
   },
   {
     "id": "extra",
-    "title": "Extra Metadata",
+    "title": "附加元数据",
     "style": "flat",
     "open": false,
     "params": [
@@ -2585,7 +2585,7 @@ export const DEFAULT_VIDEO_LAYOUT = [
   },
   {
     "id": "raw",
-    "title": "Raw Metadata",
+    "title": "原始元数据",
     "style": "raw",
     "open": false,
     "params": [],

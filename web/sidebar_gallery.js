@@ -37,7 +37,7 @@ app.registerExtension({
 
     const newer = downgradedFrom();
     if (newer) {
-      postNotice("downgrade", `You last used gallery version ${newer}, which is newer than this one. The layouts and presets made in it come back after updating to it again. To use its layouts now, load a preset saved in ${newer} from the Presets tab.`,
+      postNotice("downgrade", `你上次使用的图库版本 ${newer} 比当前版本更新。更新回该版本后，其中创建的布局和预设会恢复。如需现在使用这些布局，请在“预设”页加载 ${newer} 保存的预设。`,
         { onShown: clearDowngradeNotice });
     }
 
@@ -118,18 +118,18 @@ app.registerExtension({
     async function _loadImageIntoNode(node, dragged) {
       const widget = (node.widgets || []).find(w => w && w.name === "image");
       if (!widget) {
-        showFailure(`load the image into ${node.title || "this node"}`, "the node has no image field");
+        showFailure(`将图像加载到${node.title || "此节点"}`, "此节点没有图像字段");
         return;
       }
       const name = dragged.relpath.split("/").pop();
       const fileResp = await fetch(fileUrl(dragged));
-      if (!fileResp.ok) throw new Error("the gallery can't read it");
+      if (!fileResp.ok) throw new Error("图库无法读取此文件");
       const blob = await fileResp.blob();
       const file = new File([blob], name, { type: blob.type || "image/png" });
       const fd = new FormData();
       fd.append("image", file);
       const up = await comfyApi.fetchApi("/upload/image", { method: "POST", body: fd });
-      if (!up.ok) throw new Error("the upload to ComfyUI failed");
+      if (!up.ok) throw new Error("上传到 ComfyUI 失败");
       const data = await up.json();
       const uploaded = data.subfolder ? `${data.subfolder}/${data.name}` : data.name;
       // The combo's list lacks a file uploaded since it was filled.
@@ -170,7 +170,7 @@ app.registerExtension({
 
         await loadWorkflowFrom(await fetchFullMeta(dragged));
       } catch (err) {
-        showFailure("load this file", err);
+        showFailure("加载此文件", err);
       }
     }, true);
 
@@ -195,8 +195,8 @@ app.registerExtension({
     app.extensionManager.registerSidebarTab({
       id: "sidebarGallery",
       icon: "pi pi-images",
-      title: "Gallery",
-      tooltip: "Sidebar Gallery",
+      title: "图库",
+      tooltip: "侧边栏图库",
       type: "custom",
 
       destroy: disposeLiveTeardown,
@@ -245,13 +245,13 @@ app.registerExtension({
       try {
         try { galleryApi?.closePopup?.(); } catch { }
         try { closeGallerySettings(); } catch { }
-        const tabBtns = document.querySelectorAll('button[aria-label="Sidebar Gallery"], [id*="sidebarGallery"], [data-tooltip*="Gallery"], [data-tooltip*="Sidebar Gallery"]');
+        const tabBtns = document.querySelectorAll('button[aria-label="侧边栏图库"], button[aria-label="Sidebar Gallery"], [id*="sidebarGallery"], [data-tooltip*="侧边栏图库"], [data-tooltip*="Gallery"]');
         for (const btn of tabBtns) {
           if (btn.click) { btn.click(); return; }
         }
         const allTabs = document.querySelectorAll('.p-tablist .p-tab, [class*="sidebar"] button');
         for (const tab of allTabs) {
-          if (tab.querySelector('.pi-images') || tab.textContent?.includes('Gallery')) {
+          if (tab.querySelector('.pi-images') || (tab.textContent?.includes('Gallery') || tab.textContent?.includes('图库'))) {
             tab.click(); return;
           }
         }

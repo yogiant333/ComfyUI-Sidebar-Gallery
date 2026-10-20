@@ -33,12 +33,12 @@ let _showDerived = null;
 let _labelSeq = 0;
 
 const GROUPS = [
-  ["base", "Base colors", "The five colors everything else is built from."],
-  ["gallery", "Gallery", ""],
-  ["toolbar", "Toolbar", ""],
-  ["lightbox", "Lightbox", ""],
-  ["states", "Status colors and opacity", ""],
-  ["shape", "Shape and size", ""],
+  ["base", "基础颜色", "其他配色所依据的五种基础颜色。"],
+  ["gallery", "图库", ""],
+  ["toolbar", "工具栏", ""],
+  ["lightbox", "查看器", ""],
+  ["states", "状态颜色和不透明度", ""],
+  ["shape", "形状和大小", ""],
 ];
 
 const IMPORT_ACCEPT = THEME_FILE_SUFFIX;
@@ -78,7 +78,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
   // shows beside a list that cannot be read.
   const refused = (verb = "change") => {
     const why = themesUnreadReason();
-    if (why) showFailure(`${verb} the theme`, why);
+    if (why) showFailure(`${({ change: "更改", import: "导入", duplicate: "复制", delete: "删除" })[verb] || verb}主题`, why);
     return !!why;
   };
   const _replBaseline = {}, _replLast = {}, _replTimer = {};
@@ -92,7 +92,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
       if (!wasBuiltIn || _offeredName === t) return;
       _offeredName = t;
       themeBlock.startRename(t);
-    }).catch(e => showFailure("save the theme", e));
+    }).catch(e => showFailure("保存主题", e));
   }
 
   const form = h("div", { class: "sbg-gs-form" });
@@ -100,7 +100,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
   const grid = h("div", { class: "sbg-gs-appearance" }, [form, side]);
 
   const themeBlock = buildThemeBlock();
-  sectionTitle(form, "Themes");
+  sectionTitle(form, "主题列表");
 
   form.appendChild(themeBlock.unreadNote);
   form.appendChild(themeBlock.list);
@@ -124,7 +124,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
       const derivedSwitch = h("input", { type: "checkbox", class: "sbg-gs-switch" });
       derivedSwitch.checked = _showDerived;
       derivedSwitch.addEventListener("change", () => { _showDerived = derivedSwitch.checked; for (const d of derivedEls) d.classList.toggle("sbg-gs-row--folded", !_showDerived); });
-      form.appendChild(settingRow("Show Derived Colors", derivedSwitch, "Colors worked out from the five base colors. Set one to use a different color instead."));
+      form.appendChild(settingRow("显示派生颜色", derivedSwitch, "根据五种基础颜色计算的配色，可单独设置其他颜色。"));
       for (const [key, label, origin, hit] of DERIVED_ROWS) {
         const el = buildDerivedRow(key, label, origin, hit);
         derivedEls.push(el);
@@ -162,7 +162,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
   }
 
   function swatchButton() {
-    return h("button", { type: "button", class: "sbg-btn sbg-btn--icon sbg-gs-swatchbtn", title: "Choose color" });
+    return h("button", { type: "button", class: "sbg-btn sbg-btn--icon sbg-gs-swatchbtn", title: "选择颜色" });
   }
 
   function buildRow(spec) {
@@ -177,7 +177,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
         e.stopPropagation();
         if (refused()) return;
         openColorPopover(btn, {
-          channels: [{ key: "bg", label: "Color", def: resolveDef(spec.def) }],
+          channels: [{ key: "bg", label: "颜色", def: resolveDef(spec.def) }],
           colors,
           onChange: (_k, c) => { write(spec.key, c); repaint(); },
           onClear: () => { write(spec.key, ""); repaint(); },
@@ -266,7 +266,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
 
   function buildDerivedRow(key, label, origin, hit) {
     const btn = swatchButton();
-    const row = labelledRow({ label, hit, tip: "Computed from the five base colors unless set here" }, btn,
+    const row = labelledRow({ label, hit, tip: "未在此设置时，根据五种基础颜色计算" }, btn,
       "sbg-gs-row sbg-gs-row--derived" + (_showDerived ? "" : " sbg-gs-row--folded"));
     const val = h("span", { class: "sbg-gs-derived", text: origin });
     const colors = () => ({ bg: themeColor(key) });
@@ -281,7 +281,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
       e.stopPropagation();
       if (refused()) return;
       openColorPopover(btn, {
-        channels: [{ key: "bg", label: "Color", def: def() }],
+        channels: [{ key: "bg", label: "颜色", def: def() }],
         colors,
         onChange: (_k, c) => { write(key, c); repaint(); },
         onClear: () => { write(key, ""); repaint(); },
@@ -292,7 +292,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
   }
 
   function buildThemeBlock() {
-    const list = h("div", { class: "sbg-gs-themes", role: "listbox", "aria-label": "Themes", tabindex: "0" });
+    const list = h("div", { class: "sbg-gs-themes", role: "listbox", "aria-label": "主题列表", tabindex: "0" });
     const unreadNote = h("div", { class: "sbg-notices sbg-gs-notices" });
     // The failure the person closed, which the list's redraws leave closed, and
     // the one on screen, which a redraw leaves in place under the focus.
@@ -300,10 +300,10 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
     let shownUnread = null;
 
     const guard = (verb, fn) => async (...args) => {
-      try { await fn(...args); } catch (e) { showFailure(`${verb} the theme`, e); }
+      try { await fn(...args); } catch (e) { showFailure(`${({ change: "更改", import: "导入", duplicate: "复制", delete: "删除" })[verb] || verb}主题`, e); }
     };
-    const imp = h("button", { type: "button", class: "sbg-btn sbg-btn--iconlabel sbg-gs-theme__import", title: "Add a theme from a file" }, [
-      h("span", { html: IMPORT_ICON, "aria-hidden": "true" }), h("span", { text: "Import theme" }),
+    const imp = h("button", { type: "button", class: "sbg-btn sbg-btn--iconlabel sbg-gs-theme__import", title: "从文件添加主题" }, [
+      h("span", { html: IMPORT_ICON, "aria-hidden": "true" }), h("span", { text: "导入主题" }),
     ]);
     imp.addEventListener("click", () => {
       if (refused("import")) return;
@@ -318,12 +318,12 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
         // held is said.
         const before = new Set(userThemes().map((x) => x.id));
         const t = await importTheme(raw);
-        if (before.has(t.id)) showToast(`"${t.name}" is already in the theme list.`);
+        if (before.has(t.id)) showToast(`“${t.name}”已在主题列表中。`);
       }));
       fi.click();
     });
     const actions = h("div", { class: "sbg-gs-actions" }, [imp]);
-    const caption = h("div", { class: "sbg-gs-desc", text: "Changes below save to the selected theme as you make them. A change to a built-in theme makes a copy of it first." });
+    const caption = h("div", { class: "sbg-gs-desc", text: "下方更改会即时保存至选中的主题。修改内置主题时会先创建副本。" });
 
     const iconBtn = (icon, title, focus, cls = "") => h("button", {
       type: "button", class: "sbg-btn sbg-gs-theme__btn" + (cls ? " " + cls : ""), title, "aria-label": title, html: icon, "data-focus": focus,
@@ -344,13 +344,13 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
         class: "sbg-gs-theme" + (active ? " sbg-gs-theme--active" : ""), role: "option", "aria-selected": String(active),
         tabindex: "-1", "data-id": entry.id, "data-focus": `${entry.id}#row`,
       });
-      row.appendChild(h("span", { class: "sbg-grip sbg-gs-theme__grip", text: "⋮⋮", title: "Drag to reorder", "aria-hidden": "true" }));
+      row.appendChild(h("span", { class: "sbg-grip sbg-gs-theme__grip", text: "⋮⋮", title: "拖动调整顺序", "aria-hidden": "true" }));
       row.appendChild(h("span", { class: "sbg-gs-theme__check", html: active ? CHECK_ICON : "", "aria-hidden": "true" }));
       row.appendChild(h("span", { class: "sbg-gs-theme__strip", "aria-hidden": "true" },
         BASE_COLORS.map(({ key }) => h("span", { class: "sbg-gs-theme__swatch", style: entry.values[key] ? `background:${entry.values[key]}` : "" }))));
       const name = h("span", { class: "sbg-gs-theme__name", text: entry.name });
       row.appendChild(name);
-      if (entry.builtIn) row.appendChild(h("span", { class: "sbg-gs-theme__tag", text: entry.note ? `Built-in, ${entry.note}` : "Built-in" }));
+      if (entry.builtIn) row.appendChild(h("span", { class: "sbg-gs-theme__tag", text: entry.note ? `内置，${entry.note}` : "内置" }));
       const select = () => { if (activeThemeId() !== entry.id) selectTheme(entry.id); };
       row.addEventListener("click", (e) => { if (e.target.closest(".sbg-gs-theme__actions, .sbg-gs-theme__rename, .sbg-gs-theme__grip")) return; select(); });
       // The list's own keys would pick the row they have marked.
@@ -363,11 +363,11 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
       if (!active) return row;
       const acts = h("span", { class: "sbg-gs-theme__actions" });
       if (entry.theme) {
-        const ren = iconBtn(PENCIL_ICON, "Rename", `${entry.id}#rename`);
+        const ren = iconBtn(PENCIL_ICON, "重命名", `${entry.id}#rename`);
         ren.addEventListener("click", () => renameRow(name, entry.theme));
         acts.appendChild(ren);
       }
-      const dup = iconBtn(DUPLICATE_ICON, "Duplicate this theme", `${entry.id}#dup`);
+      const dup = iconBtn(DUPLICATE_ICON, "复制此主题", `${entry.id}#dup`);
       // Another settings tab may have taken the content during the wait.
       dup.addEventListener("click", guard("duplicate", async () => {
         if (refused("duplicate")) return;
@@ -375,19 +375,19 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
         if (list.isConnected) startRename(t);
       }));
       acts.appendChild(dup);
-      const exp = iconBtn(EXPORT_ICON, "Export this theme to a file", `${entry.id}#export`);
+      const exp = iconBtn(EXPORT_ICON, "将此主题导出为文件", `${entry.id}#export`);
       // A file's name holds no character a browser would change on the way to disk.
       exp.addEventListener("click", async () => {
         if (!entry.theme) { downloadJson(themeFile({ name: entry.name, values: activeValues() }), `${entry.name}${THEME_FILE_SUFFIX}`); return; }
         try { downloadJson(await themeDocument(entry.theme), entry.theme.filename); }
-        catch (e) { showFailure("export the theme", e); }
+        catch (e) { showFailure("导出主题", e); }
       });
       acts.appendChild(exp);
       if (entry.theme) {
-        const del = iconBtn(TRASH_ICON, "Delete this theme", `${entry.id}#delete`, "sbg-btn--icon-danger");
+        const del = iconBtn(TRASH_ICON, "删除此主题", `${entry.id}#delete`, "sbg-btn--icon-danger");
         confirmClick(del, guard("delete", async () => {
           const where = await deleteTheme(entry.theme);
-          if (where) showToast(`Theme "${entry.theme.name}" moved to ${where}.`, 4000);
+          if (where) showToast(`主题“${entry.theme.name}”已移至 ${where}。`, 4000);
         }));
         acts.appendChild(del);
       }
@@ -397,11 +397,11 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
 
     function unreadableRow(t) {
       const row = h("div", { class: "sbg-gs-theme sbg-gs-theme--unreadable", role: "option", "aria-selected": "false", "aria-disabled": "true" });
-      row.appendChild(h("span", { class: "sbg-gs-theme__name", text: `${t.filename} (can't be read)` }));
-      const del = iconBtn(TRASH_ICON, `Delete ${t.filename}`, `file:${t.filename}#delete`, "sbg-btn--icon-danger");
+      row.appendChild(h("span", { class: "sbg-gs-theme__name", text: `${t.filename}（无法读取）` }));
+      const del = iconBtn(TRASH_ICON, `删除 ${t.filename}`, `file:${t.filename}#delete`, "sbg-btn--icon-danger");
       confirmClick(del, guard("delete", async () => {
         const where = await deleteTheme(t);
-        if (where) showToast(`"${t.filename}" moved to ${where}.`, 4000);
+        if (where) showToast(`“${t.filename}”已移至 ${where}。`, 4000);
       }));
       row.appendChild(h("span", { class: "sbg-gs-theme__actions" }, [del]));
       return row;
@@ -411,7 +411,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
       if (_renaming) return;
       _renaming = true;
       const input = h("input", {
-        type: "text", class: "sbg-gs-input sbg-gs-theme__rename", value: theme.name, "aria-label": "Theme name", maxlength: themeNameMax(),
+        type: "text", class: "sbg-gs-input sbg-gs-theme__rename", value: theme.name, "aria-label": "主题名称", maxlength: themeNameMax(),
       });
       nameEl.replaceWith(input);
       input.focus();
@@ -422,7 +422,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
         done = true;
         const next = input.value.trim();
         try { if (commit && next && next !== theme.name) await renameTheme(theme, next); }
-        catch (e) { showFailure("rename the theme", e); }
+        catch (e) { showFailure("重命名主题", e); }
         finally { _renaming = false; refresh(keepFocus ? `${userThemeId(theme.id)}#rename` : undefined); }
       };
       input.addEventListener("keydown", (e) => {
@@ -463,7 +463,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
         shownUnread = showing;
         unreadNote.textContent = "";
         if (showing) {
-          unreadNote.appendChild(noticeRow(`${failureText("load the theme list", showing)}. Only built-in themes are listed.`,
+          unreadNote.appendChild(noticeRow(`${failureText("加载主题列表", showing)}。仅显示内置主题。`,
             () => { closedUnread = showing; shownUnread = null; unreadNote.textContent = ""; list.focus(); }, { failure: true }));
         }
       }
@@ -525,7 +525,7 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
     const searchWrap = h("div", { class: "sbg-search-wrap" }, [
       h("span", { class: "sbg-search-inputbox" }, [
         h("span", { class: "sbg-search-tags" }, [searchTagPill({ raw: "lora:detail" }).pill, searchTagPill({ raw: "blurry", exclude: true }).pill]),
-        h("input", { class: "sbg-search-input", type: "text", placeholder: "Search… (name: for file names only)", tabindex: "-1", readonly: "" }),
+        h("input", { class: "sbg-search-input", type: "text", placeholder: "搜索…（name: 仅搜索文件名）", tabindex: "-1", readonly: "" }),
       ]),
       refreshBtn,
     ]);
@@ -536,20 +536,20 @@ export function renderTheme({ content, visitCleanups, galleryCtx, indexOnly }) {
     const toolbar = arrangeToolbar(layout, {
       searchWrap,
       refreshBtn,
-      kindGroup: h("div", { class: "sbg-kind-group" }, [seg({ text: "All" }, true), seg({ html: IMAGE_FILTER_ICON }), seg({ html: VIDEO_FILTER_ICON }), seg({ html: AUDIO_FILTER_ICON })]),
-      countEl: h("span", { class: "sbg-count", text: layout === "count-in-search" ? total : `${total} files` }),
+      kindGroup: h("div", { class: "sbg-kind-group" }, [seg({ text: "全部" }, true), seg({ html: IMAGE_FILTER_ICON }), seg({ html: VIDEO_FILTER_ICON }), seg({ html: AUDIO_FILTER_ICON })]),
+      countEl: h("span", { class: "sbg-count", text: layout === "count-in-search" ? total : `${total} 个文件` }),
       folderNav: h("div", { class: "sbg-folder-nav" }, [
-        h("span", { class: "sbg-folder-btn sbg-folder-btn--folders" }, [h("span", { class: "sbg-folder-btn__icon", html: FOLDER_ICON, "aria-hidden": "true" }), h("span", { class: "sbg-folder-btn__label", text: "All folders" })]),
+        h("span", { class: "sbg-folder-btn sbg-folder-btn--folders" }, [h("span", { class: "sbg-folder-btn__icon", html: FOLDER_ICON, "aria-hidden": "true" }), h("span", { class: "sbg-folder-btn__label", text: "所有文件夹" })]),
       ]),
       sortSel: h("span", { class: "sbg-select sbg-select--auto sbg-gs-sample__sort", text: SORT_OPTIONS.find(([k]) => k === "created_desc")[1] }),
       gearBtn: sq(GEAR_ICON),
       // In this layout the notification area stays open as a third row holding the count.
       area: layout === "rows" ? h("div", { class: "sbg-area sbg-area--open" }, [h("div", { class: "sbg-area__progress" }, [
-        h("div", { class: "sbg-area__row" }, [h("span", { class: "sbg-area__text" }), h("span", { class: "sbg-area__right", text: `${total} files` })]),
+        h("div", { class: "sbg-area__row" }, [h("span", { class: "sbg-area__text" }), h("span", { class: "sbg-area__right", text: `${total} 个文件` })]),
       ])]) : null,
     });
     const cards = h("div", { class: "sbg-gs-sample__grid" }, picked.map(card));
-    if (!picked.length) cards.appendChild(h("div", { class: "sbg-gs-desc", text: "No thumbnails in the library yet." }));
+    if (!picked.length) cards.appendChild(h("div", { class: "sbg-gs-desc", text: "媒体库中暂无缩略图。" }));
     const root = h("div", { class: "sbg-root sbg-gs-sample__root" }, [toolbar, cards]);
 
     const lbLabel = Object.fromEntries(LB_BUTTONS.map(b => [b.id, b.label]));

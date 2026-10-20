@@ -10,9 +10,9 @@ export async function deleteFile(it) {
     // The file the card showed, since a new one can take a deleted one's name.
     const data = await apiPost("/sidebar_gallery/delete",
       { root_id: it.root_id, relpath: it.relpath, mtime: modifiedTime(it), size: it.size });
-    showToast(`Moved to ${data.where || "the trash"}`);
+    showToast(`已移至${data.where || "回收站"}`);
   } catch (e) {
-    showFailure("delete the file", e);
+    showFailure("删除文件", e);
     if (!e.data?.gone) return;
   }
   document.dispatchEvent(new CustomEvent("sbg-file-deleted", { detail: { root_id: it.root_id, relpath: it.relpath } }));
@@ -20,15 +20,15 @@ export async function deleteFile(it) {
 
 export function copyPrompt(summary) {
   const p = summary.positive_prompt;
-  if (p) copyText(typeof p === "string" ? p : pj(p), "Prompt copied.");
+  if (p) copyText(typeof p === "string" ? p : pj(p), "已复制提示词");
 }
 
 // A file with no workflow is the file's nature and no failure, so it is told
 // in the accent color.
-const NO_WORKFLOW = "This file has no workflow.";
+const NO_WORKFLOW = "此文件不包含工作流";
 
 export function copyWorkflow(meta) {
-  if (meta.workflow) copyText(typeof meta.workflow === "string" ? meta.workflow : pj(meta.workflow), "Workflow copied.");
+  if (meta.workflow) copyText(typeof meta.workflow === "string" ? meta.workflow : pj(meta.workflow), "已复制工作流");
   else showToast(NO_WORKFLOW);
 }
 

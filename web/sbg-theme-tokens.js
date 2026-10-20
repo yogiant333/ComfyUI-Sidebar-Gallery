@@ -7,13 +7,13 @@ import { BASE_COLORS, DEFAULT_THEME, builtInTheme } from "./sbg-theme-model.js";
 
 // The last column selects what the row paints in the sample.
 export const DERIVED_ROWS = [
-  ["--sbg-surface-hover", "Hover Background", "Surface, shifted slightly towards the text color", ".sbg-gs-sample__hover"],
-  ["--sbg-text-dim", "Dim Text", "Text, faded", ".sbg-card__meta, .sbg-area__row"],
-  ["--sbg-border-hover", "Border on Hover", "Border, strengthened", ".sbg-gs-sample__hover"],
-  ["--sbg-accent-glow", "Focus Glow", "Accent at 30% opacity", ".sbg-search-tag:not(.sbg-search-tag--neg)"],
-  ["--sbg-on-accent", "Text on Accent", "Dark or white, whichever reads better on the accent", ".sbg-btn--accent"],
-  ["--sbg-accent-ink", "Accent as Text", "Accent, adjusted until it's readable on the background", ".sbg-folder-btn--root, .sbg-search-refresh"],
-  ["--sbg-pill-active-text", "Active Pill Text", "Accent, adjusted until it's readable on an active pill", null],
+  ["--sbg-surface-hover", "悬停背景", "表面颜色，略微向文字颜色偏移", ".sbg-gs-sample__hover"],
+  ["--sbg-text-dim", "次要文字", "降低亮度的文字颜色", ".sbg-card__meta, .sbg-area__row"],
+  ["--sbg-border-hover", "悬停边框", "增强后的边框颜色", ".sbg-gs-sample__hover"],
+  ["--sbg-accent-glow", "焦点光晕", "30% 不透明度的强调色", ".sbg-search-tag:not(.sbg-search-tag--neg)"],
+  ["--sbg-on-accent", "强调色上的文字", "自动选用在强调色上更清晰的深色或白色", ".sbg-btn--accent"],
+  ["--sbg-accent-ink", "强调色文字", "调整至在背景上清晰可读的强调色", ".sbg-folder-btn--root, .sbg-search-refresh"],
+  ["--sbg-pill-active-text", "选中标签的文字", "调整至在选中标签上清晰可读的强调色", null],
 ];
 
 const BASE_HITS = {
@@ -40,63 +40,63 @@ export function themeRows() {
     color("base", label, key, { token: cssVar, fallback: shipped[key] }, BASE_HITS[cssVar], tip);
   }
 
-  const boxedOnly = "Boxed cards only";
-  color("gallery", "Card Background", "--sbg-card-bg", { token: "--sbg-surface" }, ".sbg-card", undefined, boxedOnly);
-  color("gallery", "Card Border", "--sbg-card-border", { token: "--sbg-border" }, ".sbg-card");
-  number("gallery", "Card Corner Radius", "--sbg-card-radius", { token: "--sbg-radius" }, "px", ".sbg-card");
-  color("gallery", "File Name", "--sbg-card-name", { token: "--sbg-text" }, ".sbg-card__name");
-  color("gallery", "Size and Date", "--sbg-card-meta", { token: "--sbg-text-dim" }, ".sbg-card__meta");
-  color("gallery", "Format Badge", S.VIDEO_BADGE_COLOR, { own: "--sbg-badge-vid" }, ".sbg-card__kind", "Color of the format badge on video and audio thumbnails");
-  color("gallery", "Favorite Star", S.FAV_COLOR, { token: "--sbg-accent" }, ".sbg-card__fav", "Color of the favorite star on cards, in the lightbox and in the folder dropdown. Stars on cards and in the lightbox use the accent color until you set one.");
-  color("gallery", "HIGH Badge", S.BADGE_HIGH_COLOR, { own: "--sbg-badge-high" }, null, "Color of the HIGH label over paired samplers and models in the metadata panel");
-  color("gallery", "LOW Badge", S.BADGE_LOW_COLOR, { own: "--sbg-badge-low" }, null, "Color of the LOW label over paired samplers and models in the metadata panel");
+  const boxedOnly = "仅适用于带边框卡片";
+  color("gallery", "卡片背景", "--sbg-card-bg", { token: "--sbg-surface" }, ".sbg-card", undefined, boxedOnly);
+  color("gallery", "卡片边框", "--sbg-card-border", { token: "--sbg-border" }, ".sbg-card");
+  number("gallery", "卡片圆角", "--sbg-card-radius", { token: "--sbg-radius" }, "px", ".sbg-card");
+  color("gallery", "文件名", "--sbg-card-name", { token: "--sbg-text" }, ".sbg-card__name");
+  color("gallery", "大小和日期", "--sbg-card-meta", { token: "--sbg-text-dim" }, ".sbg-card__meta");
+  color("gallery", "格式徽标", S.VIDEO_BADGE_COLOR, { own: "--sbg-badge-vid" }, ".sbg-card__kind", "视频和音频缩略图上格式徽标的颜色");
+  color("gallery", "收藏星标", S.FAV_COLOR, { token: "--sbg-accent" }, ".sbg-card__fav", "卡片、查看器和文件夹菜单中收藏星标的颜色。未设置时，卡片和查看器星标使用强调色。");
+  color("gallery", "高噪声徽标", S.BADGE_HIGH_COLOR, { own: "--sbg-badge-high" }, null, "元数据面板中配对采样器和模型上方高噪声标签的颜色");
+  color("gallery", "低噪声徽标", S.BADGE_LOW_COLOR, { own: "--sbg-badge-low" }, null, "元数据面板中配对采样器和模型上方低噪声标签的颜色");
 
-  color("toolbar", "Search Bar", "--sbg-search-bg", { token: "--sbg-well-25" }, ".sbg-search-wrap");
-  color("toolbar", "Search Tag", S.SEARCH_TAG_COLOR, { token: "--sbg-accent" }, ".sbg-search-tag:not(.sbg-search-tag--neg)", "Color of search tags in the search bar. Uses the accent color until you set one.");
-  color("toolbar", "Exclude Tag", S.SEARCH_TAG_NEG_COLOR, { token: "--sbg-danger" }, ".sbg-search-tag--neg", "Color of exclude tags in the search bar, the ones starting with a minus. Uses the Danger color until you set one.");
-  color("toolbar", "Filter Buttons", "--sbg-filter-bg", { token: "--sbg-tint-soft" }, ".sbg-kind-group");
-  color("toolbar", "Progress Bar", "--sbg-progress-fill", { own: "--sbg-progress-fill" }, null);
+  color("toolbar", "搜索栏", "--sbg-search-bg", { token: "--sbg-well-25" }, ".sbg-search-wrap");
+  color("toolbar", "搜索标签", S.SEARCH_TAG_COLOR, { token: "--sbg-accent" }, ".sbg-search-tag:not(.sbg-search-tag--neg)", "搜索栏中搜索标签的颜色。未设置时使用强调色。");
+  color("toolbar", "排除标签", S.SEARCH_TAG_NEG_COLOR, { token: "--sbg-danger" }, ".sbg-search-tag--neg", "搜索栏中以减号开头的排除标签颜色。未设置时使用危险状态色。");
+  color("toolbar", "筛选按钮", "--sbg-filter-bg", { token: "--sbg-tint-soft" }, ".sbg-kind-group");
+  color("toolbar", "进度条", "--sbg-progress-fill", { own: "--sbg-progress-fill" }, null);
 
-  color("lightbox", "Backdrop", "--sbg-lb-backdrop", { token: "--sbg-scrim-90" }, null);
+  color("lightbox", "遮罩背景", "--sbg-lb-backdrop", { token: "--sbg-scrim-90" }, null);
 
   for (const [key, label, act, def, cleared, note] of [
-    [S.LB_COLOR_FAVORITE, "Favorite Button", "favorite", "--sbg-lb-btn-bg", "the Surface color"],
-    [S.LB_COLOR_DOWNLOAD, "Download Button", "download", "--sbg-lb-btn-bg", "the Surface color"],
-    [S.LB_COLOR_COPY_PROMPT, "Copy Prompt Button", "copy-prompt", "--sbg-lb-btn-bg", "the Surface color"],
-    [S.LB_COLOR_COPY_WF, "Copy Workflow Button", "copy-wf", "--sbg-lb-btn-bg", "the Surface color"],
-    [S.LB_COLOR_LOAD_WF, "Load Workflow Button", "load-wf", "--sbg-accent", "the accent color"],
-    [S.LB_COLOR_COMPARE, "Compare Button", "compare", "--sbg-lb-btn-bg", "the Surface color"],
-    [S.LB_COLOR_DELETE, "Delete Buttons", "delete", "--sbg-danger-solid", "a soft red",
-      "Every Delete in the gallery: the lightbox, the Presets tab and a card's right-click menu"],
+    [S.LB_COLOR_FAVORITE, "收藏按钮", "favorite", "--sbg-lb-btn-bg", "表面颜色"],
+    [S.LB_COLOR_DOWNLOAD, "下载按钮", "download", "--sbg-lb-btn-bg", "表面颜色"],
+    [S.LB_COLOR_COPY_PROMPT, "复制提示词按钮", "copy-prompt", "--sbg-lb-btn-bg", "表面颜色"],
+    [S.LB_COLOR_COPY_WF, "复制工作流按钮", "copy-wf", "--sbg-lb-btn-bg", "表面颜色"],
+    [S.LB_COLOR_LOAD_WF, "加载工作流按钮", "load-wf", "--sbg-accent", "强调色"],
+    [S.LB_COLOR_COMPARE, "对比按钮", "compare", "--sbg-lb-btn-bg", "表面颜色"],
+    [S.LB_COLOR_DELETE, "删除按钮", "delete", "--sbg-danger-solid", "柔和红色",
+      "图库中的所有删除按钮：查看器、预设标签页和卡片右键菜单"],
   ]) {
-    color("lightbox", label, key, { token: def }, `.sbg-lb__act--${act}`, `Uses ${cleared} until you set one.`, note);
+    color("lightbox", label, key, { token: def }, `.sbg-lb__act--${act}`, `未设置时使用${cleared}。`, note);
   }
-  color("lightbox", "Metadata Panel", "--sbg-panel-solid", { derived: "--sbg-panel-solid", own: "--sbg-panel-solid" }, ".sbg-lb__meta-panel");
-  color("lightbox", "Section Header", "--sbg-section-head-bg", { derived: "--sbg-lb-head-bg", token: "--sbg-well-10" }, ".sbg-section__head");
-  pair("lightbox", "Pill", [
-    { key: "bg", label: "Background", setting: S.PILL_BG_COLOR, def: { derived: "--sbg-lb-pill-bg", token: "--sbg-pill-bg-fallback" }, channel: "bg" },
-    { key: "text", label: "Text", setting: S.PILL_TEXT_COLOR, def: { token: "--sbg-panel-ink-pill" }, channel: "text" },
-    { key: "border", label: "Border", setting: S.PILL_BORDER_COLOR, def: { derived: "--sbg-lb-pill-border", token: "--sbg-pill-border-fallback" }, channel: "border" },
-  ], ".sbg-badge", "The background, text and border of values shown as pills, for any field without its own color.");
-  pair("lightbox", "Search Highlight", [
-    { key: "bg", label: "Background", setting: S.HIGHLIGHT_BG, def: { own: "--sbg-highlight-bg" } },
-    { key: "text", label: "Text", setting: S.HIGHLIGHT_TEXT_COLOR, def: { token: "--sbg-text" } },
-  ], ".sbg-highlight", "The background and text of words the search matched in the metadata panel. With a mostly solid background and no text color set, the text turns black or white to stay readable.");
-  color("lightbox", "Source Tab", S.INITIAL_IMAGE_TAB_COLOR, { token: "--sbg-text-dim" }, null, "Color of the tab next to Generated in the metadata panel, which shows the source image or audio. Until you set one, it matches the Generated tab.");
-  for (const a of APP_REGISTRY) color("lightbox", `${a.label} Badge`, a.settingKey, { own: a.cssVar }, null, `Color of the ${a.label} badge at the top of the metadata panel`);
+  color("lightbox", "元数据面板", "--sbg-panel-solid", { derived: "--sbg-panel-solid", own: "--sbg-panel-solid" }, ".sbg-lb__meta-panel");
+  color("lightbox", "区块标题栏", "--sbg-section-head-bg", { derived: "--sbg-lb-head-bg", token: "--sbg-well-10" }, ".sbg-section__head");
+  pair("lightbox", "胶囊标签", [
+    { key: "bg", label: "背景", setting: S.PILL_BG_COLOR, def: { derived: "--sbg-lb-pill-bg", token: "--sbg-pill-bg-fallback" }, channel: "bg" },
+    { key: "text", label: "文字", setting: S.PILL_TEXT_COLOR, def: { token: "--sbg-panel-ink-pill" }, channel: "text" },
+    { key: "border", label: "边框", setting: S.PILL_BORDER_COLOR, def: { derived: "--sbg-lb-pill-border", token: "--sbg-pill-border-fallback" }, channel: "border" },
+  ], ".sbg-badge", "未单独设置颜色的字段中，胶囊标签的背景、文字和边框。");
+  pair("lightbox", "搜索高亮", [
+    { key: "bg", label: "背景", setting: S.HIGHLIGHT_BG, def: { own: "--sbg-highlight-bg" } },
+    { key: "text", label: "文字", setting: S.HIGHLIGHT_TEXT_COLOR, def: { token: "--sbg-text" } },
+  ], ".sbg-highlight", "元数据面板中搜索匹配文字的背景及文字颜色。背景接近不透明且未设置文字颜色时，自动使用黑色或白色保证可读性。");
+  color("lightbox", "源媒体标签页", S.INITIAL_IMAGE_TAB_COLOR, { token: "--sbg-text-dim" }, null, "元数据面板中“生成结果”旁源图像或源音频标签页的颜色。未设置时跟随“生成结果”标签页。");
+  for (const a of APP_REGISTRY) color("lightbox", `${a.label} 徽标`, a.settingKey, { own: a.cssVar }, null, `元数据面板顶部 ${a.label} 徽标的颜色`);
 
-  color("states", "Danger", "--sbg-danger", { own: "--sbg-danger" }, null);
-  color("states", "Warning", "--sbg-warn", { own: "--sbg-warn" }, null);
-  color("states", "Success", "--sbg-success-text", { own: "--sbg-success-text" }, null);
-  number("states", "Disabled Opacity", "--sbg-disabled-opacity", { own: "--sbg-disabled-opacity" }, "%", null);
+  color("states", "危险", "--sbg-danger", { own: "--sbg-danger" }, null);
+  color("states", "警告", "--sbg-warn", { own: "--sbg-warn" }, null);
+  color("states", "成功", "--sbg-success-text", { own: "--sbg-success-text" }, null);
+  number("states", "禁用状态不透明度", "--sbg-disabled-opacity", { own: "--sbg-disabled-opacity" }, "%", null);
 
-  number("shape", "Corner Radius", "--sbg-radius", { own: "--sbg-radius" }, "px", ".sbg-card, .sbg-section");
-  number("shape", "Small Corner Radius", "--sbg-radius-sm", { own: "--sbg-radius-sm" }, "px", ".sbg-badge, .sbg-btn, .sbg-search-wrap");
-  number("shape", "Base Font Size", "--sbg-font-size", { own: "--sbg-font-size" }, "px", ".sbg-root");
+  number("shape", "圆角", "--sbg-radius", { own: "--sbg-radius" }, "px", ".sbg-card, .sbg-section");
+  number("shape", "小圆角", "--sbg-radius-sm", { own: "--sbg-radius-sm" }, "px", ".sbg-badge, .sbg-btn, .sbg-search-wrap");
+  number("shape", "基础字号", "--sbg-font-size", { own: "--sbg-font-size" }, "px", ".sbg-root");
 
   // More would clip a Boxed card's second line, since the grid reserves a fixed
   // info height for each card style.
-  number("shape", "Card Padding", "--sbg-card-pad", { own: "--sbg-card-pad" }, "px", ".sbg-card__info", { max: 8, note: boxedOnly });
+  number("shape", "卡片内边距", "--sbg-card-pad", { own: "--sbg-card-pad" }, "px", ".sbg-card__info", { max: 8, note: boxedOnly });
   return rows;
 }
 

@@ -19,14 +19,14 @@ import { renderSettings } from "./sbg-settings-tab-settings.js";
 import { renderHelp } from "./sbg-settings-tab-help.js";
 
 const TABS = [
-  { id: "layout", label: "Metadata", icon: TAB_LAYOUT_ICON, searchable: false, render: (c) => renderLayout(c.content, c.galleryCtx, c.closeGS, c.visitCleanups) },
-  { id: "theme", label: "Theme", icon: TAB_THEME_ICON, render: renderTheme },
-  { id: "appearance", label: "Appearance", icon: TAB_APPEARANCE_ICON, render: renderAppearance },
-  { id: "presets", label: "Presets", icon: TAB_PRESETS_ICON, render: renderPresets },
-  { id: "keybindings", label: "Keybindings", icon: TAB_KEYBINDINGS_ICON, render: renderKeybindings },
-  { id: "settings", label: "General", icon: TAB_SETTINGS_ICON, render: renderSettings },
-  { id: "diagnostics", label: "Diagnostics", icon: TAB_DIAGNOSTICS_ICON, render: renderDiagnosticsTab },
-  { id: "help", label: "Help", icon: TAB_HELP_ICON, render: renderHelp },
+  { id: "layout", label: "元数据", icon: TAB_LAYOUT_ICON, searchable: false, render: (c) => renderLayout(c.content, c.galleryCtx, c.closeGS, c.visitCleanups) },
+  { id: "theme", label: "主题", icon: TAB_THEME_ICON, render: renderTheme },
+  { id: "appearance", label: "外观", icon: TAB_APPEARANCE_ICON, render: renderAppearance },
+  { id: "presets", label: "预设", icon: TAB_PRESETS_ICON, render: renderPresets },
+  { id: "keybindings", label: "快捷键", icon: TAB_KEYBINDINGS_ICON, render: renderKeybindings },
+  { id: "settings", label: "常规", icon: TAB_SETTINGS_ICON, render: renderSettings },
+  { id: "diagnostics", label: "诊断", icon: TAB_DIAGNOSTICS_ICON, render: renderDiagnosticsTab },
+  { id: "help", label: "帮助", icon: TAB_HELP_ICON, render: renderHelp },
 ];
 
 // So an unmount of the gallery closes the settings panel with its full cleanup, since
@@ -96,7 +96,7 @@ export function openGallerySettings(galleryCtx, defaultTab = null) {
   });
 
   const gsClose = h("button", {
-    class: "sbg-gs-close", html: sizedIcon(CLOSE_ICON, 18), title: "Close", "aria-label": "Close settings",
+    class: "sbg-gs-close", html: sizedIcon(CLOSE_ICON, 18), title: "关闭", "aria-label": "关闭设置",
   });
   const tabBtns = TABS.map(tab =>
     h("button", {
@@ -112,12 +112,12 @@ export function openGallerySettings(galleryCtx, defaultTab = null) {
 
   const tabBar = h("div", {
     class: "sbg-gs-nav", role: "tablist",
-    "aria-label": "Settings sections", "aria-orientation": "vertical",
+    "aria-label": "设置分类", "aria-orientation": "vertical",
   }, tabBtns);
 
   const searchInput = h("input", {
-    type: "search", class: "sbg-gs-searchinput", placeholder: "Search settings…",
-    "aria-label": "Search settings",
+    type: "search", class: "sbg-gs-searchinput", placeholder: "搜索设置…",
+    "aria-label": "搜索设置",
   });
   const searchBox = h("div", { class: "sbg-gs-search" }, [
     h("span", { class: "sbg-gs-searchicon", html: SEARCH_ICON, "aria-hidden": "true" }),
@@ -127,7 +127,7 @@ export function openGallerySettings(galleryCtx, defaultTab = null) {
   const rail = h("div", { class: "sbg-gs-rail" }, [
     h("div", { class: "sbg-gs-railhead" }, [
       h("span", { class: "sbg-gs-railicon", html: GEAR_ICON, "aria-hidden": "true" }),
-      h("h2", { class: "sbg-gs-title", id: "sbg-gs-title", text: "Sidebar Gallery" }),
+      h("h2", { class: "sbg-gs-title", id: "sbg-gs-title", text: "侧边栏图库" }),
     ]),
     searchBox,
     tabBar,
@@ -265,8 +265,8 @@ export function openGallerySettings(galleryCtx, defaultTab = null) {
       _updateBadges(qRaw.toLowerCase(), formLessId, 0);
       if (qRaw) {
         const hits = _otherTabHits(qRaw.toLowerCase(), formLessId);
-        noResults.textContent = "Search does not cover this tab."
-          + (hits.length ? " Matches found in " + hits.join(", ") + "." : "");
+        noResults.textContent = "此标签页不支持搜索。"
+          + (hits.length ? " 在以下标签页找到匹配项：" + hits.join(", ") + "." : "");
         noResults.classList.remove("sbg-hidden");
       } else {
         noResults.classList.add("sbg-hidden");
@@ -289,8 +289,8 @@ export function openGallerySettings(galleryCtx, defaultTab = null) {
       const hits = _otherTabHits(q, activeId);
       const shown = searchInput.value.trim();
       noResults.textContent = hits.length
-        ? `Nothing in this tab matches "${shown}". Matches found in ${hits.join(", ")}.`
-        : `Nothing matches "${shown}".`;
+        ? `此标签页没有与“${shown}”匹配的内容。在以下标签页找到匹配项：${hits.join("、")}。`
+        : `没有与“${shown}”匹配的内容。`;
       noResults.classList.remove("sbg-hidden");
     } else {
       noResults.classList.add("sbg-hidden");

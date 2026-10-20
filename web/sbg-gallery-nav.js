@@ -71,8 +71,8 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
 
   // With subfolders left out, All shows only the root's own files, so the
   // folder button names the root.
-  const _folderLabel = () => state.favoritesOnly ? "Favorites"
-    : (state.subfolder || (includeSubfolders() ? "All folders" : rootLabel(state.roots, state.rootId)));
+  const _folderLabel = () => state.favoritesOnly ? "收藏"
+    : (state.subfolder || (includeSubfolders() ? "所有文件夹" : rootLabel(state.roots, state.rootId)));
 
   const _openKey = (sub) => _pins.key(state.rootId, sub);
   const _isOpen = (sub) => galleryCache.view.pickerOpenFolders[_openKey(sub)] === true;
@@ -207,12 +207,12 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
 
     if (state.roots.length > 1 && !rootsInPicker) {
       const rootBtn = h("button", {
-        class: "sbg-folder-btn sbg-folder-btn--root", text: currentRoot, title: "Switch root",
-        "aria-haspopup": "listbox", "aria-expanded": "false", "aria-label": `Root folder: ${currentRoot}`,
+        class: "sbg-folder-btn sbg-folder-btn--root", text: currentRoot, title: "切换根文件夹",
+        "aria-haspopup": "listbox", "aria-expanded": "false", "aria-label": `根文件夹：${currentRoot}`,
       });
       rootBtn.addEventListener("click", () => {
         _toggleDropdown("root", rootBtn, () => {
-          const popup = h("div", { class: "sbg-dropdown", role: "listbox", "aria-label": "Roots" });
+          const popup = h("div", { class: "sbg-dropdown", role: "listbox", "aria-label": "根文件夹" });
           for (const r of state.roots) popup.appendChild(makeRootRow(r, false));
           return { popup };
         });
@@ -222,8 +222,8 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
 
     if (state.subfolders.length > 0 || rootsInPicker || state.favoritesOnly || _favShown) {
       const pickBtn = h("button", {
-        class: "sbg-folder-btn sbg-folder-btn--folders", title: "Browse folders",
-        "aria-haspopup": "listbox", "aria-expanded": "false", "aria-label": `Folder: ${_folderLabel()}`,
+        class: "sbg-folder-btn sbg-folder-btn--folders", title: "浏览文件夹",
+        "aria-haspopup": "listbox", "aria-expanded": "false", "aria-label": `文件夹：${_folderLabel()}`,
       });
       if (state.favoritesOnly) pickBtn.appendChild(h("span", { class: "sbg-fav-star", html: STAR_ICON, "aria-hidden": "true" }));
       else pickBtn.appendChild(h("span", { class: "sbg-folder-btn__icon", html: FOLDER_ICON, "aria-hidden": "true" }));
@@ -237,18 +237,18 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
           const p = h("div", { class: "sbg-dropdown sbg-dropdown--folders" });
           const filterInput = h("input", {
             type: "search", class: "sbg-dropdown__filter",
-            placeholder: "Filter folders…", "aria-label": "Filter folders",
+            placeholder: "筛选文件夹…", "aria-label": "筛选文件夹",
           });
           const subToggle = h("button", {
             type: "button", class: "sbg-dropdown__subfolders",
-            title: "Include files from subfolders", "aria-label": "Include files from subfolders",
+            title: "包含子文件夹中的文件", "aria-label": "包含子文件夹中的文件",
           });
           _drawSubfolderToggle(subToggle, includeSubfolders());
           subToggle.addEventListener("click", () => saveSetting(S.PICKER_INCLUDE_SUBFOLDERS, !includeSubfolders()));
           const filterWrap = h("div", { class: "sbg-dropdown__filterwrap" }, [filterInput, subToggle]);
           const list = h("div", {
             class: "sbg-dropdown__list", role: "listbox",
-            "aria-label": rootsInPicker ? "Roots and folders" : "Folders",
+            "aria-label": rootsInPicker ? "根文件夹和子文件夹" : "文件夹",
           });
 
           const _optionEls = [];
@@ -271,7 +271,7 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
 
               "aria-disabled": missing ? "true" : undefined,
               "data-sub": sub,
-              title: missing ? `${sub} is no longer in this root. Unpin it to remove it.` : undefined,
+              title: missing ? `${sub} 已不在此根文件夹中。取消置顶即可移除。` : undefined,
             });
             const branch = !!node && node.children.length > 0;
             if (node) {
@@ -286,7 +286,7 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
               const strip = h("button", {
                 type: "button", tabindex: "-1",
                 class: `sbg-tree-strip${_isOpen(sub) ? " sbg-tree-strip--open" : ""}`,
-                "aria-label": `Show or hide the subfolders of ${sub}`,
+                "aria-label": `显示或隐藏 ${sub} 的子文件夹`,
               });
               strip.appendChild(h("span", { class: "sbg-tree-chev", html: CHEVRON_RIGHT_ICON, "aria-hidden": "true" }));
               strip.addEventListener("click", (ev) => { ev.stopPropagation(); toggleBranch(sub); });
@@ -302,8 +302,8 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
                 type: "button",
                 class: `sbg-dropdown__pin${on ? " sbg-dropdown__pin--on" : ""}`,
                 html: on ? PIN_FILLED_ICON : PIN_OUTLINE_ICON,
-                title: on ? "Unpin" : "Pin to the top of this list",
-                "aria-label": (on ? "Unpin " : "Pin ") + sub,
+                title: on ? "取消置顶" : "置顶到列表顶部",
+                "aria-label": (on ? "取消置顶 " : "置顶 ") + sub,
               });
               pin.addEventListener("click", (ev) => {
                 ev.stopPropagation();
@@ -358,12 +358,12 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
             keepFocusOnMark(() => applyFilter(true));
           };
 
-          const cellLine = h("div", { class: "sbg-dropdown__cells", role: "group", "aria-label": "Views" });
+          const cellLine = h("div", { class: "sbg-dropdown__cells", role: "group", "aria-label": "视图" });
           const allActive = state.subfolder === "" && !state.favoritesOnly;
           const allCell = h("div", {
             class: `sbg-dropdown__cell${allActive ? " sbg-dropdown__cell--active" : ""}`,
             role: "option", "aria-selected": allActive ? "true" : "false",
-            text: "All", title: "All folders, or only the files directly in this root while files from subfolders are not included",
+            text: "全部", title: "显示所有文件夹；未包含子文件夹时，仅显示根文件夹中的文件",
           });
           allCell.addEventListener("click", () => pick(""));
           cellLine.appendChild(allCell);
@@ -375,7 +375,7 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
             role: "option", "aria-selected": state.favoritesOnly ? "true" : "false",
           });
           favCell.appendChild(h("span", { class: "sbg-fav-star", html: STAR_ICON, "aria-hidden": "true" }));
-          favCell.appendChild(document.createTextNode("Favorites"));
+          favCell.appendChild(document.createTextNode("收藏"));
           if (hasFavs) {
             favCell.addEventListener("click", () => {
               _closeDropdown();
@@ -386,7 +386,7 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
             _optionEls.push(favCell);
           } else {
             favCell.setAttribute("aria-disabled", "true");
-            favCell.title = "No favorites in this root yet";
+            favCell.title = "此根文件夹中暂无收藏";
           }
           cellLine.appendChild(favCell);
 
@@ -395,7 +395,7 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
               class: "sbg-dropdown__cell",
               role: "option", "aria-selected": "false",
             });
-            rootsCell.appendChild(h("span", { text: "Roots" }));
+            rootsCell.appendChild(h("span", { text: "根文件夹" }));
             const chevEl = h("span", {
               class: `sbg-dropdown__chev${galleryCache.view.pickerRootsExpanded ? " sbg-dropdown__chev--open" : ""}`,
               html: CHEVRON_RIGHT_ICON, "aria-hidden": "true",
@@ -612,7 +612,7 @@ export function createFolderNav({ state, teardown, setView, refilter, switchRoot
       const live = folderNav.querySelector(".sbg-folder-btn--folders");
       if (live) {
         live.querySelector(".sbg-folder-btn__label").textContent = _folderLabel();
-        live.setAttribute("aria-label", `Folder: ${_folderLabel()}`);
+        live.setAttribute("aria-label", `文件夹：${_folderLabel()}`);
       }
     }
   }));

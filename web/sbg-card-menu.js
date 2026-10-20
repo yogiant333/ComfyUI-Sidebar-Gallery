@@ -50,42 +50,42 @@ export function openCardMenu(e, it) {
   const shown = CARD_MENU_ITEMS.filter(m => getSetting(m.show)).map(m => m.id);
   const ids = orderedIds(S.CARD_MENU_ORDER, CARD_MENU_ITEMS.map(m => m.id)).filter(id => shown.includes(id));
   if (!ids.length) return null;
-  const menu = h("div", { class: "sbg-card-menu", role: "menu", tabindex: "-1", "aria-label": `Actions for ${it.filename}` });
+  const menu = h("div", { class: "sbg-card-menu", role: "menu", tabindex: "-1", "aria-label": `${it.filename} 的操作` });
 
   const fav = _item(favoriteTitle(isFavorite(it.root_id, it.relpath)), () => {
     toggleFavorite(it.root_id, it.relpath);
     closeCardMenu();
   });
 
-  const dl = h("a", { class: "sbg-card-menu__item", role: "menuitem", tabindex: "-1", href: fileUrl(it), download: it.filename, target: "_blank", text: "Download" });
+  const dl = h("a", { class: "sbg-card-menu__item", role: "menuitem", tabindex: "-1", href: fileUrl(it), download: it.filename, target: "_blank", text: "下载" });
   dl.addEventListener("click", () => closeCardMenu());
 
-  const copyPromptItem = _item("Copy Prompt", null);
+  const copyPromptItem = _item("复制提示词", null);
   copyPromptItem.disabled = true;
 
-  const copyWf = _item("Copy Workflow", async () => {
-    copyWf.textContent = "Loading…";
+  const copyWf = _item("复制工作流", async () => {
+    copyWf.textContent = "正在加载…";
     try {
       copyWorkflow(await fetchFullMeta(it));
     } catch (err) {
-      showFailure("copy the workflow", err);
+      showFailure("复制工作流", err);
     } finally {
       closeCardMenu();
     }
   });
 
-  const loadWf = _item("Load Workflow", async () => {
-    loadWf.textContent = "Loading…";
+  const loadWf = _item("加载工作流", async () => {
+    loadWf.textContent = "正在加载…";
     try {
       await loadWorkflowFrom(await fetchFullMeta(it));
     } catch (err) {
-      showFailure("load the workflow", err);
+      showFailure("加载工作流", err);
     } finally {
       closeCardMenu();
     }
   });
 
-  const del = _item("Delete", null, "sbg-card-menu__item--danger");
+  const del = _item("删除", null, "sbg-card-menu__item--danger");
   const runDelete = async () => {
     del.disabled = true;
     await deleteFile(it);
@@ -111,7 +111,7 @@ export function openCardMenu(e, it) {
       // prompt, so it says why when clicked.
       if (_menu !== menu) return;
       copyPromptItem.disabled = false;
-      copyPromptItem.addEventListener("click", () => { showFailure("copy the prompt", err); closeCardMenu(); });
+      copyPromptItem.addEventListener("click", () => { showFailure("复制提示词", err); closeCardMenu(); });
     });
   }
 

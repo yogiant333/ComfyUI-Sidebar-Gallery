@@ -85,7 +85,7 @@ export function openColorPopover(anchor, { channels, colors, onChange, onClear, 
     if (want === !!clearRow.firstChild) return;
     clearRow.innerHTML = "";
     if (!want) return;
-    const clr = h("button", { class: "sbg-btn sbg-btn--sm", text: "Reset to default" });
+    const clr = h("button", { class: "sbg-btn sbg-btn--sm", text: "恢复默认" });
     clr.addEventListener("click", () => { onClear(); closePopovers({ commit: false }); });
     clearRow.appendChild(clr);
   }
@@ -107,7 +107,7 @@ export function openColorPopover(anchor, { channels, colors, onChange, onClear, 
     setSelectedTab(tabs, tabs[0]);
     tabs[0].classList.add("sbg-btn--accent");
     wireTablistKeys(tabs, select);
-    pop.appendChild(h("div", { class: "sbg-btn-row", role: "tablist", "aria-label": "Which color" }, tabs));
+    pop.appendChild(h("div", { class: "sbg-btn-row", role: "tablist", "aria-label": "颜色通道" }, tabs));
   }
   refreshClear();
 

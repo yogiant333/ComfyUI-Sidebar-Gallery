@@ -9,7 +9,7 @@ import { makeSection } from "./sbg-meta-section.js";
 // section with no fields or a nodes section with no sample workflow.
 function buildPlaceholderSection(sec) {
   const wrap = h("div", { class: "sbg-meta-group sbg-ly3-placeholder" });
-  wrap.appendChild(TL.kvRow(sec.style === "nodes" ? "(workflow nodes)" : "(no fields)", "—"));
+  wrap.appendChild(TL.kvRow(sec.style === "nodes" ? "（工作流节点）" : "（无字段）", "—"));
   return wrap;
 }
 
@@ -23,12 +23,12 @@ export function createLayoutPreview({ rightPane, getMedia, activeLayout, activeK
   function refreshPreview() {
     rightPane.innerHTML = "";
     const m = mock();
-    rightPane.appendChild(h("div", { class: "sbg-ly3-prevhint", text: "Live preview" }));
-    if (!m) { rightPane.appendChild(h("div", { class: "sbg-ly3-empty", text: "Loading sample metadata…" })); return; }
+    rightPane.appendChild(h("div", { class: "sbg-ly3-prevhint", text: "实时预览" }));
+    if (!m) { rightPane.appendChild(h("div", { class: "sbg-ly3-empty", text: "正在加载示例元数据…" })); return; }
 
     const f = sampleReads[getMedia()];
     if (f && !f.read && f.error && !f.closed) {
-      rightPane.appendChild(h("div", { class: "sbg-notices sbg-gs-notices" }, [noticeRow(`${failureText("load the sample metadata", f.error)}. The preview has no values.`,
+      rightPane.appendChild(h("div", { class: "sbg-notices sbg-gs-notices" }, [noticeRow(`${failureText("加载示例元数据", f.error)}。预览中没有数据值。`,
         () => { f.closed = true; refreshPreview(); rightPane.closest("[role=tabpanel]").focus(); })]));
     }
     const panel = h("div", { class: "sbg-ly3-panel" });
@@ -38,10 +38,10 @@ export function createLayoutPreview({ rightPane, getMedia, activeLayout, activeK
       panel.appendChild(makeSection(sec, contentEl, { remember: false }));
       any = true;
     }
-    if (!any) rightPane.appendChild(h("div", { class: "sbg-ly3-empty", text: "Nothing to preview. Add a section, or show a hidden one." }));
+    if (!any) rightPane.appendChild(h("div", { class: "sbg-ly3-empty", text: "暂无可预览的内容。请添加区块，或显示已隐藏的区块。" }));
     else rightPane.appendChild(panel);
     const hiddenCount = activeLayout().filter(s => s.hidden).length;
-    if (hiddenCount) rightPane.appendChild(h("div", { class: "sbg-ly3-prevnote", text: `${hiddenCount} hidden section${hiddenCount > 1 ? "s" : ""} not shown.` }));
+    if (hiddenCount) rightPane.appendChild(h("div", { class: "sbg-ly3-prevnote", text: `未显示 ${hiddenCount} 个已隐藏的区块。` }));
   }
 
   // No single file carries every field a layout can bind, so the sample merges several.

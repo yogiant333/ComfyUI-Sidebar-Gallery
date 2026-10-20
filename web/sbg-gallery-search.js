@@ -128,7 +128,7 @@ export function firstCompletionRow(items) {
 export function searchTagPill(tag) {
   const neg = tag.exclude === true;
   const text = h("span", { text: (neg ? "−" : "") + tag.raw, class: "sbg-search-tag__text" });
-  const rm = h("span", { class: "sbg-search-tag__remove", html: sizedIcon(CLOSE_ICON, 10), title: "Remove tag", "aria-label": "Remove tag" });
+  const rm = h("span", { class: "sbg-search-tag__remove", html: sizedIcon(CLOSE_ICON, 10), title: "移除标签", "aria-label": "移除标签" });
   const pill = h("span", { class: "sbg-search-tag" + (neg ? " sbg-search-tag--neg" : "") }, [text, rm]);
   return { pill, text, rm };
 }
@@ -157,12 +157,12 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
   // With the filter buttons on the search bar's row there is room only for the
   // short placeholder.
   const qInput = h("input", {
-    class: "sbg-search-input", placeholder: compact ? "Search…" : "Search… (name: for file names only)",
-    title: "To search a value in a specific widget/node/etc, type it with a prefix (e.g. cfg:1). To exclude a value from a search, add a minus sign before it (e.g. -euler).",
+    class: "sbg-search-input", placeholder: compact ? "搜索…" : "搜索…（name: 仅搜索文件名）",
+    title: "添加前缀可搜索特定控件或节点中的值（例如 cfg:1）。在值前添加减号可将其排除（例如 -euler）。",
     role: "combobox", "aria-autocomplete": "list", "aria-expanded": "false", "aria-controls": listId,
   });
-  const searchClear = h("button", { class: "sbg-search-clear", html: CLOSE_ICON, title: "Clear search", "aria-label": "Clear search" });
-  const searchRefresh = h("button", { class: "sbg-search-refresh", html: REFRESH_ICON, title: "Refresh (scan for changes)", "aria-label": "Refresh gallery" });
+  const searchClear = h("button", { class: "sbg-search-clear", html: CLOSE_ICON, title: "清除搜索", "aria-label": "清除搜索" });
+  const searchRefresh = h("button", { class: "sbg-search-refresh", html: REFRESH_ICON, title: "刷新（扫描文件变化）", "aria-label": "刷新画廊" });
   const _syncSearchBtns = () => {
     const active = state.searchTags.length > 0 || qInput.value.length > 0;
     searchClear.classList.toggle("sbg-search-clear--visible", active);
@@ -170,9 +170,9 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
   };
   const searchTagsWrap = h("div", { class: "sbg-search-tags" });
 
-  const searchModeSel = h("select", { class: "sbg-search-mode sbg-hidden", title: "Match all tags (AND) or any tag (OR)" }, [
-    h("option", { value: "AND", text: "AND" }),
-    h("option", { value: "OR", text: "OR" })
+  const searchModeSel = h("select", { class: "sbg-search-mode sbg-hidden", title: "匹配所有标签（与）或任意标签（或）" }, [
+    h("option", { value: "AND", text: "与" }),
+    h("option", { value: "OR", text: "或" })
   ]);
   searchModeSel.addEventListener("change", () => {
     setView({ searchMode: searchModeSel.value });
@@ -181,7 +181,7 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
 
   const inputFlexBox = h("div", { class: "sbg-search-inputbox" }, [searchTagsWrap, qInput]);
 
-  const autoCompleteDropdown = h("div", { class: "sbg-search-ac", id: listId, role: "listbox", "aria-label": "Suggestions" });
+  const autoCompleteDropdown = h("div", { class: "sbg-search-ac", id: listId, role: "listbox", "aria-label": "搜索建议" });
   attachOverlayThumb(autoCompleteDropdown);
   autoCompleteDropdown.classList.add("sbg-hidden");
   const _acVisible = () => !autoCompleteDropdown.classList.contains("sbg-hidden");
@@ -283,7 +283,7 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
     const cut = list.filter(_readable).length > _SAVED_CAP && before <= _SAVED_CAP;
     if (cut) list.splice(list.findLastIndex(_readable), 1);
     if (!_storeSaved(list)) return false;
-    showToast(cut ? `Search "${clean}" saved. Only ${_SAVED_CAP} saved searches are kept, so the oldest was removed.` : `Search "${clean}" saved`);
+    showToast(cut ? `已保存搜索“${clean}”。最多保留 ${_SAVED_CAP} 个搜索，已移除最早保存的搜索。` : `已保存搜索“${clean}”`);
     return true;
   }
 
@@ -291,8 +291,8 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
     _acPinned = true;
     autoCompleteDropdown.innerHTML = "";
     _acSelect(-1);
-    const nameInput = h("input", { class: "sbg-input", placeholder: "Name this search" });
-    const okBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: "Save" });
+    const nameInput = h("input", { class: "sbg-input", placeholder: "为此搜索命名" });
+    const okBtn = h("button", { class: "sbg-btn sbg-btn--sm", text: "保存" });
     autoCompleteDropdown.appendChild(h("div", { class: "sbg-search-ac-form" }, [nameInput, okBtn]));
     // The search bar reads collapsed while the form shows, since it holds no
     // suggestions to announce.
@@ -323,7 +323,7 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
     const saved = _loadSaved();
     const canSave = state.searchTags.length > 0;
     if (!saved.length && !canSave) return false;
-    if (saved.length) autoCompleteDropdown.appendChild(_acHead("Saved searches"));
+    if (saved.length) autoCompleteDropdown.appendChild(_acHead("已保存的搜索"));
     saved.forEach((p, i) => {
       const item = _acRow(" sbg-search-ac-item--saved");
       item.dataset.kind = "saved";
@@ -331,11 +331,11 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
       const label = h("span", { class: "sbg-search-ac-name", text: p.name });
       const count = h("span", {
         class: "sbg-search-ac-count",
-        text: p.tags.length > 1 ? `${p.tags.length} tags, ${p.mode === "OR" ? "OR" : "AND"}`
-          : `${p.tags.length} tag`,
+        text: p.tags.length > 1 ? `${p.tags.length} 个标签，${p.mode === "OR" ? "或" : "与"}`
+          : `${p.tags.length} 个标签`,
       });
 
-      const del = h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger sbg-search-ac-delete", html: TRASH_ICON, title: `Delete "${p.name}"`, "aria-label": `Delete "${p.name}"` });
+      const del = h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger sbg-search-ac-delete", html: TRASH_ICON, title: `删除“${p.name}”`, "aria-label": `删除“${p.name}”` });
       del.addEventListener("mousedown", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -346,7 +346,7 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
       autoCompleteDropdown.appendChild(item);
     });
     if (canSave) {
-      const save = _acRow(" sbg-search-ac-item--save", { text: "Save current search…" });
+      const save = _acRow(" sbg-search-ac-item--save", { text: "保存当前搜索…" });
       save.dataset.kind = "save";
       save.addEventListener("mousedown", (e) => { e.preventDefault(); _renderSaveForm(); });
       autoCompleteDropdown.appendChild(save);
@@ -397,7 +397,7 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
     const matches = _candidates().filter(p => p.startsWith(val));
     const complete = matches.length === 1 && matches[0] === val + ":";
     if (!complete) {
-      if (matches.length && drawn) autoCompleteDropdown.appendChild(_acHead("Fields"));
+      if (matches.length && drawn) autoCompleteDropdown.appendChild(_acHead("字段"));
       for (const prefix of matches) {
         const item = _acRow("", { text: prefix });
         item.addEventListener("mousedown", (e) => {
@@ -632,7 +632,7 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
       _searchAbort = ctrl;
       const rootId = state.rootId;
       try {
-        line.progress("Searching…");
+        line.progress("正在搜索…");
         const matches = await _search({}, ctrl.signal);
         line.stop();
         // Matches name files in the root they were asked for, and the root now
@@ -645,7 +645,7 @@ export function createSearchBar({ state, teardown, setView, refilter, announce, 
         // the read, so the signal is asked as well.
         if (e.name !== "AbortError" && !ctrl.signal.aborted) {
           _showResult(null);
-          line.fail(failureText("search", e));
+          line.fail(failureText("搜索", e));
         }
       }
     }, 400);

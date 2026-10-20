@@ -7,7 +7,7 @@ import { DEFAULT_IMAGE_LAYOUT, DEFAULT_VIDEO_LAYOUT, DEFAULT_AUDIO_LAYOUT } from
 export const APPS = APP_REGISTRY.map(a => a.id);
 export const APP_LABELS = Object.fromEntries(APP_REGISTRY.map(a => [a.id, a.label]));
 export const MEDIA_KEYS = ["image", "video", "audio"];
-export const MEDIA_LABELS = { image: "Images", video: "Videos", audio: "Audio" };
+export const MEDIA_LABELS = { image: "图像", video: "视频", audio: "音频" };
 
 function _mediaName(media) {
   return MEDIA_KEYS.includes(media) ? media : "image";

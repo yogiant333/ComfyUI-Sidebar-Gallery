@@ -28,8 +28,8 @@ export const LAYOUTS_FROM_OLDER_VERSION = "layouts-from-older-version";
 export const COLOURS_FROM_OLDER_VERSION = "colours-from-older-version";
 
 const _TITLES = {
-  [LAYOUTS_FROM_OLDER_VERSION]: "Before applying layouts changed in an older version",
-  [COLOURS_FROM_OLDER_VERSION]: "Before applying colors changed in an older version",
+  [LAYOUTS_FROM_OLDER_VERSION]: "应用旧版本修改的布局之前",
+  [COLOURS_FROM_OLDER_VERSION]: "应用旧版本修改的配色之前",
 };
 
 export function causeLabel(cause) {
@@ -37,7 +37,7 @@ export function causeLabel(cause) {
 }
 
 export function whenText(ms) {
-  if (!Number.isFinite(ms)) return "unknown date";
+  if (!Number.isFinite(ms)) return "未知日期";
   const d = new Date(ms);
 
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + " " + d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
@@ -47,7 +47,7 @@ export function whenText(ms) {
 // copy none of them made.
 export function backupTitle(row) {
   const title = row && typeof row.title === "string" ? row.title.trim() : "";
-  return title || "Backup";
+  return title || "备份";
 }
 
 export function backupRowLabel(row) {
@@ -82,7 +82,7 @@ export function undoableCopy(rows) {
 // copies apart.
 export function undoTitle(row) {
   const { kind, name } = undoKind(row);
-  if (kind === "load" && name) return `Before undoing loading the preset "${name}"`;
-  if (kind === "undid" && name) return `Before loading the preset "${name}" again`;
-  return "Before restoring a backup";
+  if (kind === "load" && name) return `撤销加载预设“${name}”之前`;
+  if (kind === "undid" && name) return `重新加载预设“${name}”之前`;
+  return "恢复备份之前";
 }

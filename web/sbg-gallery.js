@@ -30,7 +30,7 @@ export function initGallery(mountEl, config) {
   adoptTeardown(teardown);
 
   const toolbarLayout = getSetting(S.TOOLBAR_LAYOUT);
-  const countEl = h("span", { class: "sbg-count", title: "Files shown out of all files in this root" });
+  const countEl = h("span", { class: "sbg-count", title: "当前显示数量 / 此根文件夹中的文件总数" });
   const area = createNotifyArea({ teardown, countEl: toolbarLayout === "rows" ? countEl : null });
   const loadStatus = area.source("load");
 
@@ -59,12 +59,12 @@ export function initGallery(mountEl, config) {
 
   // Pressed buttons instead of a radiogroup, whose single tab stop would take
   // the icon filters out of the Tab order.
-  const kindBtnAll = h("button", { class: "sbg-btn sbg-btn--seg sbg-btn--active", text: "All", "data-kind": "", title: "Show all files", "aria-pressed": "true" });
-  const kindBtnImg = h("button", { class: "sbg-btn sbg-btn--seg", html: IMAGE_FILTER_ICON, "data-kind": "image", title: "Images only", "aria-label": "Images only", "aria-pressed": "false" });
-  const kindBtnVid = h("button", { class: "sbg-btn sbg-btn--seg", html: VIDEO_FILTER_ICON, "data-kind": "video", title: "Videos only", "aria-label": "Videos only", "aria-pressed": "false" });
-  const kindBtnAud = h("button", { class: "sbg-btn sbg-btn--seg", html: AUDIO_FILTER_ICON, "data-kind": "audio", title: "Audio only", "aria-label": "Audio only", "aria-pressed": "false" });
+  const kindBtnAll = h("button", { class: "sbg-btn sbg-btn--seg sbg-btn--active", text: "全部", "data-kind": "", title: "显示所有文件", "aria-pressed": "true" });
+  const kindBtnImg = h("button", { class: "sbg-btn sbg-btn--seg", html: IMAGE_FILTER_ICON, "data-kind": "image", title: "仅显示图片", "aria-label": "仅显示图片", "aria-pressed": "false" });
+  const kindBtnVid = h("button", { class: "sbg-btn sbg-btn--seg", html: VIDEO_FILTER_ICON, "data-kind": "video", title: "仅显示视频", "aria-label": "仅显示视频", "aria-pressed": "false" });
+  const kindBtnAud = h("button", { class: "sbg-btn sbg-btn--seg", html: AUDIO_FILTER_ICON, "data-kind": "audio", title: "仅显示音频", "aria-label": "仅显示音频", "aria-pressed": "false" });
   const kindButtons = [kindBtnAll, kindBtnImg, kindBtnVid, kindBtnAud];
-  const kindGroup = h("div", { class: "sbg-kind-group", role: "group", "aria-label": "Filter by media type" }, kindButtons);
+  const kindGroup = h("div", { class: "sbg-kind-group", role: "group", "aria-label": "按媒体类型筛选" }, kindButtons);
 
   const setActiveKind = (kind) => {
     for (const b of kindButtons) {
@@ -74,15 +74,15 @@ export function initGallery(mountEl, config) {
     }
   };
 
-  const sortSel = h("select", { class: "sbg-select sbg-select--auto", title: "Sort order" },
+  const sortSel = h("select", { class: "sbg-select sbg-select--auto", title: "排序方式" },
     SORT_OPTIONS.map(([value, text]) => h("option", { value, text })));
   sortSel.value = state.sort;
-  const gearBtn = h("button", { class: "sbg-btn sbg-btn--square", html: GEAR_ICON, title: "Gallery settings", "aria-label": "Gallery settings" });
+  const gearBtn = h("button", { class: "sbg-btn sbg-btn--square", html: GEAR_ICON, title: "画廊设置", "aria-label": "画廊设置" });
 
   function setCount(shown, total) {
     const t = total.toLocaleString();
-    if (shown === total) countEl.textContent = toolbarLayout === "count-in-search" ? t : `${t} ${total === 1 ? "file" : "files"}`;
-    else countEl.textContent = `${shown.toLocaleString()} of ${t}`;
+    if (shown === total) countEl.textContent = toolbarLayout === "count-in-search" ? t : `${t} 个文件`;
+    else countEl.textContent = `${shown.toLocaleString()} / ${t}`;
   }
   const toolbar = arrangeToolbar(toolbarLayout, {
     searchWrap, refreshBtn: search.refreshBtn, kindGroup, countEl, folderNav, sortSel, gearBtn, area: area.el,
@@ -245,7 +245,7 @@ export function initGallery(mountEl, config) {
         }
       }
     } catch (e) {
-      loadStatus.fail(failureText("start the gallery", e));
+      loadStatus.fail(failureText("启动画廊", e));
     }
   })();
 

@@ -93,10 +93,10 @@ export function createAudioPane({ item: it, insertMedia, swapIn, setCurrentMedia
   scrub.addEventListener("pointercancel", _endScrub);
   scrub.addEventListener("lostpointercapture", () => { scrubbing = false; });
 
-  const playBtn = h("button", { class: "sbg-btn sbg-btn--round sbg-btn--round-lg", html: _PLAY_SVG, title: "Play or pause (Space)" });
+  const playBtn = h("button", { class: "sbg-btn sbg-btn--round sbg-btn--round-lg", html: _PLAY_SVG, title: "播放或暂停（空格键）" });
   playBtn.addEventListener("click", _toggle);
   const timeEl = h("span", { class: "sbg-lb__audio-time", text: "0:00 / 0:00" });
-  const muteBtn = h("button", { class: "sbg-btn sbg-btn--round", html: audio.muted ? VOLUME_MUTED_ICON : VOLUME_ICON, title: audio.muted ? "Unmute" : "Mute" });
+  const muteBtn = h("button", { class: "sbg-btn sbg-btn--round", html: audio.muted ? VOLUME_MUTED_ICON : VOLUME_ICON, title: audio.muted ? "取消静音" : "静音" });
   muteBtn.addEventListener("click", () => { audio.muted = !audio.muted; });
   const volSlider = h("input", { type: "range", class: "sbg-lb__audio-vol", min: "0", max: "1", step: "0.01", "aria-label": "Volume" });
   volSlider.value = String(audio.volume);
@@ -109,7 +109,7 @@ export function createAudioPane({ item: it, insertMedia, swapIn, setCurrentMedia
     mediaState.volume = audio.volume;
     mediaState.muted = audio.muted;
     muteBtn.innerHTML = audio.muted ? VOLUME_MUTED_ICON : VOLUME_ICON;
-    muteBtn.title = audio.muted ? "Unmute" : "Mute";
+    muteBtn.title = audio.muted ? "取消静音" : "静音";
     volSlider.value = String(audio.volume);
   };
   audio.onplay = () => { playBtn.innerHTML = PAUSE_ICON; };
@@ -135,7 +135,7 @@ export function createAudioPane({ item: it, insertMedia, swapIn, setCurrentMedia
         audio.src = fileUrl(it);
       }, Math.min(1500, 300 * _audRetries));
     } else {
-      timeEl.textContent = failureText("load this audio file");
+      timeEl.textContent = failureText("加载此音频文件");
       timeEl.classList.add("sbg-lb__audio-time--failed");
       swapIn(wrap);
     }

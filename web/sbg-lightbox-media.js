@@ -6,7 +6,7 @@ import { createAudioPane, mediaState } from "./sbg-lightbox-audio.js";
 const _FULL_PRELOAD_MAX_BYTES = 16 * 1024 * 1024;
 
 export function failedMediaHTML(it) {
-  return `${kindIcon(it)}<div class="sbg-lb__failed-text">${failureText("load this image")}</div>`;
+  return `${kindIcon(it)}<div class="sbg-lb__failed-text">${failureText("加载此图片")}</div>`;
 }
 
 export function createMediaStage({ item: it, insertMedia, swapIn, setCurrentMedia, isStale, onImageDecoded }) {

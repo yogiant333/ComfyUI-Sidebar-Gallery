@@ -122,7 +122,7 @@ export async function loadWorkflow(app, wf) {
   // The text came from the file, so a parse failure is said to be the file's.
   // Its own message would read as ComfyUI's answer being unreadable.
   if (typeof wf === "string") {
-    try { wf = JSON.parse(wf); } catch { throw new Error("the file's workflow is damaged"); }
+    try { wf = JSON.parse(wf); } catch { throw new Error("文件中的工作流已损坏"); }
   }
   return (await app.loadGraphData(wf)) !== false;
 }
@@ -149,7 +149,7 @@ export async function apiPost(path, body, { signal, keepalive = false } = {}) {
   throw Object.assign(new Error(_reasonIn(data, resp.status)), { status: resp.status, data });
 }
 
-export const RESTART_FIRST = "restart ComfyUI to finish the update";
+export const RESTART_FIRST = "请重启 ComfyUI 以完成更新";
 
 export function fmtBytes(b) {
   const n = Number(b);
@@ -162,10 +162,10 @@ export function fmtBytes(b) {
 
 export function timeAgo(ts, dateOptions) {
   const diff = (Date.now() / 1000) - ts;
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+  if (diff < 60) return "刚刚";
+  if (diff < 3600) return `${Math.floor(diff / 60)} 分钟前`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} 小时前`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)} 天前`;
   return new Date(ts * 1000).toLocaleDateString(undefined, dateOptions);
 }
 

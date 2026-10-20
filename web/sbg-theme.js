@@ -923,7 +923,7 @@ async function _takeColours(values) {
         backup: { cause: COLOURS_FROM_OLDER_VERSION, title: causeLabel(COLOURS_FROM_OLDER_VERSION) },
       }, read, { clear: false, editing: active });
     } catch (e) {
-      postNotice("theme-colours-kept", `${failureText("apply colors from an older version to the theme in use", e)}. Retrying at the next browser refresh.`);
+      postNotice("theme-colours-kept", `${failureText("将旧版本配色应用至当前主题", e)}. Retrying at the next browser refresh.`);
       return null;
     }
     // A theme gone or damaged since the list was read leaves the colours for

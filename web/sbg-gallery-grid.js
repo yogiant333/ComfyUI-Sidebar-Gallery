@@ -36,7 +36,7 @@ function _showFavState(el, on, filename) {
   el.classList.toggle("sbg-card__fav--on", on);
   el.innerHTML = on ? STAR_ICON : STAR_OUTLINE_ICON;
   el.title = favoriteTitle(on);
-  el.setAttribute("aria-label", on ? `Remove ${filename} from favorites` : `Add ${filename} to favorites`);
+  el.setAttribute("aria-label", on ? `取消收藏 ${filename}` : `收藏 ${filename}`);
 }
 
 export function createGalleryGrid({
@@ -355,7 +355,7 @@ export function createGalleryGrid({
           state.favoritesOnly && !searching
             ? h("div", { class: "sbg-empty__icon", html: STAR_OUTLINE_ICON })
             : h("div", { class: "sbg-empty__icon", html: searching ? SEARCH_ICON : FOLDER_ICON }),
-          h("div", { text: searching ? "No matches for this search" : state.favoritesOnly ? "No favorites found" : "No media found" }),
+          h("div", { text: searching ? "未找到符合搜索条件的文件" : state.favoritesOnly ? "暂无收藏文件" : "未找到媒体文件" }),
         ]);
         grid.appendChild(_emptyMsg);
       }

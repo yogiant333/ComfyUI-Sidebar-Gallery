@@ -9,7 +9,7 @@ function _badgeModifier(field) {
   return String(field).replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-const _BADGE_FALLBACK = { pos_prompt: "POSITIVE", neg_prompt: "NEGATIVE" };
+const _BADGE_FALLBACK = { pos_prompt: "正向提示词", neg_prompt: "反向提示词" };
 
 /** What a match badge's name is read through, taken once for a whole draw. */
 export function badgeLookups() {

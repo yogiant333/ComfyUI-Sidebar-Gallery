@@ -9,7 +9,7 @@ const ALL_KEYS = KEYBIND_GROUPS.flatMap(g => g.keys);
 export function renderKeybindings({ content, visitCleanups }) {
   content.innerHTML = "";
   const wrap = h("div", { class: "sbg-gs-form" });
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "Click Add, then press a key or mouse button. Click the cross on a key to remove it. A tap of Escape binds Escape, and holding it cancels." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "点击“添加”，然后按下键盘按键或鼠标按钮。点击按键旁的叉号可移除。轻按 Esc 绑定该键，长按 Esc 取消。" }));
 
   for (const group of KEYBIND_GROUPS) {
     sectionTitle(wrap, group.title);
@@ -17,6 +17,6 @@ export function renderKeybindings({ content, visitCleanups }) {
     for (const spec of group.keys) wrap.appendChild(keyInput(spec, ALL_KEYS, visitCleanups));
   }
 
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "In fullscreen video outside compare, Previous File and Next File skip a tenth of the video instead of changing the file." }));
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "非对比模式的全屏视频中，“上一个文件”和“下一个文件”将后退或前进视频总时长的十分之一。" }));
   content.appendChild(wrap);
 }

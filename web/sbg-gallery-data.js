@@ -16,11 +16,11 @@ export function announceConfigFiles(cfg) {
   if (!cfg) return;
 
   if (cfg.quarantined) {
-    postNotice("folders-set-aside", `Couldn't read the folder settings, so defaults will be used. The folder settings file was kept as ${cfg.quarantined}.`, { sticky: true, failure: true });
+    postNotice("folders-set-aside", `无法读取文件夹设置，将使用默认设置。原设置文件已保留为 ${cfg.quarantined}。`, { sticky: true, failure: true });
   }
 
   if (cfg.copied) {
-    postNotice("folders-copied", `The folder settings file wasn't saved as UTF-8, so some characters may have been read wrong. The original is kept as ${cfg.copied}.`, { sticky: true });
+    postNotice("folders-copied", `文件夹设置文件未使用 UTF-8 编码，部分字符可能读取有误。原文件已保留为 ${cfg.copied}。`, { sticky: true });
   }
 }
 
@@ -92,7 +92,7 @@ export function createDataService({
         folders.ok();
       } catch (e) {
         console.warn("[SBG] Subfolder list failed to load:", e);
-        folders.fail(failureText("load the folder list", e), null, { tint: true });
+        folders.fail(failureText("加载文件夹列表", e), null, { tint: true });
       } finally {
         _subfoldersInflight = null;
         if (_subfoldersAgain) {
@@ -151,7 +151,7 @@ export function createDataService({
       galleryCache.config.configOwed = true;
       if (_disposed) throw e;
 
-      configStatus.fail(failureText("load the folder settings", e), null, { tint: true });
+      configStatus.fail(failureText("加载文件夹设置", e), null, { tint: true });
       _retryConfig();
       throw e;
     }
@@ -161,7 +161,7 @@ export function createDataService({
     // Posted once until a read succeeds, since each read while the file stays
     // unreadable would bring back a notice that had timed out or been closed.
     if (cfg.unreadable) {
-      if (!_unreadableShown) postNotice("folders-unreadable", `${failureText("open the folder settings file", cfg.unreadable)}. Extra folders may be missing until the file can be opened.`, { failure: true });
+      if (!_unreadableShown) postNotice("folders-unreadable", `${failureText("打开文件夹设置文件", cfg.unreadable)}。在能够打开此文件之前，额外文件夹可能无法显示。`, { failure: true });
       _unreadableShown = true;
     } else {
       _unreadableShown = false;
@@ -252,7 +252,7 @@ export function createDataService({
   async function fetchAllItems({ rescan = false, rootId: rid = state.rootId } = {}) {
     if (rescan) resetFailedThumbs();
     const shown = rid === state.rootId;
-    if (shown) load.progress(rescan ? "Scanning…" : "Loading…");
+    if (shown) load.progress(rescan ? "正在扫描…" : "正在加载…");
     try {
       const data = await api("/sidebar_gallery/list_all", { root_id: rid, rescan: rescan ? "1" : undefined });
       const isCurrent = rid === state.rootId;
@@ -302,7 +302,7 @@ export function createDataService({
       }
       return null;
     } catch (e) {
-      if (rid === state.rootId) load.fail(failureText("load the files", e));
+      if (rid === state.rootId) load.fail(failureText("加载文件", e));
       return e;
     } finally {
       if (shown) load.stop();
@@ -356,7 +356,7 @@ export function createDataService({
         } catch (e) {
           if (rid === state.rootId) {
             // A closed line stops the retry, which would otherwise bring it back.
-            poll.fail(`${failureText("check for new files", e)}. The files shown may be out of date.`, _stopPollRetry, { tint: true });
+            poll.fail(`${failureText("检查新文件", e)}。当前显示的文件可能不是最新的。`, _stopPollRetry, { tint: true });
             _retryPoll();
           }
           return;

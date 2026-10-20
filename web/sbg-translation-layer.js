@@ -556,7 +556,7 @@ function _resolveCards(section, params, summary) {
 }
 
 function _nodeHeading(n) {
-  return n.title || (n._from ? `${n.class_type} (from ${n._from})` : (n.class_type || "Unknown"));
+  return n.title || (n._from ? `${n.class_type}（来自 ${n._from}）` : (n.class_type || "未知节点"));
 }
 
 function _resolveNodes(summary) {
@@ -869,7 +869,7 @@ function _renderTabbed(section, summary, ctx) {
     let idx = Math.max(0, remembered == null ? -1 : usable.findIndex(u => (u.tab.label || "") === remembered));
 
     const pills = usable.map((u, i) => {
-      const btn = h("button", { class: "sbg-prompt-pill", role: "tab", text: u.tab.label || `Tab ${i + 1}` });
+      const btn = h("button", { class: "sbg-prompt-pill", role: "tab", text: u.tab.label || `标签页 ${i + 1}` });
       if (u.tab.pillColor) applyColor(btn, u.tab.pillColor);
       btn.addEventListener("click", () => select(i));
       return btn;
@@ -1013,7 +1013,7 @@ function _renderCards(section, summary, ctx) {
     const pair = h("div", { class: "sbg-meta-pair" });
     step.forEach((i, n) => {
       const item = h("div", { class: "sbg-meta-pair__item" });
-      item.appendChild(h("span", { class: "sbg-meta-pair__label", text: n ? "LOW" : "HIGH" }));
+      item.appendChild(h("span", { class: "sbg-meta-pair__label", text: n ? "低噪声" : "高噪声" }));
       add(item, cards[i]);
       pair.appendChild(item);
     });

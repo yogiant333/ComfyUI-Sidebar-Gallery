@@ -97,24 +97,24 @@ export function openLightbox(list, startIdx, openEvent) {
 
   const mediaContainer = h("div", { class: "sbg-lb__center" });
 
-  const prevBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--prev", html: NAV_ARROW, title: titleWithKeys("Previous", keyPrev), "aria-label": "Previous file" });
-  const nextBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--next", html: NAV_ARROW, title: titleWithKeys("Next", keyNext), "aria-label": "Next file" });
-  const closeBtn = h("button", { class: "sbg-lb__close", html: sizedIcon(CLOSE_ICON, 16), title: titleWithKeys("Close", keyClose), "aria-label": "Close lightbox" });
+  const prevBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--prev", html: NAV_ARROW, title: titleWithKeys("上一个", keyPrev), "aria-label": "上一个文件" });
+  const nextBtn = h("button", { class: "sbg-lb__nav sbg-lb__nav--next", html: NAV_ARROW, title: titleWithKeys("下一个", keyNext), "aria-label": "下一个文件" });
+  const closeBtn = h("button", { class: "sbg-lb__close", html: sizedIcon(CLOSE_ICON, 16), title: titleWithKeys("关闭", keyClose), "aria-label": "关闭预览" });
 
   const bottomName = h("span", { class: "sbg-lb__bottom-name" });
   const bottomCount = h("span", { class: "sbg-lb__bottom-count" });
 
-  const dlBtn = h("a", { class: "sbg-btn sbg-lb__act--download", text: "Download", title: "Download file", download: "", target: "_blank" });
-  const loadWfBtn = h("button", { class: "sbg-btn sbg-btn--accent sbg-lb__act--load-wf", text: "Load Workflow", title: "Load workflow into ComfyUI", disabled: "true" });
-  const copyPromptBtn = h("button", { class: "sbg-btn sbg-lb__act--copy-prompt", text: "Copy Prompt", title: "Copy positive prompt", disabled: "true" });
-  const copyWfBtn = h("button", { class: "sbg-btn sbg-lb__act--copy-wf", text: "Copy Workflow", title: "Copy workflow JSON", disabled: "true" });
+  const dlBtn = h("a", { class: "sbg-btn sbg-lb__act--download", text: "下载", title: "下载文件", download: "", target: "_blank" });
+  const loadWfBtn = h("button", { class: "sbg-btn sbg-btn--accent sbg-lb__act--load-wf", text: "加载工作流", title: "将工作流加载到 ComfyUI", disabled: "true" });
+  const copyPromptBtn = h("button", { class: "sbg-btn sbg-lb__act--copy-prompt", text: "复制提示词", title: "复制正向提示词", disabled: "true" });
+  const copyWfBtn = h("button", { class: "sbg-btn sbg-lb__act--copy-wf", text: "复制工作流", title: "复制工作流 JSON", disabled: "true" });
 
-  const compareBtn = h("button", { class: "sbg-btn sbg-lb__act--compare", text: COMPARE_LABEL, title: titleWithKeys("Compare with another file", keyCompare) });
+  const compareBtn = h("button", { class: "sbg-btn sbg-lb__act--compare", text: COMPARE_LABEL, title: titleWithKeys("与其他文件对比", keyCompare) });
   const favBtn = h("button", { class: "sbg-btn sbg-lb__act--favorite", title: favoriteTitle(false) });
   const _setFavContent = (on) => {
     favBtn.innerHTML = "";
     favBtn.appendChild(h("span", { class: "sbg-fav-star", html: on ? STAR_ICON : STAR_OUTLINE_ICON, "aria-hidden": "true" }));
-    favBtn.appendChild(document.createTextNode(on ? "Favorited" : "Favorite"));
+    favBtn.appendChild(document.createTextNode(on ? "已收藏" : "收藏"));
   };
   _setFavContent(false);
   function _syncFavBtn() {
@@ -127,7 +127,7 @@ export function openLightbox(list, startIdx, openEvent) {
   favBtn.addEventListener("click", () => toggleFavorite(items[idx].root_id, items[idx].relpath));
   document.addEventListener("sbg-favorites-changed", _syncFavBtn);
 
-  const delBtn = h("button", { class: "sbg-btn sbg-btn--danger sbg-btn--delete sbg-lb__act--delete", text: "Delete", title: `${titleWithKeys("Delete", keyDelete)}. Moves this file to the Recycle Bin or Trash, or to the gallery's trash folder when the drive has none. While comparing, this deletes the left file.` });
+  const delBtn = h("button", { class: "sbg-btn sbg-btn--danger sbg-btn--delete sbg-lb__act--delete", text: "删除", title: `${titleWithKeys("删除", keyDelete)}。将此文件移至回收站；磁盘没有回收站时，移至画廊的回收站文件夹。对比时将删除左侧文件。` });
   // Drawn by the stylesheet while two files are side by side, as an image so it
   // stays while the button asks for confirmation.
   delBtn.style.setProperty("--sbg-arrow-left", iconImage(ARROW_LEFT_ICON));
@@ -182,7 +182,7 @@ export function openLightbox(list, startIdx, openEvent) {
     class: "sbg-lightbox",
     role: "dialog",
     "aria-modal": "true",
-    "aria-label": "Lightbox",
+    "aria-label": "文件预览",
   }, [mediaArea, h("div", { class: "sbg-lb__meta-wrap" }, [metaResizeHandle, metaPanel])]);
   document.body.appendChild(overlay);
 
@@ -508,8 +508,8 @@ export function openLightbox(list, startIdx, openEvent) {
     {
       keys: keyFullscreen, mods: "none", run: () => {
         if (document.fullscreenElement) document.exitFullscreen();
-        else if (!overlay.requestFullscreen) showFailure("go fullscreen", "this browser doesn't offer it");
-        else overlay.requestFullscreen().catch((e) => showFailure("go fullscreen", e));
+        else if (!overlay.requestFullscreen) showFailure("进入全屏", "当前浏览器不支持此功能");
+        else overlay.requestFullscreen().catch((e) => showFailure("进入全屏", e));
         return true;
       },
     },
@@ -660,16 +660,16 @@ export function openLightbox(list, startIdx, openEvent) {
 
   loadWfBtn.addEventListener("click", async () => {
     try {
-      loadWfBtn.textContent = "Loading…";
+      loadWfBtn.textContent = "正在加载…";
       const m = await _fullMetaOfShown();
       if (!m) return;
       // Closes even when ComfyUI cannot build the graph, since its own dialog
       // saying so opens behind the lightbox.
       if (await loadWorkflowFrom(m)) destroy();
     } catch (e) {
-      showFailure("load the workflow", e);
+      showFailure("加载工作流", e);
     } finally {
-      loadWfBtn.textContent = "Load Workflow";
+      loadWfBtn.textContent = "加载工作流";
     }
   });
 
@@ -680,13 +680,13 @@ export function openLightbox(list, startIdx, openEvent) {
 
   copyWfBtn.addEventListener("click", async () => {
     try {
-      copyWfBtn.textContent = "Loading…";
+      copyWfBtn.textContent = "正在加载…";
       const m = await _fullMetaOfShown();
       if (m) copyWorkflow(m);
     } catch (e) {
-      showFailure("copy the workflow", e);
+      showFailure("复制工作流", e);
     } finally {
-      copyWfBtn.textContent = "Copy Workflow";
+      copyWfBtn.textContent = "复制工作流";
     }
   });
 

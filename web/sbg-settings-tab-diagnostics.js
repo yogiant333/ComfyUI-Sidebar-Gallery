@@ -47,7 +47,7 @@ function _refreshGalleryWhenSettled(galleryCtx) {
   _stopRefreshWait = stop;
 }
 
-const STORE_REFUSED = "this browser's storage is full or blocked";
+const STORE_REFUSED = "浏览器存储空间已满或被阻止";
 
 // The In Progress row's words for the run going, or null when none is.
 function _runningText(progress) {
@@ -78,7 +78,7 @@ function statRow(container, label, title, before = null) {
 export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, indexOnly }) {
   content.innerHTML = "";
   const wrap = h("div", { class: "sbg-gs-form" });
-  sectionTitle(wrap, "Tools");
+  sectionTitle(wrap, "工具");
 
   const actionRow = h("div", { class: "sbg-gs-actions" });
 
@@ -115,18 +115,18 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
     }
   };
 
-  const diagGalleryRefreshBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "Refresh gallery", title: "Rescan the root you are viewing and reload its file list" });
+  const diagGalleryRefreshBtn = h("button", { class: "sbg-btn sbg-btn--accent", text: "刷新图库", title: "重新扫描当前根目录并加载文件列表" });
   diagGalleryRefreshBtn.addEventListener("click", () =>
-    busyButton(diagGalleryRefreshBtn, "Refreshing…", async () => {
+    busyButton(diagGalleryRefreshBtn, "刷新中…", async () => {
       // The load reports its failure in the notification area, which the
       // settings panel covers, so it is said here as well, in the same words.
       const failed = await galleryCtx.fetchAllItems({ rescan: true });
-      if (failed) showFailure("load the files", failed);
-      else showToast("Gallery refreshed");
+      if (failed) showFailure("加载文件", failed);
+      else showToast("图库已刷新");
       await refreshStats();
     }));
 
-  const diagRefreshBtn = h("button", { class: "sbg-btn", text: "Rebuild index", title: "Read every file's metadata again and rebuild the index" });
+  const diagRefreshBtn = h("button", { class: "sbg-btn", text: "重建索引", title: "重新读取所有文件的元数据并重建索引" });
   // Whether a rebuild was seen running, so its end puts the button back and
   // reads the figures again.
   let seenRun = false;
@@ -135,7 +135,7 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
   let firstRunning = false;
   const showIdle = () => {
     diagRefreshBtn.disabled = firstRunning;
-    diagRefreshBtn.textContent = "Rebuild index";
+    diagRefreshBtn.textContent = "重建索引";
   };
   // A root's scanning phase has no percentage, so the button reads 0% there
   // instead of the count line of files found. The search index rebuild never
@@ -143,7 +143,7 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
   const showRunning = (data, entry) => {
     diagRefreshBtn.disabled = true;
     const kind = progressKind(data, entry);
-    diagRefreshBtn.textContent = kind === "facts" ? indexRunningText(kind, entry) : `Rebuilding (${Math.max(0, indexPct(kind, entry))}%)`;
+    diagRefreshBtn.textContent = kind === "facts" ? indexRunningText(kind, entry) : `正在重建（${Math.max(0, indexPct(kind, entry))}%）`;
   };
 
   const onProgress = (data, meta) => {
@@ -169,30 +169,30 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
   };
   confirmClick(diagRefreshBtn, async () => {
     diagRefreshBtn.disabled = true;
-    diagRefreshBtn.textContent = "Rebuilding (0%)";
+    diagRefreshBtn.textContent = "正在重建（0%）";
     let answer;
     try {
       answer = await apiPost("/sidebar_gallery/rebuild_index", {});
     } catch (e) {
       showIdle();
-      showFailure("start the rebuild", e);
+      showFailure("开始重建", e);
       return;
     }
     if (answer.status === "already_running") {
       showIdle();
-      showToast("Couldn't start the rebuild: another scan is running.");
+      showToast("无法开始重建：另一个扫描任务正在运行。");
       return;
     }
     seenRun = true;
     _refreshGalleryWhenSettled(galleryCtx);
   });
 
-  const diagCacheMetaBtn = h("button", { class: "sbg-btn", text: "Cache all metadata", title: "Download the metadata of every file in the root you are viewing into this browser" });
+  const diagCacheMetaBtn = h("button", { class: "sbg-btn", text: "缓存所有元数据", title: "将当前根目录中所有文件的元数据缓存至此浏览器" });
   // The tab's own cache figures show what a run stored, so only what went wrong
   // is said: a store that refused the writes, or else the files that couldn't
   // be fetched.
   diagCacheMetaBtn.addEventListener("click", () =>
-    busyButton(diagCacheMetaBtn, "Caching…", async () => {
+    busyButton(diagCacheMetaBtn, "缓存中…", async () => {
       const items = galleryCtx.getAllItems ? galleryCtx.getAllItems() : [];
       let cached = 0;
       let skipped = 0;
@@ -203,19 +203,19 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
         try {
           batch.push({ key: itemKey(it), value: await fetchSummary(it) });
           cached++;
-          if (cached % 50 === 0) diagCacheMetaBtn.textContent = `Caching… ${cached}/${items.length}`;
+          if (cached % 50 === 0) diagCacheMetaBtn.textContent = `缓存中… ${cached}/${items.length}`;
           if (batch.length >= 50 && !(await metaCache.putBatch(batch.splice(0)))) refused = true;
         } catch { skipped++; }
       }
       if (batch.length && !(await metaCache.putBatch(batch))) refused = true;
-      if (refused) showFailure("cache the metadata", STORE_REFUSED);
+      if (refused) showFailure("缓存元数据", STORE_REFUSED);
       else if (skipped) showToast(`The metadata of ${skipped === 1 ? "1 file" : `${skipped} files`} couldn't be fetched, so it wasn't cached.`);
       await refreshStats();
   }));
 
-  const diagCacheThumbBtn = h("button", { class: "sbg-btn", text: "Cache thumbnails", title: "Download the thumbnails of every file in the root you are viewing into this browser" });
+  const diagCacheThumbBtn = h("button", { class: "sbg-btn", text: "缓存缩略图", title: "将当前根目录中所有文件的缩略图缓存至此浏览器" });
   diagCacheThumbBtn.addEventListener("click", () =>
-    busyButton(diagCacheThumbBtn, "Caching…", async () => {
+    busyButton(diagCacheThumbBtn, "缓存中…", async () => {
       const items = galleryCtx.getAllItems ? galleryCtx.getAllItems() : [];
       const refusedBefore = thumbCache.refused();
       let cached = 0;
@@ -227,32 +227,32 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
           if (await thumbCache.fillStore(it.thumb_url)) cached++;
           else skipped++;
           if ((cached + skipped) % 20 === 0) {
-            diagCacheThumbBtn.textContent = `Caching… ${cached}/${items.length}`;
+            diagCacheThumbBtn.textContent = `缓存中… ${cached}/${items.length}`;
           }
         } catch { skipped++; }
       }
-      if (thumbCache.refused() > refusedBefore) showFailure("cache the thumbnails", STORE_REFUSED);
-      else if (skipped) showToast(skipped === 1 ? "1 thumbnail couldn't be fetched, so it wasn't cached." : `${skipped} thumbnails couldn't be fetched, so they weren't cached.`);
+      if (thumbCache.refused() > refusedBefore) showFailure("缓存缩略图", STORE_REFUSED);
+      else if (skipped) showToast(skipped === 1 ? "1 thumbnail couldn't be fetched, so it wasn't cached." : `${skipped} 张缩略图获取失败，未缓存。`);
       await refreshStats();
   }));
 
-  const diagClearMetaBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "Clear metadata cache", title: "Remove the metadata this browser has stored" });
+  const diagClearMetaBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "清除元数据缓存", title: "删除此浏览器中保存的元数据缓存" });
   confirmClick(diagClearMetaBtn, async () => {
-    if (!(await metaCache.clear())) showFailure("clear the metadata cache", "this browser's storage is unavailable");
+    if (!(await metaCache.clear())) showFailure("清除元数据缓存", "浏览器存储不可用");
     await refreshStats();
   });
 
-  const diagClearThumbBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "Clear thumbnail cache", title: "Remove the thumbnails this browser has stored" });
+  const diagClearThumbBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "清除缩略图缓存", title: "删除此浏览器中保存的缩略图缓存" });
   confirmClick(diagClearThumbBtn, async () => {
     const ok = await thumbCache.clear();
     // A thumbnail that failed is not asked for again until a rescan, so
     // clearing the cache also gives those files another try.
     resetFailedThumbs();
-    if (!ok) showFailure("clear the thumbnail cache", "this browser's storage is unavailable");
+    if (!ok) showFailure("清除缩略图缓存", "浏览器存储不可用");
     await refreshStats();
   });
 
-  const diagNukeBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "Clear everything and refresh", title: "Delete every cache this browser holds for the gallery and refresh the page. The settings, presets and files are not touched." });
+  const diagNukeBtn = h("button", { class: "sbg-btn sbg-btn--danger", text: "清除所有缓存并刷新", title: "删除此浏览器中的所有图库缓存并刷新页面。设置、预设和文件不受影响。" });
   confirmClick(diagNukeBtn, () => {
     cacheDb.remove();
     deleteSnapshots();
@@ -260,9 +260,9 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
     for (const k of B_RETIRED) lsRemove(k);
 
     metaCache.clearMemory();
-    showToast("All caches cleared. Refreshing the page.");
+    showToast("已清除所有缓存，正在刷新页面。");
     setTimeout(() => location.reload(), 500);
-  }, { label: "Clear and refresh?", armMs: 3000 });
+  }, { label: "确认清除并刷新？", armMs: 3000 });
 
   actionRow.appendChild(diagGalleryRefreshBtn);
   actionRow.appendChild(diagRefreshBtn);
@@ -275,41 +275,41 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
 
   wrap.appendChild(problemSlot);
 
-  sectionTitle(wrap, "Index", "The database that lists every file and its metadata, so the gallery opens without rescanning the disk");
+  sectionTitle(wrap, "索引", "保存文件及其元数据的数据库，让图库无需重新扫描磁盘即可打开");
   const roots = galleryCtx && galleryCtx.getRoots ? galleryCtx.getRoots() : [];
-  const rootRows = new Map(roots.map(r => [r.id, statRow(wrap, r.label, r.path || "Files indexed under this root, and when its last scan finished")]));
-  const total = statRow(wrap, "Total", "Files indexed across every root");
-  const kinds = [["image", "Images"], ["video", "Videos"], ["audio", "Audio"]].map(([kind, label]) => [kind, statRow(wrap, label)]);
+  const rootRows = new Map(roots.map(r => [r.id, statRow(wrap, r.label, r.path || "此根目录中的索引文件数量及上次扫描完成时间")]));
+  const total = statRow(wrap, "总计", "所有根目录中的索引文件数量");
+  const kinds = [["image", "图像"], ["video", "视频"], ["audio", "音频"]].map(([kind, label]) => [kind, statRow(wrap, label)]);
   // Shown only when there are any, since a row reading zero would leave users
   // wondering what is missing from their library.
-  const missing = statRow(wrap, "Missing", "Files a scan could no longer find. Their details come back if the files do, and a rebuild removes any missing for more than 30 days.");
+  const missing = statRow(wrap, "缺失", "扫描时无法找到的文件。文件恢复后可重新显示详情；重建索引时移除缺失超过 30 天的记录。");
   missing.set(null);
-  const dbPath = statRow(wrap, "Database Path");
+  const dbPath = statRow(wrap, "数据库路径");
   dbPath.value.classList.add("sbg-gs-value--path");
-  const dbSize = statRow(wrap, "Database Size", "Size of the database on disk, counting the two working files SQLite keeps beside it");
-  const inProgress = statRow(wrap, "In Progress");
+  const dbSize = statRow(wrap, "数据库大小", "数据库占用的磁盘空间，包括旁边两个 SQLite 工作文件");
+  const inProgress = statRow(wrap, "进行中");
   inProgress.row.classList.add("sbg-gs-row--active");
   inProgress.set(null);
 
-  sectionTitle(wrap, "Server thumbnails", "Thumbnails the server makes and keeps in its .thumbs folder, shared by every browser");
-  const thumbCount = statRow(wrap, "Count");
-  const thumbSize = statRow(wrap, "Size");
+  sectionTitle(wrap, "服务器缩略图", "服务器生成并保存在 .thumbs 文件夹中的缩略图，所有浏览器共享");
+  const thumbCount = statRow(wrap, "数量");
+  const thumbSize = statRow(wrap, "大小");
 
-  sectionTitle(wrap, "Browser thumbnail cache", "Thumbnails kept in this browser so the grid shows them without asking the server");
-  const tcCount = statRow(wrap, "Cached");
-  const tcSize = statRow(wrap, "Size");
+  sectionTitle(wrap, "浏览器缩略图缓存", "此浏览器保存的缩略图，无需向服务器请求即可显示");
+  const tcCount = statRow(wrap, "已缓存");
+  const tcSize = statRow(wrap, "大小");
 
-  sectionTitle(wrap, "Browser metadata cache", "Metadata kept in this browser so the lightbox opens without asking the server");
-  const mcCount = statRow(wrap, "Stored");
-  const mcSize = statRow(wrap, "Size");
-  const mcMem = statRow(wrap, "In Memory", "Metadata held in memory since this page loaded");
+  sectionTitle(wrap, "浏览器元数据缓存", "此浏览器保存的元数据，无需向服务器请求即可打开查看器");
+  const mcCount = statRow(wrap, "已存储");
+  const mcSize = statRow(wrap, "大小");
+  const mcMem = statRow(wrap, "内存中", "页面加载后保存在内存中的元数据");
 
   async function refreshStats() {
-    mcMem.set(`${metaCache.memorySize} entries`);
+    mcMem.set(`${metaCache.memorySize} 条`);
     Promise.all([thumbCache.stats(), metaCache.stats()]).then(([ts, ms]) => {
-      tcCount.set(`${ts.count.toLocaleString()} thumbnails`);
+      tcCount.set(`${ts.count.toLocaleString()} 张缩略图`);
       tcSize.set(fmtCacheSize(ts.totalSizeBytes));
-      mcCount.set(`${ms.count.toLocaleString()} entries`);
+      mcCount.set(`${ms.count.toLocaleString()} 条`);
       mcSize.set(fmtCacheSize(ms.totalSizeBytes));
     }).catch(() => { });
 
@@ -317,7 +317,7 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
       fillStatus(await api("/sidebar_gallery/status"));
       setProblem("status", null);
     } catch (e) {
-      setProblem("status", failureText("load diagnostics", e));
+      setProblem("status", failureText("加载诊断信息", e));
       for (const r of [...rootRows.values(), total, ...kinds.map(([, r]) => r), dbPath, dbSize, thumbCount, thumbSize]) r.set("—");
       missing.set(null);
     }
@@ -327,9 +327,9 @@ export function renderDiagnosticsTab({ content, galleryCtx, visitCleanups, index
     const indexInfo = st.index;
     const lastScans = indexInfo.last_scan || {};
     for (const [rid, count] of Object.entries(indexInfo.counts)) {
-      if (!rootRows.has(rid)) rootRows.set(rid, statRow(wrap, rid, "Files indexed under this root, and when its last scan finished", total.row));
-      const when = lastScans[rid] ? " · scanned " + timeAgo(lastScans[rid]) : "";
-      rootRows.get(rid).set(Number(count).toLocaleString() + " files" + when);
+      if (!rootRows.has(rid)) rootRows.set(rid, statRow(wrap, rid, "此根目录中的索引文件数量及上次扫描完成时间", total.row));
+      const when = lastScans[rid] ? " · 扫描于 " + timeAgo(lastScans[rid]) : "";
+      rootRows.get(rid).set(Number(count).toLocaleString() + " 个文件" + when);
     }
     total.set(typeof indexInfo.total === "number" ? indexInfo.total.toLocaleString() + " files" : null);
     for (const [kind, row] of kinds) {

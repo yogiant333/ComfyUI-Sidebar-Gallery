@@ -171,7 +171,7 @@ export async function loadSettings() {
       console.warn("[SBG] Failed to load settings from server:", e);
       _settingsUnread = true;
       // It stays until closed, since every change is refused until a reload.
-      postNotice("settings-unread", `${failureText("load the gallery settings", e)}. Defaults are in use, and changes won't be saved until the page is refreshed.`, { sticky: true, failure: true });
+      postNotice("settings-unread", `${failureText("加载图库设置", e)}. Defaults are in use, and changes won't be saved until the page is refreshed.`, { sticky: true, failure: true });
     }
     _settingsLoaded = true;
     window.addEventListener("pagehide", _sendOnLeave);
@@ -191,7 +191,7 @@ export async function readSettingsFromDisk() {
   if (!resp.ok) throw new Error(await errorFrom(resp));
   _announceSettingsFiles(resp);
   const data = await resp.json();
-  if (!data || typeof data !== "object") throw new Error("the settings file couldn't be read");
+  if (!data || typeof data !== "object") throw new Error("无法读取设置文件");
   return data;
 }
 
@@ -502,7 +502,7 @@ const _toastedKeys = new Set();
 const _refusedKeys = new Set();
 function _saveFailed(key, err) {
   console.warn("[SBG] Failed to save setting", key, err.error);
-  const text = `${failureText("save the gallery settings", err.error)}. Recent changes may be lost when the page is refreshed.`;
+  const text = `${failureText("保存图库设置", err.error)}. Recent changes may be lost when the page is refreshed.`;
   postSaveFailure("settings-save-failed", text, !_toastedKeys.has(key));
   _toastedKeys.add(key);
   _unsavedKeys.add(key);

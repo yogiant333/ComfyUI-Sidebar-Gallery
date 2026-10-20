@@ -17,7 +17,7 @@ export function createMetaPanel({
   isCompareActive, comparedItem, sourceMediaContent,
   loadWfBtn, copyPromptBtn, copyWfBtn, focusLightbox = () => {},
 }) {
-  const loadingLine = () => h("div", { class: "sbg-lb__note sbg-loading", text: "Loading metadata…" });
+  const loadingLine = () => h("div", { class: "sbg-lb__note sbg-loading", text: "正在加载元数据…" });
 
   let _waitLine = loadingLine();
   const metaBody = h("div", { class: "sbg-lb__meta-body" }, [_waitLine]);
@@ -25,15 +25,15 @@ export function createMetaPanel({
   const _metaHeaderBadge = h("span", { class: "sbg-source-app" });
 
   const _tabGenerated = h("button", {
-    class: "sbg-tab sbg-tab--active", text: "Generated",
+    class: "sbg-tab sbg-tab--active", text: "生成结果",
     role: "tab", "aria-selected": "true", tabindex: "0",
   });
   const _tabSource = h("button", {
-    class: "sbg-tab sbg-lb__source-tab", text: "Source Image",
+    class: "sbg-tab sbg-lb__source-tab", text: "源图像",
     role: "tab", "aria-selected": "false", tabindex: "-1",
   });
   const _metaTabs = h("div", {
-    class: "sbg-tabs", role: "tablist", "aria-label": "Metadata views",
+    class: "sbg-tabs", role: "tablist", "aria-label": "元数据视图",
   }, [_tabGenerated, _tabSource]);
   _metaTabs.classList.add("sbg-hidden");
   host.append(h("div", { class: "sbg-lb__meta-header" }, [_metaTabs, _metaHeaderBadge]), metaBody);
@@ -92,7 +92,7 @@ export function createMetaPanel({
   }
 
   const showLoading = () => _showWithoutSummary(loadingLine());
-  const showFailed = (e) => _showWithoutSummary(h("div", { class: "sbg-lb__note sbg-lb__note--failed", text: failureText("load the metadata", e) }));
+  const showFailed = (e) => _showWithoutSummary(h("div", { class: "sbg-lb__note sbg-lb__note--failed", text: failureText("加载元数据", e) }));
 
   function _switchMetaTab(tab) {
     _setActiveMetaTab(tab);
@@ -194,14 +194,14 @@ export function createMetaPanel({
 
   function _compareHeader(withDiffLegend) {
     const header = h("div", { class: "sbg-compare-header" });
-    header.appendChild(h("div", { class: "sbg-compare-header__title", text: `Comparing: ${comparedItem().filename}` }));
+    header.appendChild(h("div", { class: "sbg-compare-header__title", text: `对比：${comparedItem().filename}` }));
     const legend = h("div", { class: "sbg-compare-header__legend" });
     if (withDiffLegend) {
-      legend.appendChild(h("span", { class: "sbg-cmp-legend--same", text: "■ Same" }));
-      legend.appendChild(h("span", { class: "sbg-cmp-legend--changed", text: "■ Changed" }));
+      legend.appendChild(h("span", { class: "sbg-cmp-legend--same", text: "■ 相同" }));
+      legend.appendChild(h("span", { class: "sbg-cmp-legend--changed", text: "■ 不同" }));
     }
-    legend.appendChild(h("span", { class: "sbg-cmp-legend--current", text: withDiffLegend ? "■ Current only" : "■ Current" }));
-    legend.appendChild(h("span", { class: "sbg-cmp-legend--compared", text: withDiffLegend ? "■ Compared only" : "■ Compared" }));
+    legend.appendChild(h("span", { class: "sbg-cmp-legend--current", text: withDiffLegend ? "■ 仅当前项" : "■ 当前项" }));
+    legend.appendChild(h("span", { class: "sbg-cmp-legend--compared", text: withDiffLegend ? "■ 仅对比项" : "■ 对比项" }));
     header.appendChild(legend);
     return header;
   }
@@ -214,7 +214,7 @@ export function createMetaPanel({
     if (compareSummary.__cmpPending || compareSummary.__cmpError) {
       _drawLine(h("div", {
         class: "sbg-lb__note " + (compareSummary.__cmpPending ? "sbg-loading" : "sbg-lb__note--failed"),
-        text: compareSummary.__cmpPending ? "Loading the compared file's metadata…" : failureText("load the compared file's metadata", compareSummary.error),
+        text: compareSummary.__cmpPending ? "正在加载对比文件的元数据…" : failureText("加载对比文件的元数据", compareSummary.error),
       }));
       return;
     }
@@ -251,19 +251,19 @@ export function createMetaPanel({
     const block = (label, side, s, rootId) => {
       const wrap = _sideBlock(label, side);
       if (sourceMediaList(s).length) wrap.appendChild(sourceMediaContent(s, rootId));
-      else wrap.appendChild(note("No source image or audio"));
+      else wrap.appendChild(note("没有源图像或音频"));
       return wrap;
     };
     const sameSource = sourceMediaList(curS).length && sourceMediaList(cmpS).length
       && sourceMediaKey(curS, curRoot) === sourceMediaKey(cmpS, cmpRoot);
-    metaBody.appendChild(block("Current", "current", curS, curRoot));
+    metaBody.appendChild(block("当前项", "current", curS, curRoot));
     metaBody.appendChild(_hairline());
     if (sameSource) {
-      const wrap = _sideBlock("Compared", "compared");
-      wrap.appendChild(note("Same source as the current file"));
+      const wrap = _sideBlock("对比项", "compared");
+      wrap.appendChild(note("与当前文件使用相同的源文件"));
       metaBody.appendChild(wrap);
     } else {
-      metaBody.appendChild(block("Compared", "compared", cmpS, cmpRoot));
+      metaBody.appendChild(block("对比项", "compared", cmpS, cmpRoot));
     }
   }
 
@@ -331,17 +331,17 @@ export function createMetaPanel({
         : h("div", { class: "sbg-cmp-sechead" });
       sectionHeader.appendChild(h("span", { class: "sbg-cmp-sectitle", text: section.title }));
       sectionHeader.appendChild(hasDiff
-        ? h("span", { class: "sbg-cmp-flag sbg-cmp-flag--diff", text: "CHANGED" })
-        : h("span", { class: "sbg-cmp-flag sbg-cmp-flag--same", text: "SAME" }));
+        ? h("span", { class: "sbg-cmp-flag sbg-cmp-flag--diff", text: "不同" })
+        : h("span", { class: "sbg-cmp-flag sbg-cmp-flag--same", text: "相同" }));
       sectionWrap.appendChild(sectionHeader);
 
       if (hasDiff && hasCurrent && hasCompare) {
         const stack = h("div", { class: "sbg-cmp-stack" });
-        const topBlock = _sideBlock("Current", "current");
+        const topBlock = _sideBlock("当前项", "current");
         const tc = TL.renderSection(secCur, curMerged, {}); if (tc) topBlock.appendChild(tc);
         stack.appendChild(topBlock);
         stack.appendChild(_hairline());
-        const bottomBlock = _sideBlock("Compared", "compared");
+        const bottomBlock = _sideBlock("对比项", "compared");
         const bc = TL.renderSection(secCmp, cmpMerged, {}); if (bc) bottomBlock.appendChild(bc);
         stack.appendChild(bottomBlock);
         sectionWrap.appendChild(stack);
@@ -362,8 +362,8 @@ export function createMetaPanel({
           : TL.renderSection(secCmp, cmpMerged, {});
         if (single) {
           const wrapper = hasCurrent
-            ? _sideBlock("Current only", "current")
-            : _sideBlock("Compared only", "compared");
+            ? _sideBlock("仅当前项", "current")
+            : _sideBlock("仅对比项", "compared");
           wrapper.appendChild(single);
           sectionWrap.appendChild(wrapper);
         }

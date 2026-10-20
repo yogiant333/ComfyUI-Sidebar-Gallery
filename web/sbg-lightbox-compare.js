@@ -8,8 +8,8 @@ import { failedMediaHTML } from "./sbg-lightbox-media.js";
 import { S, getSetting } from "./sbg-settings-store.js";
 import { titleWithKeys } from "./sbg-settings-inputs.js";
 
-export const COMPARE_LABEL = "Compare";
-const COMPARE_EXIT_LABEL = `${sizedIcon(CLOSE_ICON, 11)}Exit Compare`;
+export const COMPARE_LABEL = "对比";
+const COMPARE_EXIT_LABEL = `${sizedIcon(CLOSE_ICON, 11)}退出对比`;
 
 export function createCompareController({
   getItems, getIdx, isDestroyed, goTo, panel, releaseMedia,
@@ -32,7 +32,7 @@ export function createCompareController({
   function toggleCompareMode() {
     if (_compareActive) { closeCompareMode(); return; }
     const currentItem = getItems()[getIdx()];
-    if (getItems().length < 2) { showToast("Compare needs at least two files."); return; }
+    if (getItems().length < 2) { showToast("对比需要至少两个文件"); return; }
     _compareActive = true;
     _compareIdx = getIdx() === 0 ? 1 : getIdx() - 1;
     // The current media element moves into the left half still carrying the
@@ -44,20 +44,20 @@ export function createCompareController({
 
     const leftHalf = h("div", { class: "sbg-compare__half" });
     const leftFig = h("div", { class: "sbg-compare__fig" });
-    const leftOverlay = h("div", { class: "sbg-compare__label", text: "CURRENT" });
+    const leftOverlay = h("div", { class: "sbg-compare__label", text: "当前" });
     const leftFilename = h("div", { class: "sbg-compare__filename", text: currentItem.filename || "" });
-    const leftPrevBtn = navButton("prev", "Previous file on the left", S.KEY_CMP_CUR_PREV);
-    const leftNextBtn = navButton("next", "Next file on the left", S.KEY_CMP_CUR_NEXT);
+    const leftPrevBtn = navButton("prev", "左侧上一个文件", S.KEY_CMP_CUR_PREV);
+    const leftNextBtn = navButton("next", "左侧下一个文件", S.KEY_CMP_CUR_NEXT);
     leftPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); goTo(getIdx() - 1); });
     leftNextBtn.addEventListener("click", (e) => { e.stopPropagation(); goTo(getIdx() + 1); });
 
     const rightHalf = h("div", { class: "sbg-compare__half" });
     const rightFig = h("div", { class: "sbg-compare__fig" });
     const rightImg = h("img", {});
-    const rightPrevBtn = navButton("prev", "Previous file on the right", S.KEY_PREV);
-    const rightNextBtn = navButton("next", "Next file on the right", S.KEY_NEXT);
+    const rightPrevBtn = navButton("prev", "右侧上一个文件", S.KEY_PREV);
+    const rightNextBtn = navButton("next", "右侧下一个文件", S.KEY_NEXT);
     const rightFilename = h("div", { class: "sbg-compare__filename", text: "" });
-    const rightLabel = h("div", { class: "sbg-compare__label sbg-compare__label--compared", text: "COMPARED" });
+    const rightLabel = h("div", { class: "sbg-compare__label sbg-compare__label--compared", text: "对比项" });
     rightPrevBtn.addEventListener("click", (e) => { e.stopPropagation(); _navigateCompare(-1); });
     rightNextBtn.addEventListener("click", (e) => { e.stopPropagation(); _navigateCompare(1); });
 

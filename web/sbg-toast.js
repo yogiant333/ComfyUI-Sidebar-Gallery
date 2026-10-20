@@ -93,17 +93,17 @@ export function reasonOf(err) {
   if (!r || r === "undefined" || r === "null") return "";
   // Each browser words a failed fetch and an unreadable JSON answer its own way.
   if (/^(TypeError:\s*)?(Failed to fetch|NetworkError when attempting to fetch resource\.?|Load failed|Network ?error)$/i.test(r)) {
-    return "ComfyUI didn't answer";
+    return "ComfyUI 未响应";
   }
   if (/JSON\.parse|JSON Parse error|JSON at position|Unexpected token|unexpected character|is not valid JSON|unexpected end of (data|JSON input)/i.test(r)) {
-    return "ComfyUI's answer couldn't be read";
+    return "无法读取 ComfyUI 的响应";
   }
   const status = /^HTTP (\d{3})\b/.exec(r);
   if (status) {
     const code = Number(status[1]);
-    if (code === 404) return "ComfyUI couldn't find it (HTTP 404)";
-    if (code >= 500) return `ComfyUI ran into an error (HTTP ${code})`;
-    if (code >= 400) return `ComfyUI refused it (HTTP ${code})`;
+    if (code === 404) return "ComfyUI 未找到所请求的内容（HTTP 404）";
+    if (code >= 500) return `ComfyUI 出现错误（HTTP ${code}）`;
+    if (code >= 400) return `ComfyUI 拒绝了请求（HTTP ${code}）`;
     return r;
   }
   if (/^[A-Z][a-z]*\b/.test(r) && !_KEEPS_CAPITAL.test(r)) r = r[0].toLowerCase() + r.slice(1);
@@ -113,7 +113,7 @@ export function reasonOf(err) {
 
 export function failureText(action, reason) {
   const why = reasonOf(reason);
-  return why ? `Couldn't ${action}: ${why}` : `Couldn't ${action}`;
+  return why ? `${action}失败：${why}` : `${action}失败`;
 }
 
 export function showFailure(action, reason) {
@@ -125,7 +125,7 @@ export function showFailure(action, reason) {
 // would write defaults over the saved settings. One toast serves every change,
 // in the accent color, since the red notice under the toolbar already says what
 // went wrong.
-export const SETTINGS_UNREAD_TEXT = "Couldn't save the change: the gallery settings couldn't be read. Refresh the page and try again.";
+export const SETTINGS_UNREAD_TEXT = "保存更改失败：无法读取画廊设置。请刷新页面后重试。";
 
 export function showSettingsUnread() {
   return showToast(SETTINGS_UNREAD_TEXT);
@@ -142,7 +142,7 @@ export function settingsUnreadError() {
 function _askFor(btn) {
   const name = (btn.getAttribute("aria-label") || btn.textContent.trim() || btn.title).trim();
   const word = name.split(/\s+/)[0] || "";
-  return word ? word[0].toUpperCase() + word.slice(1) + "?" : "Sure?";
+  return word ? word[0].toUpperCase() + word.slice(1) + "?" : "确定？";
 }
 
 export function confirmClick(btn, onConfirm, opts = {}) {
@@ -191,10 +191,10 @@ export function copyText(text, done) {
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(str)
       .then(() => showToast(done))
-      .catch(() => { if (!_copyFallback(str, done)) showFailure("copy to the clipboard"); });
+      .catch(() => { if (!_copyFallback(str, done)) showFailure("复制到剪贴板"); });
     return;
   }
-  if (!_copyFallback(str, done)) showFailure("copy to the clipboard");
+  if (!_copyFallback(str, done)) showFailure("复制到剪贴板");
 }
 
 function _copyFallback(str, done) {
@@ -315,8 +315,8 @@ export function noticeRow(message, onDismiss, { failure = false } = {}) {
   const x = document.createElement("button");
   x.className = "sbg-btn sbg-btn--icon sbg-notice__x";
   x.innerHTML = CLOSE_ICON;
-  x.title = "Dismiss";
-  x.setAttribute("aria-label", "Dismiss");
+  x.title = "关闭";
+  x.setAttribute("aria-label", "关闭");
   x.addEventListener("click", onDismiss);
   row.appendChild(text);
   row.appendChild(x);

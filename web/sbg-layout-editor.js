@@ -19,7 +19,7 @@ import { wireListboxKeys } from "./sbg-a11y.js";
 import { EYE_ICON, EYE_OFF_ICON, TRASH_ICON, SEARCH_ICON, CHEVRON_RIGHT_ICON, DUPLICATE_ICON, CLOSE_ICON, sizedIcon } from "./sbg-icons.js";
 
 const PARAM_STYLES = ["kv", "pill", "detail", "title", "text", "hidden"];
-const PARAM_STYLE_LABELS = { kv: "Row", pill: "Badge", detail: "Detail line", title: "Title", text: "Text box", hidden: "Hidden" };
+const PARAM_STYLE_LABELS = { kv: "行", pill: "徽标", detail: "详情行", title: "标题", text: "文本框", hidden: "隐藏" };
 const paramStyleLabel = (s) => PARAM_STYLE_LABELS[s] || s;
 
 // A server still running an older version sends no catalog rows. Until ComfyUI
@@ -45,10 +45,10 @@ function pathGroups() {
     } else if (prompts) {
       prompts.roots.push(...r.summary_keys);
     } else {
-      groups.push(prompts = { label: "Prompts", roots: [...r.summary_keys] });
+      groups.push(prompts = { label: "提示词", roots: [...r.summary_keys] });
     }
   }
-  groups.push({ label: "Other", roots: null });
+  groups.push({ label: "其他", roots: null });
   return groups;
 }
 
@@ -71,7 +71,7 @@ function labelWithNodeTitle(path, inst) {
 
 function instanceLabel(ct, inst) {
   if (inst.title) return `${ct}: “${inst.title}”`;
-  if (inst.from) return `${ct} (from ${inst.from})`;
+  if (inst.from) return `${ct}（来源：${inst.from}）`;
   return `${ct} #${(inst.index || 0) + 1}`;
 }
 
@@ -122,12 +122,12 @@ function expandPathItems(pth) {
 
 const _matchKey = (pth, match) => pth + "|" + JSON.stringify(match || null);
 
-const alreadyInMessage = (owner) => `Already in "${(owner && (owner.title || owner.label)) || "section"}".`;
+const alreadyInMessage = (owner) => `“${(owner && (owner.title || owner.label)) || "区块"}”中已存在。`;
 
 function matchChipText(match) {
   if (!match) return "";
   if (match.title) return `“${match.title}”`;
-  if (match.from) return `from ${match.from}`;
+  if (match.from) return `来源：${match.from}`;
   return `#${(match.index || 0) + 1}`;
 }
 
@@ -198,10 +198,10 @@ function _attachOptionsPopup(inp, label, getOptions) {
 const _sourceBoxes = new WeakMap();
 
 function _buildCardSourceUI(obj, body, onSourceChange, onPairChange) {
-  const help = "What each card shows. Pick a list, such as loras, for one card per entry. Left empty, it uses the list most fields read from, such as LoRAs, or else makes one card for the whole file. You can also type workflow_nodes.<NodeType> for one card per node of that type.";
+  const help = "设置每张卡片显示的内容。选择 loras 等列表后，每个条目显示为一张卡片。留空时，使用多数字段读取的列表（如 LoRA）；否则为整个文件生成一张卡片。也可输入 workflow_nodes.<NodeType>，为该类型的每个节点生成一张卡片。";
   const wrap = h("div", { class: "sbg-ly3-src" });
-  wrap.appendChild(h("span", { text: "Cards from:", title: help }));
-  const inp = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm", placeholder: "Auto, or loras, samplers…", value: obj.source || "", title: help });
+  wrap.appendChild(h("span", { text: "卡片来源：", title: help }));
+  const inp = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm", placeholder: "自动，或输入 loras、samplers…", value: obj.source || "", title: help });
   _sourceBoxes.set(obj, inp);
   inp.addEventListener("change", () => {
     const hadFocus = document.activeElement === inp;
@@ -212,36 +212,36 @@ function _buildCardSourceUI(obj, body, onSourceChange, onPairChange) {
     const next = _sourceBoxes.get(obj);
     if (hadFocus && next !== inp) { next.focus(); closeOptionPopups(); }
   });
-  _attachOptionsPopup(inp, "Cards from", () => [
-    { value: "", label: "Auto" },
+  _attachOptionsPopup(inp, "卡片来源", () => [
+    { value: "", label: "自动" },
     ...containerRoots().map(s => ({ value: s, label: s })),
   ]);
   wrap.appendChild(inp);
 
-  const pairLbl = h("label", { class: "sbg-ly3-openlbl", title: "Show high-noise and low-noise entries side by side, as in Wan 2.2" });
+  const pairLbl = h("label", { class: "sbg-ly3-openlbl", title: "并排显示高噪和低噪条目，例如 Wan 2.2" });
   const pairCb = h("input", { type: "checkbox" });
   pairCb.checked = pairsHighLow(obj, obj.source || autoAnchorFor(obj));
   pairCb.addEventListener("change", () => { obj.highlow = pairCb.checked; onPairChange(); });
-  pairLbl.appendChild(pairCb); pairLbl.appendChild(document.createTextNode("Pair High and Low Noise"));
+  pairLbl.appendChild(pairCb); pairLbl.appendChild(document.createTextNode("配对高噪和低噪"));
   wrap.appendChild(pairLbl);
   body.appendChild(wrap);
 }
 
 function _buildShowWhenUI(obj, body, onChange) {
-  const help = "When to show this. Auto shows it only when the file has the data most of its fields read, such as LoRAs. Always shows it whenever any field has a value. You can also type a data source, such as controlnet or workflow_nodes.<NodeType>, to show it only when the file has that.";
+  const help = "设置显示条件。自动：仅当文件包含多数字段读取的数据（如 LoRA）时显示。始终：只要任一字段有值就显示。也可输入 controlnet 或 workflow_nodes.<NodeType> 等数据源，仅当文件包含该数据时显示。";
   const wrap = h("div", { class: "sbg-ly3-src" });
-  wrap.appendChild(h("span", { text: "Show when:", title: help }));
+  wrap.appendChild(h("span", { text: "显示条件：", title: help }));
   const auto = autoAnchorFor(obj);
   const inp = h("input", {
     type: "text", class: "sbg-gs-input sbg-gs-input--sm",
-    placeholder: auto ? `Auto (when ${auto} exists)` : "(auto)",
+    placeholder: auto ? `自动（当 ${auto} 存在时）` : "（自动）",
     value: obj.showWhen || "", title: help,
   });
   inp.addEventListener("change", () => { obj.showWhen = inp.value.trim() || undefined; onChange(); });
-  _attachOptionsPopup(inp, "Show when", () => [
-    { value: "", label: auto ? `Auto (when ${auto} exists)` : "Auto" },
-    { value: "always", label: "Always" },
-    ...containerRoots().map(s => ({ value: s, label: `when ${s} exists` })),
+  _attachOptionsPopup(inp, "显示条件", () => [
+    { value: "", label: auto ? `自动（当 ${auto} 存在时）` : "自动" },
+    { value: "always", label: "始终" },
+    ...containerRoots().map(s => ({ value: s, label: `当 ${s} 存在时` })),
   ]);
   wrap.appendChild(inp);
   body.appendChild(wrap);
@@ -310,10 +310,10 @@ function carryLaterProps(src, dst) {
 // Render properties carry across both ways, so a section merged in as a tab
 // looks the same. `hidden` stays behind since a tab has no control to undo it.
 export function tabFromSection(sec) {
-  return carryLaterProps(sec, copyRenderProps(sec, { id: uid("tab"), label: sec.title || "Tab 1", style: sec.style || "flat", params: sec.params || [] }));
+  return carryLaterProps(sec, copyRenderProps(sec, { id: uid("tab"), label: sec.title || "标签页 1", style: sec.style || "flat", params: sec.params || [] }));
 }
 export function sectionFromTab(tab) {
-  const sec = carryLaterProps(tab, copyRenderProps(tab, newSection(tab.label || "New Section", tab.params || [])));
+  const sec = carryLaterProps(tab, copyRenderProps(tab, newSection(tab.label || "新区块", tab.params || [])));
   sec.style = tab.style || "flat";
   return sec;
 }
@@ -529,7 +529,7 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
   }
 
   const secConvertTargets = (band) => ({ selector: ".sbg-ly3-sec", accepts: (el) => canHoldFields(elToSection.get(el)), band, className: "sbg-ly3-sec--droptarget" });
-  const SEC_PROMOTE = { containerSelector: ".sbg-ly3-seclist", itemSelector: ".sbg-ly3-sec", label: "Drops here as its own section" };
+  const SEC_PROMOTE = { containerSelector: ".sbg-ly3-seclist", itemSelector: ".sbg-ly3-sec", label: "放到这里以创建独立区块" };
 
   function mergeSectionIntoSection(src, tgt) {
     const l = activeLayout();
@@ -619,8 +619,8 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
 
     const actions = h("div", { class: "sbg-ly3-actions" });
     const xfer = h("button", {
-      class: "sbg-btn sbg-btn--sm sbg-btn--iconlabel", html: `${sizedIcon(DUPLICATE_ICON, 12)}Copy between layouts`,
-      title: "Copy sections or tabs from one layout into another",
+      class: "sbg-btn sbg-btn--sm sbg-btn--iconlabel", html: `${sizedIcon(DUPLICATE_ICON, 12)}跨布局复制`,
+      title: "将区块或标签页从一个布局复制到另一个布局",
     });
     xfer.addEventListener("click", () => {
       const close = openTransferDialog({ activeKey, layoutFor, persistKeys, appendTabToSection, expanded, render });
@@ -630,8 +630,8 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
 
     const ownsDefault = _viewMemory.app === "comfyui";
     const reset = h("button", {
-      class: "sbg-btn sbg-btn--sm", text: "Reset",
-      title: ownsDefault ? "Reset this layout to the default" : "Use the ComfyUI layout again instead of this one",
+      class: "sbg-btn sbg-btn--sm", text: "重置",
+      title: ownsDefault ? "将此布局重置为默认布局" : "重新使用 ComfyUI 布局",
     });
     confirmClick(reset, () => {
       const dropped = activeLayout().map((s) => s.id);
@@ -641,7 +641,7 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
       render();
       // A reset to the default shows on the tab, while handing the layout back
       // to ComfyUI's can leave the tab looking the same, so only that one is announced.
-      if (kept && !ownsDefault) showToast(`This layout now follows the ComfyUI layout for ${layoutStore.MEDIA_LABELS[_viewMemory.media].toLowerCase()}.`);
+      if (kept && !ownsDefault) showToast(`此布局现在使用 ComfyUI 的${layoutStore.MEDIA_LABELS[_viewMemory.media]}布局。`);
     }, { armClass: "sbg-btn--danger" });
     actions.appendChild(reset);
     topBar.appendChild(actions);
@@ -658,16 +658,16 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     // can fire no blur.
     closeOptionPopups();
     leftPane.innerHTML = "";
-    leftPane.appendChild(h("div", { class: "sbg-ly3-hint", text: "Drag ⋮⋮ to move a section, tab or field. Open a section to edit its fields, or add fields from All fields below." }));
+    leftPane.appendChild(h("div", { class: "sbg-ly3-hint", text: "拖动 ⋮⋮ 可移动区块、标签页或字段。展开区块可编辑字段，也可从下方的“所有字段”添加字段。" }));
 
     const list = h("div", { class: "sbg-ly3-seclist" });
     containerToList.set(list, { kind: "sections" });
     leftPane.appendChild(list);
     for (const sec of activeLayout()) list.appendChild(buildSectionEditor(sec, list));
 
-    const addSec = h("button", { class: "sbg-btn sbg-btn--sm sbg-ly3-addsec", text: "+ Add section" });
+    const addSec = h("button", { class: "sbg-btn sbg-btn--sm sbg-ly3-addsec", text: "+ 添加区块" });
     addSec.addEventListener("click", () => {
-      const sec = newSection("New Section", []);
+      const sec = newSection("新区块", []);
       expanded.add(sec.id);
       activeLayout().push(sec); persist(); render();
     });
@@ -682,23 +682,23 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     elToSection.set(card, sec);
 
     const head = h("div", { class: "sbg-ly3-sechead" });
-    const grip = h("span", { class: "sbg-grip", text: "⋮⋮", title: "Drag to move. Drop onto another section to merge it in as tabs." });
+    const grip = h("span", { class: "sbg-grip", text: "⋮⋮", title: "拖动以移动。放到另一个区块上可合并为标签页。" });
     head.appendChild(grip);
 
-    const exp = h("button", { class: "sbg-ly3-exp" + (isOpen ? " sbg-ly3-exp--open" : ""), html: sizedIcon(CHEVRON_RIGHT_ICON, 11), title: "Open or close this section" });
+    const exp = h("button", { class: "sbg-ly3-exp" + (isOpen ? " sbg-ly3-exp--open" : ""), html: sizedIcon(CHEVRON_RIGHT_ICON, 11), title: "展开或收起此区块" });
     exp.addEventListener("click", () => { if (isOpen) expanded.delete(sec.id); else expanded.add(sec.id); renderEditor(); });
     head.appendChild(exp);
 
-    const eye = h("button", { class: "sbg-btn sbg-btn--icon", title: sec.hidden ? "Hidden from panel. Click to show" : "Shown in panel. Click to hide", html: sizedIcon(sec.hidden ? EYE_OFF_ICON : EYE_ICON, 14) });
+    const eye = h("button", { class: "sbg-btn sbg-btn--icon", title: sec.hidden ? "已从面板中隐藏。点击显示" : "已在面板中显示。点击隐藏", html: sizedIcon(sec.hidden ? EYE_OFF_ICON : EYE_ICON, 14) });
     eye.addEventListener("click", () => { sec.hidden = !sec.hidden; persist(); render(); });
     head.appendChild(eye);
 
-    const title = h("input", { type: "text", class: "sbg-ly3-title", value: sec.title || "", placeholder: "Section title" });
-    title.addEventListener("input", () => { sec.title = title.value || "Untitled"; persist(); refreshPreview(); });
+    const title = h("input", { type: "text", class: "sbg-ly3-title", value: sec.title || "", placeholder: "区块标题" });
+    title.addEventListener("input", () => { sec.title = title.value || "未命名"; persist(); refreshPreview(); });
     head.appendChild(title);
 
     const hasTabs = (sec.tabs || []).length > 0;
-    const styleSel = mkSelect(SECTION_STYLES, sec.style || "flat", (v) => { sec.style = v; persist(); renderEditor(); refreshPreview(); }, sectionStyleLabel, { title: "How this section shows its fields" });
+    const styleSel = mkSelect(SECTION_STYLES, sec.style || "flat", (v) => { sec.style = v; persist(); renderEditor(); refreshPreview(); }, sectionStyleLabel, { title: "此区块的字段显示方式" });
     // The panel draws a section's tabs whatever its style, so these two styles
     // wait until the tabs are gone.
     if (hasTabs) {
@@ -708,18 +708,18 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     }
     head.appendChild(styleSel);
 
-    const secColorBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "Section colors" });
+    const secColorBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "区块颜色" });
     paintSwatch(secColorBtn, sec.color, swatchDefaults("section", sec));
     secColorBtn.addEventListener("click", () => openColorPicker(secColorBtn, sec, sec, "color", "section"));
     head.appendChild(secColorBtn);
 
-    const openLbl = h("label", { class: "sbg-ly3-openlbl", title: "Show this section open by default in the metadata panel" });
+    const openLbl = h("label", { class: "sbg-ly3-openlbl", title: "在元数据面板中默认展开此区块" });
     const openCb = h("input", { type: "checkbox" }); openCb.checked = sec.open !== false;
     openCb.addEventListener("change", () => { sec.open = openCb.checked; persist(); refreshPreview(); });
-    openLbl.appendChild(openCb); openLbl.appendChild(document.createTextNode("Starts Open"));
+    openLbl.appendChild(openCb); openLbl.appendChild(document.createTextNode("默认展开"));
     head.appendChild(openLbl);
 
-    const del = h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger", title: "Delete section", html: TRASH_ICON });
+    const del = h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger", title: "删除区块", html: TRASH_ICON });
     confirmClick(del, () => {
       const l = activeLayout(); const i = l.indexOf(sec); if (i >= 0) l.splice(i, 1); expanded.delete(sec.id);
       if (persist()) layoutStore.forgetPromptTabs([sec.id]);
@@ -739,7 +739,7 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
         for (const p of (sec.params || [])) fields.appendChild(buildFieldRow(sec, p, fields));
         if (!(sec.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: emptyText }));
         body.appendChild(fields);
-        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ Add field" });
+        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ 添加字段" });
         addField.addEventListener("click", () => openAddFieldPicker(addField, sec));
         body.appendChild(addField);
       };
@@ -753,22 +753,22 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
       _buildShowWhenUI(sec, body, () => { persist(); refreshPreview(); });
 
       if (drawsItself) {
-        body.appendChild(h("div", { class: "sbg-ly3-auto", text: sec.style === "nodes" ? "Shows every workflow node. There are no fields to set up here." : "Shows the file's raw metadata. There are no fields to set up here." }));
+        body.appendChild(h("div", { class: "sbg-ly3-auto", text: sec.style === "nodes" ? "显示所有工作流节点，无需在此设置字段。" : "显示文件的原始元数据，无需在此设置字段。" }));
       } else if (!hasTabs) {
-        addFieldsList("No fields yet. Drag one in from All fields below, or click + Add field.");
+        addFieldsList("还没有字段。请从下方的“所有字段”拖入，或点击“+ 添加字段”。");
       } else {
         const ofHead = h("div", { class: "sbg-ly3-outerfields-head" });
         ofHead.appendChild(h("span", {
-          class: "sbg-ly3-tabsed-label", text: "Fields outside tabs",
-          title: "Fields shown with every tab. Drag fields here from All fields or from a tab.",
+          class: "sbg-ly3-tabsed-label", text: "标签页外的字段",
+          title: "在每个标签页中均显示的字段。可从“所有字段”或标签页中拖入。",
         }));
         const posLbl = h("label", { class: "sbg-ly3-openlbl" });
         const posCb = h("input", { type: "checkbox" }); posCb.checked = !!sec.fieldsAbove;
         posCb.addEventListener("change", () => { sec.fieldsAbove = posCb.checked || undefined; persist(); refreshPreview(); });
-        posLbl.appendChild(posCb); posLbl.appendChild(document.createTextNode("Show Above Tabs"));
+        posLbl.appendChild(posCb); posLbl.appendChild(document.createTextNode("显示在标签页上方"));
         ofHead.appendChild(posLbl);
         body.appendChild(ofHead);
-        addFieldsList("No fields outside the tabs. Drag one here, or click + Add field.");
+        addFieldsList("标签页外没有字段。请拖入字段，或点击“+ 添加字段”。");
       }
       card.appendChild(body);
     }
@@ -795,12 +795,12 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     const row = h("div", { class: "sbg-ly3-field" + (hidden ? " sbg-ly3-field--hidden" : "") });
     elToParam.set(row, p);
 
-    row.appendChild(h("span", { class: "sbg-grip sbg-ly3-fieldgrip", text: "⋮⋮", title: "Drag to move. Dropping it between sections makes it a section of its own." }));
+    row.appendChild(h("span", { class: "sbg-grip sbg-ly3-fieldgrip", text: "⋮⋮", title: "拖动以移动。放到两个区块之间可创建独立区块。" }));
 
     // The panel labels a field with no label of its own automatically, while a
     // wildcard's rows take their keys, so its box starts empty.
     const autoLabel = String(p.path || "").endsWith(".*") ? "" : labelize(p.path);
-    const lbl = h("input", { type: "text", class: "sbg-ly3-fieldlabel", value: typeof p.label === "string" ? p.label : autoLabel, placeholder: "No label" });
+    const lbl = h("input", { type: "text", class: "sbg-ly3-fieldlabel", value: typeof p.label === "string" ? p.label : autoLabel, placeholder: "无标签" });
     lbl.title = p.path;
 
     lbl.addEventListener("input", () => { p.label = lbl.value; persist(); refreshPreview(); });
@@ -811,12 +811,12 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     if (p.match) {
       const chip = h("span", {
         class: "sbg-ly3-matchchip",
-        title: "Reads only one node of this type (" + matchChipText(p.match) + "). Click the cross to read all of them again.",
+        title: "仅读取此类型的一个节点（" + matchChipText(p.match) + "）。点击叉号可重新读取所有节点。",
       });
       chip.appendChild(h("span", { class: "sbg-ly3-matchchip__txt", text: matchChipText(p.match) }));
       const clearX = h("button", {
         type: "button", class: "sbg-ly3-matchchip__x", html: sizedIcon(CLOSE_ICON, 10),
-        title: "Read every node of this type again", "aria-label": "Read every node of this type again",
+        title: "重新读取此类型的所有节点", "aria-label": "重新读取此类型的所有节点",
       });
       clearX.addEventListener("click", () => { delete p.match; persist(); renderEditor(); refreshPreview(); });
       chip.appendChild(clearX);
@@ -827,23 +827,23 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
       setHidden(p, v === "hidden");
       if (v !== "hidden") p.style = v;
       persist(); renderEditor(); refreshPreview();
-    }, paramStyleLabel, { title: "How this field is shown" });
+    }, paramStyleLabel, { title: "此字段的显示方式" });
     row.appendChild(styleSel);
 
     const tools = h("div", { class: "sbg-ly3-fieldtools" });
     const effStyle = hidden ? (p._prevStyle || "kv") : (p.style || "kv");
     if (effStyle === "pill") {
-      const fmt = h("input", { type: "text", class: "sbg-ly3-fmt", value: p.format || "", placeholder: "Format, such as CFG {v}" });
+      const fmt = h("input", { type: "text", class: "sbg-ly3-fmt", value: p.format || "", placeholder: "格式，例如 CFG {v}" });
       fmt.addEventListener("input", () => { p.format = fmt.value.trim() || undefined; persist(); refreshPreview(); });
       tools.appendChild(fmt);
     }
     const _ckind = effStyle === "text" && isNegativePath(p.path) ? "text-neg" : effStyle;
-    const colorBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "Field colors" });
+    const colorBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "字段颜色" });
     paintSwatch(colorBtn, p.color, swatchDefaults(_ckind, hostSec, hostTab));
     colorBtn.addEventListener("click", () => openColorPicker(colorBtn, p, hostSec, "color", _ckind, hostTab));
     tools.appendChild(colorBtn);
     if (pathToSearch(absolutizeParamPath(p.path, owner.source)) !== "app") {
-      const findBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "Search for files that have this field", html: SEARCH_ICON });
+      const findBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "搜索包含此字段的文件", html: SEARCH_ICON });
       findBtn.addEventListener("click", () => {
         const spelling = searchSpelling(p.path, owner.source);
         if (closeGS) closeGS();
@@ -851,10 +851,10 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
       });
       tools.appendChild(findBtn);
     }
-    const eyeBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: hidden ? "Hidden. Click to show" : "Shown. Click to hide", html: sizedIcon(hidden ? EYE_OFF_ICON : EYE_ICON, 14) });
+    const eyeBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: hidden ? "已隐藏。点击显示" : "已显示。点击隐藏", html: sizedIcon(hidden ? EYE_OFF_ICON : EYE_ICON, 14) });
     eyeBtn.addEventListener("click", () => { setHidden(p, !hidden); persist(); renderEditor(); refreshPreview(); });
     tools.appendChild(eyeBtn);
-    const delBtn = h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger", title: "Remove field", html: TRASH_ICON });
+    const delBtn = h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger", title: "移除字段", html: TRASH_ICON });
     delBtn.addEventListener("click", () => { detachParam(owner, p); persist(); renderEditor(); refreshPreview(); });
     tools.appendChild(delBtn);
     row.appendChild(tools);
@@ -880,16 +880,16 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     const wrap = h("div", { class: "sbg-ly3-tabsed" });
     const head = h("div", { class: "sbg-ly3-tabsed-head" });
     head.appendChild(h("span", {
-      class: "sbg-ly3-tabsed-label", text: "Tabs",
-      title: "Split this section into tabs, such as Initial and Enhanced. Each tab has its own fields, style and colors.",
+      class: "sbg-ly3-tabsed-label", text: "标签页",
+      title: "将此区块拆分为标签页，例如“初始”和“增强”。每个标签页可单独设置字段、样式和颜色。",
     }));
-    const add = h("button", { class: "sbg-ly3-tabadd", text: "+ Add tab" });
+    const add = h("button", { class: "sbg-ly3-tabadd", text: "+ 添加标签页" });
     add.addEventListener("click", () => {
       const count = (sec.tabs || []).length;
       if (!count && (sec.params || []).length) {
         startTabs(sec, null);
       } else {
-        const nt = { id: uid("tab"), label: "Tab " + (count + 1), style: "text", params: [] };
+        const nt = { id: uid("tab"), label: "标签页 " + (count + 1), style: "text", params: [] };
         if (!count) startTabs(sec, nt);
         sec.tabs.push(nt);
         expanded.add(nt.id);
@@ -914,25 +914,25 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     const row = h("div", { class: "sbg-ly3-tabrow" });
     elToTab.set(row, t);
     const head = h("div", { class: "sbg-ly3-tabrow-head" });
-    const grip = h("span", { class: "sbg-grip", text: "⋮⋮", title: "Drag to move. Dropping it between sections makes it a section of its own." });
+    const grip = h("span", { class: "sbg-grip", text: "⋮⋮", title: "拖动以移动。放到两个区块之间可创建独立区块。" });
     head.appendChild(grip);
-    const exp = h("button", { class: "sbg-ly3-exp" + (isOpen ? " sbg-ly3-exp--open" : ""), html: sizedIcon(CHEVRON_RIGHT_ICON, 11), title: "Open or close this tab" });
+    const exp = h("button", { class: "sbg-ly3-exp" + (isOpen ? " sbg-ly3-exp--open" : ""), html: sizedIcon(CHEVRON_RIGHT_ICON, 11), title: "展开或收起此标签页" });
     exp.addEventListener("click", () => { if (isOpen) expanded.delete(t.id); else expanded.add(t.id); renderEditor(); });
     head.appendChild(exp);
-    const name = h("input", { type: "text", class: "sbg-ly3-title", value: t.label || "", placeholder: "Tab name" });
+    const name = h("input", { type: "text", class: "sbg-ly3-title", value: t.label || "", placeholder: "标签页名称" });
     name.addEventListener("input", () => { t.label = name.value || undefined; persist(); refreshPreview(); });
     head.appendChild(name);
-    head.appendChild(mkSelect(SECTION_STYLES, t.style || "text", (v) => { t.style = v; persist(); renderEditor(); refreshPreview(); }, sectionStyleLabel, { title: "How this tab shows its fields" }));
+    head.appendChild(mkSelect(SECTION_STYLES, t.style || "text", (v) => { t.style = v; persist(); renderEditor(); refreshPreview(); }, sectionStyleLabel, { title: "此标签页的字段显示方式" }));
 
-    const pillBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "Tab button color" });
+    const pillBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "标签页按钮颜色" });
     paintSwatch(pillBtn, t.pillColor, swatchDefaults("tabpill", sec));
     pillBtn.addEventListener("click", () => openColorPicker(pillBtn, t, sec, "pillColor", "tabpill"));
     head.appendChild(pillBtn);
-    const bgBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "Tab colors" });
+    const bgBtn = h("button", { class: "sbg-btn sbg-btn--icon", title: "标签页颜色" });
     paintSwatch(bgBtn, t.color, swatchDefaults("tabbody", sec));
     bgBtn.addEventListener("click", () => openColorPicker(bgBtn, t, sec, "color", "tabbody"));
     head.appendChild(bgBtn);
-    const del = h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger", title: "Delete tab", html: TRASH_ICON });
+    const del = h("button", { class: "sbg-btn sbg-btn--icon sbg-btn--icon-danger", title: "删除标签页", html: TRASH_ICON });
     confirmClick(del, () => { detachTab(sec, t); expanded.delete(t.id); persist(); renderEditor(); refreshPreview(); });
     head.appendChild(del);
     row.appendChild(head);
@@ -947,9 +947,9 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
         const fields = h("div", { class: "sbg-ly3-tabfields" });
         containerToList.set(fields, { kind: "params", owner: t });
         for (const p of (t.params || [])) fields.appendChild(buildFieldRow(t, p, fields, { inSec: sec }));
-        if (!(t.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: "No fields in this tab. Drag one in, or click + Add field." }));
+        if (!(t.params || []).length) fields.appendChild(h("div", { class: "sbg-ly3-empty", text: "此标签页中没有字段。请拖入字段，或点击“+ 添加字段”。" }));
         body.appendChild(fields);
-        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ Add field" });
+        const addField = h("button", { class: "sbg-ly3-addfield", text: "+ 添加字段" });
         addField.addEventListener("click", () => openAddFieldPicker(addField, t));
         body.appendChild(addField);
       }
@@ -988,7 +988,7 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
       if (capped.length < inGrp.length) {
         listEl.appendChild(h("div", {
           class: "sbg-ly3-cutnote",
-          text: `Showing ${capped.length.toLocaleString()} of ${inGrp.length.toLocaleString()}. Type to narrow.`,
+          text: `显示 ${inGrp.length.toLocaleString()} 项中的 ${capped.length.toLocaleString()} 项。输入文字可缩小范围。`,
         }));
       }
       shown += capped.length;
@@ -998,19 +998,19 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
 
   function buildTray() {
     const tray = h("div", { class: "sbg-ly3-tray" });
-    const head = h("button", { class: "sbg-ly3-trayhead" + (_viewMemory.trayOpen ? " sbg-ly3-trayhead--open" : ""), html: `${sizedIcon(CHEVRON_RIGHT_ICON, 10)}All fields (drag into a section, or click to add)` });
+    const head = h("button", { class: "sbg-ly3-trayhead" + (_viewMemory.trayOpen ? " sbg-ly3-trayhead--open" : ""), html: `${sizedIcon(CHEVRON_RIGHT_ICON, 10)}所有字段（拖入区块，或点击添加）` });
     head.addEventListener("click", () => { _viewMemory.trayOpen = !_viewMemory.trayOpen; renderEditor(); });
     tray.appendChild(head);
 
     if (fieldPathsError && fieldPathsError !== closedFieldError) {
-      const offered = catalogRows() ? "built-in fields" : "the file's name, path, size and modified time";
-      tray.appendChild(h("div", { class: "sbg-notices sbg-gs-notices" }, [noticeRow(`${failureText("load the field list", fieldPathsError)}. Only ${offered} can be added.`,
+      const offered = catalogRows() ? "内置字段" : "文件名、路径、大小和修改时间";
+      tray.appendChild(h("div", { class: "sbg-notices sbg-gs-notices" }, [noticeRow(`${failureText("加载字段列表", fieldPathsError)}。只能添加${offered}。`,
         () => { closedFieldError = fieldPathsError; renderEditor(); content.querySelector(".sbg-ly3-trayhead").focus(); })]));
     }
     if (!_viewMemory.trayOpen) return tray;
 
-    const search = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm sbg-ly3-traysearch", placeholder: "Search fields…", "aria-label": "Search all fields", value: trayFilter });
-    const body = h("div", { class: "sbg-ly3-traybody", role: "listbox", "aria-label": "All fields" });
+    const search = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm sbg-ly3-traysearch", placeholder: "搜索字段…", "aria-label": "搜索所有字段", value: trayFilter });
+    const body = h("div", { class: "sbg-ly3-traybody", role: "listbox", "aria-label": "所有字段" });
     attachOverlayThumb(body);
     tray.appendChild(search); tray.appendChild(body);
 
@@ -1037,7 +1037,7 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     function renderTrayList() {
       body.innerHTML = "";
       const shown = drawPathGroups(body, "sbg-ly3-traygrp", search.value.toLowerCase(), 300, null, drawItem);
-      if (!shown) body.appendChild(h("div", { class: "sbg-ly3-empty", text: "No fields match." }));
+      if (!shown) body.appendChild(h("div", { class: "sbg-ly3-empty", text: "没有匹配的字段。" }));
       resyncKeys();
     }
     search.addEventListener("input", () => { trayFilter = search.value; renderTrayList(); });
@@ -1063,7 +1063,7 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
   }
 
   function addPathToSection(pth, sec, match) {
-    if (!sec) { showToast("Add a section first."); return; }
+    if (!sec) { showToast("请先添加一个区块。"); return; }
     if (!sec.params) sec.params = [];
     if (sec.params.some(p => _matchKey(p.path, p.match) === _matchKey(pth, match))) { showToast(alreadyInMessage(sec)); return; }
     sec.params.push(_mkParam(pth, match));
@@ -1093,8 +1093,8 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
   function openAddFieldPicker(anchor, owner) {
     closePopovers();
     const pop = h("div", { class: "sbg-popover sbg-popover--picker" });
-    const search = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm", placeholder: "Search fields…", "aria-label": "Search fields to add" });
-    const list = h("div", { class: "sbg-ly3-picklist", role: "listbox", "aria-label": "Fields to add" });
+    const search = h("input", { type: "text", class: "sbg-gs-input sbg-gs-input--sm", placeholder: "搜索字段…", "aria-label": "搜索要添加的字段" });
+    const list = h("div", { class: "sbg-ly3-picklist", role: "listbox", "aria-label": "可添加的字段" });
     attachOverlayThumb(list);
     pop.appendChild(search); pop.appendChild(list);
 
@@ -1116,7 +1116,7 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     function renderList(keepPlace) {
       list.innerHTML = "";
       const shown = drawPathGroups(list, "sbg-ly3-pickgrp", search.value.toLowerCase(), 200, mapped, drawItem);
-      if (!shown) list.appendChild(h("div", { class: "sbg-ly3-empty", text: "No more fields match." }));
+      if (!shown) list.appendChild(h("div", { class: "sbg-ly3-empty", text: "没有更多匹配的字段。" }));
       resyncKeys(keepPlace);
     }
     search.addEventListener("input", () => renderList());
@@ -1139,9 +1139,9 @@ export function renderLayout(content, galleryCtx, closeGS, cleanups) {
     const d = swatchDefaults(kind, sec, tab);
     openColorPopover(anchor, {
       channels: [
-        { key: "bg", label: "Background", def: d.bg },
-        { key: "text", label: "Text", def: d.text },
-        { key: "border", label: "Border", def: d.border },
+        { key: "bg", label: "背景", def: d.bg },
+        { key: "text", label: "文字", def: d.text },
+        { key: "border", label: "边框", def: d.border },
       ],
       colors: curCol,
       onChange: (key, color) => { getCol()[key] = color; persist(); refreshPreview(); paintSwatch(anchor, target[colorKey], d); },

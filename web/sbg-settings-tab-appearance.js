@@ -6,39 +6,39 @@ export function renderAppearance({ content }) {
   content.innerHTML = "";
   const wrap = h("div", { class: "sbg-gs-form" });
 
-  sectionTitle(wrap, "Grid");
-  wrap.appendChild(numberInput(S.THUMB_SIZE, "How wide a thumbnail should be, from 64 to 256, which decides how many fit in a row. They stretch to fill the row. Used only when Thumbnails Per Row is Auto."));
-  wrap.appendChild(comboInput(S.THUMB_PER_ROW, "Auto fits as many as Thumbnail Size allows. A number puts exactly that many in each row, sized to fill the width."));
-  wrap.appendChild(comboInput(S.THUMB_SHAPE, "Square crops each thumbnail to a square. Aspect ratio keeps each picture's shape where it can, trimming very wide or very tall ones."));
+  sectionTitle(wrap, "网格");
+  wrap.appendChild(numberInput(S.THUMB_SIZE, "缩略图宽度为 64 至 256 像素，用于决定每行数量，并拉伸填满整行。仅在每行缩略图数量为“自动”时生效。"));
+  wrap.appendChild(comboInput(S.THUMB_PER_ROW, "“自动”根据缩略图大小决定每行数量；选择数字则固定每行数量并填满宽度。"));
+  wrap.appendChild(comboInput(S.THUMB_SHAPE, "“正方形”将缩略图裁为方形；“原始比例”尽量保留图片比例，仅裁剪过宽或过高的图片。"));
 
-  sectionTitle(wrap, "Cards");
+  sectionTitle(wrap, "卡片");
   wrap.appendChild(comboInput(S.CARD_STYLE,
-    "How each file shows in the grid. Boxed shows the picture in a bordered card with the name, size and date under it. Picture with one line shows the name and date on one line under the picture. Picture only shows the name, size and date over the picture when you hover it."));
-  wrap.appendChild(toggle(S.CARD_LIFT, "Lift the card and zoom its picture a little while the pointer is on it. Applies right away."));
+    "文件在网格中的显示方式。“带边框卡片”在图片下方显示名称、大小和日期；“图片及单行信息”在图片下方用一行显示名称和日期；“仅图片”在悬停时覆盖显示名称、大小和日期。"));
+  wrap.appendChild(toggle(S.CARD_LIFT, "悬停时抬起卡片并略微放大图片。立即生效。"));
 
-  sectionTitle(wrap, "Toolbar");
-  wrap.appendChild(comboInput(S.TOOLBAR_LAYOUT, "Where the file count and the filter buttons are shown."));
+  sectionTitle(wrap, "工具栏");
+  wrap.appendChild(comboInput(S.TOOLBAR_LAYOUT, "文件数量和筛选按钮的显示位置。"));
   wrap.appendChild(toggle(S.PICKER_ROOTS_IN_FOLDERS,
-    "With more than one root, list the roots at the top of the folder dropdown instead of on their own button. Applies right away."));
+    "有多个根目录时，在文件夹下拉菜单顶部列出根目录。立即生效。"));
   wrap.appendChild(numberInput(S.SEARCH_AC_ROWS,
-    "How many suggestions the search bar shows before the list scrolls, from 3 to 30. Saved searches come first, then field names."));
+    "搜索建议列表滚动前显示的行数，范围为 3 至 30。先显示已保存的搜索，再显示字段名称。"));
 
-  sectionTitle(wrap, "Card tooltip");
-  wrap.appendChild(toggle(S.TOOLTIP_NAME, "Show the file's name when you hover a card."));
-  wrap.appendChild(toggle(S.TOOLTIP_SIZE, "Show the file's size when you hover a card."));
-  wrap.appendChild(toggle(S.TOOLTIP_DATE, "Show how long ago the file was modified when you hover a card, or the date for a file older than a week."));
+  sectionTitle(wrap, "卡片悬停提示");
+  wrap.appendChild(toggle(S.TOOLTIP_NAME, "悬停在卡片上时显示文件名。"));
+  wrap.appendChild(toggle(S.TOOLTIP_SIZE, "悬停在卡片上时显示文件大小。"));
+  wrap.appendChild(toggle(S.TOOLTIP_DATE, "悬停时显示文件距上次修改的时间；超过一周则显示日期。"));
 
-  sectionTitle(wrap, "Lightbox buttons");
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "The buttons under the picture in the lightbox. Drag one to reorder it, and switch one off to hide it. Reopen the lightbox to apply." }));
+  sectionTitle(wrap, "查看器按钮");
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "查看器图片下方的按钮。拖动调整顺序，关闭开关可隐藏。重新打开查看器后生效。" }));
   wrap.appendChild(orderList(S.LB_BUTTON_ORDER, LB_BUTTONS));
 
-  sectionTitle(wrap, "Card menu");
-  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "The menu that opens when you right-click a card. Drag an item to reorder it, and switch one off to hide it. With every item off, right-clicking opens the browser's own menu." }));
+  sectionTitle(wrap, "卡片菜单");
+  wrap.appendChild(h("div", { class: "sbg-gs-desc", text: "右键点击卡片时打开的菜单。拖动调整顺序，关闭开关可隐藏。全部关闭后，右键打开浏览器菜单。" }));
   wrap.appendChild(orderList(S.CARD_MENU_ORDER, CARD_MENU_ITEMS));
 
-  sectionTitle(wrap, "File and model names");
-  wrap.appendChild(comboInput(S.FILENAME_STYLE, "Show a file's name alone, or with its folder path, in File Info."));
-  wrap.appendChild(comboInput(S.MODEL_NAME_STYLE, "Show model and LoRA names alone, or with their folder path."));
+  sectionTitle(wrap, "文件和模型名称");
+  wrap.appendChild(comboInput(S.FILENAME_STYLE, "在文件信息中仅显示文件名，或同时显示文件夹路径。"));
+  wrap.appendChild(comboInput(S.MODEL_NAME_STYLE, "仅显示模型及 LoRA 名称，或同时显示文件夹路径。"));
 
   content.appendChild(wrap);
 }

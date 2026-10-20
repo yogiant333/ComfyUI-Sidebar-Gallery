@@ -60,12 +60,12 @@ function labelForChunk(raw) {
   if (c.mods.alt) parts.push("Alt");
   if (c.mods.shift) parts.push("Shift");
   if (c.mods.meta) parts.push("Meta");
-  if (c.button !== null) parts.push(MOUSE_BUTTONS[c.button]?.label || "Mouse");
+  if (c.button !== null) parts.push(MOUSE_BUTTONS[c.button]?.label || "鼠标");
   else parts.push(NAMED_KEYS[c.key] || _KEY_LABELS[c.key] || (c.key.length === 1 ? c.key.toUpperCase() : c.key));
   return parts.join(" + ");
 }
 
-const _KEY_LABELS = { ArrowLeft: "Left arrow", ArrowRight: "Right arrow", ArrowUp: "Up arrow", ArrowDown: "Down arrow", Escape: "Esc" };
+const _KEY_LABELS = { ArrowLeft: "左方向键", ArrowRight: "右方向键", ArrowUp: "上方向键", ArrowDown: "下方向键", Escape: "Esc" };
 
 export const keysText = (binding) => splitBindings(binding).map(labelForChunk).join(", ");
 
@@ -116,7 +116,7 @@ export function orderList(orderId, entries) {
   for (const id of orderedIds(orderId, entries.map(e => e.id))) {
     const e = byId.get(id);
     const row = h("div", { class: "sbg-gs-row sbg-gs-orderrow", role: "listitem", "data-id": e.id });
-    const grip = h("span", { class: "sbg-grip sbg-gs-ordergrip", text: "⋮⋮", title: "Drag to reorder", "aria-hidden": "true" });
+    const grip = h("span", { class: "sbg-grip sbg-gs-ordergrip", text: "⋮⋮", title: "拖动调整顺序", "aria-hidden": "true" });
     const cb = h("input", { type: "checkbox", class: "sbg-gs-switch" });
     cb.checked = getSetting(e.show);
     cb.addEventListener("change", () => saveSetting(e.show, cb.checked));
@@ -270,11 +270,11 @@ export function keyInput(spec, peers, cleanups) {
       const clash = clashesFor(chunk);
       const chip = h("span", {
         class: clash.length ? "sbg-key sbg-key--clash" : "sbg-key",
-        title: clash.length ? "Also bound to " + clash.join(", ") : "",
+        title: clash.length ? "同时绑定至：" + clash.join(", ") : "",
       }, [h("span", { text })]);
       const del = h("button", {
         type: "button", class: "sbg-key__x", html: sizedIcon(CLOSE_ICON, 10),
-        "aria-label": `Remove ${text} from ${label}`,
+        "aria-label": `从${label}中移除 ${text}`,
       });
       del.addEventListener("click", () => redraw(() => write(chunks.filter((_, j) => j !== i)), armed ? _CANCEL : _ADD));
       chip.appendChild(del);
@@ -283,12 +283,12 @@ export function keyInput(spec, peers, cleanups) {
 
     if (armed) {
       list.appendChild(h("span", {
-        class: "sbg-key sbg-key--armed", text: "Press a key or mouse button",
-        title: "Tap Escape to bind it, or hold Escape to cancel", tabindex: "-1",
+        class: "sbg-key sbg-key--armed", text: "请按键盘按键或鼠标按钮",
+        title: "轻按 Esc 绑定该键，长按 Esc 取消", tabindex: "-1",
       }));
       const cancel = h("button", {
-        type: "button", class: "sbg-key-btn sbg-key-btn--cancel", text: "Cancel",
-        "aria-label": `Cancel adding a key for ${label}`,
+        type: "button", class: "sbg-key-btn sbg-key-btn--cancel", text: "取消",
+        "aria-label": `取消为${label}添加快捷键`,
       });
       cancel.addEventListener("click", disarm);
       list.appendChild(cancel);
@@ -296,8 +296,8 @@ export function keyInput(spec, peers, cleanups) {
     }
 
     const add = h("button", {
-      type: "button", class: "sbg-key-btn sbg-key-btn--add", text: "+ Add",
-      "aria-label": `Add a key for ${label}`,
+      type: "button", class: "sbg-key-btn sbg-key-btn--add", text: "+ 添加",
+      "aria-label": `为${label}添加快捷键`,
     });
     add.addEventListener("click", arm);
     list.appendChild(add);
@@ -305,8 +305,8 @@ export function keyInput(spec, peers, cleanups) {
     // the default, so Reset shows until the setting is forgotten.
     if (storedSetting(id) !== undefined) {
       const reset = h("button", {
-        type: "button", class: "sbg-key-btn", text: "Reset",
-        title: "Back to the default binding", "aria-label": `Reset ${label}`,
+        type: "button", class: "sbg-key-btn", text: "重置",
+        title: "恢复默认快捷键", "aria-label": `重置${label}`,
       });
       reset.addEventListener("click", () => redraw(() => { deleteSetting(id); _rerenderKeyRows(); }, _ADD));
       list.appendChild(reset);

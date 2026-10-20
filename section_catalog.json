@@ -31,7 +31,7 @@
 
   "sections": [
     {
-      "key": "file_info", "section_id": "file_info", "title": "File Info", "kind": "fileinfo",
+      "key": "file_info", "section_id": "file_info", "title": "文件信息", "kind": "fileinfo",
       "search_field": "fileinfo", "search_aliases": ["file_info"], "server_aliases": ["file info"],
       "search_count": "entries", "search_keys": false,
       "search_paths": ["resolution", "codec", "fps", "total_frames", "duration", "duration_seconds"],
@@ -39,7 +39,7 @@
       "media": ["image", "video", "audio"]
     },
     {
-      "key": "model", "section_id": "models", "title": "Models", "kind": "scalar",
+      "key": "model", "section_id": "models", "title": "模型", "kind": "scalar",
       "search_field": "model", "search_aliases": ["models"],
       "search_count": "entries", "search_keys": false,
       "search_paths": ["model"],
@@ -47,7 +47,7 @@
       "media": ["image", "video", "audio"]
     },
     {
-      "key": "positive_prompt", "section_id": "positive", "title": "Positive Prompt", "kind": "text",
+      "key": "positive_prompt", "section_id": "positive", "title": "正向提示词", "kind": "text",
       "search_field": "prompt", "search_aliases": [],
       "search_count": "occurrences", "search_keys": false,
       "search_paths": ["positive_prompt"], "search_badges": ["pos_prompt"],
@@ -55,7 +55,7 @@
       "media": ["image", "video", "audio"]
     },
     {
-      "key": "negative_prompt", "section_id": "negative", "title": "Negative Prompt", "kind": "text",
+      "key": "negative_prompt", "section_id": "negative", "title": "负向提示词", "kind": "text",
       "search_field": "prompt", "search_aliases": [],
       "search_count": "occurrences", "search_keys": false,
       "search_paths": ["negative_prompt"], "search_badges": ["neg_prompt"],
@@ -63,7 +63,7 @@
       "media": ["image", "video", "audio"]
     },
     {
-      "key": "initial_prompt", "section_id": "initial_prompt", "title": "Original Prompt (pre-enhance)", "kind": "text",
+      "key": "initial_prompt", "section_id": "initial_prompt", "title": "原始提示词（增强前）", "kind": "text",
       "search_field": "prompt", "search_aliases": [],
       "search_count": "occurrences", "search_keys": false,
       "search_paths": [],
@@ -71,7 +71,7 @@
       "media": ["image", "video", "audio"]
     },
     {
-      "key": "track", "section_id": "track", "title": "Track", "kind": "object",
+      "key": "track", "section_id": "track", "title": "音轨", "kind": "object",
       "search_field": "track", "search_aliases": ["artist", "album"],
       "search_count": "occurrences", "search_keys": true,
       "search_paths": ["track"],
@@ -79,7 +79,7 @@
       "media": ["audio"]
     },
     {
-      "key": "audio_tags", "section_id": "audio_tags", "title": "Tags", "kind": "text",
+      "key": "audio_tags", "section_id": "audio_tags", "title": "标签", "kind": "text",
       "search_field": "tags", "search_aliases": ["tag", "audio_tags"],
       "search_count": "occurrences", "search_keys": false,
       "search_paths": ["audio_tags"],
@@ -87,7 +87,7 @@
       "media": ["audio"]
     },
     {
-      "key": "audio_lyrics", "section_id": "audio_lyrics", "title": "Lyrics", "kind": "text",
+      "key": "audio_lyrics", "section_id": "audio_lyrics", "title": "歌词", "kind": "text",
       "search_field": "lyrics", "search_aliases": ["lyric", "audio_lyrics"],
       "search_count": "occurrences", "search_keys": false,
       "search_paths": ["audio_lyrics"],
@@ -95,7 +95,7 @@
       "media": ["audio"]
     },
     {
-      "key": "samplers", "section_id": "sampling", "title": "Sampling", "kind": "array",
+      "key": "samplers", "section_id": "sampling", "title": "采样", "kind": "array",
       "search_field": "sampling", "search_aliases": ["samplers"],
       "search_count": "occurrences", "search_keys": true,
       "search_paths": ["samplers", "sampler_name", "clip_skip", "shift", "sampling_type"],
@@ -127,7 +127,7 @@
       "media": ["image", "video"]
     },
     {
-      "key": "upscaling", "section_id": "upscaling", "title": "Upscaling", "kind": "array",
+      "key": "upscaling", "section_id": "upscaling", "title": "放大", "kind": "array",
       "search_field": "upscaling", "search_aliases": [],
       "search_count": "occurrences", "search_keys": true,
       "search_paths": ["upscaling"],
@@ -135,7 +135,7 @@
       "media": ["image", "video"]
     },
     {
-      "key": "interpolation", "section_id": "interpolation", "title": "Interpolation", "kind": "array",
+      "key": "interpolation", "section_id": "interpolation", "title": "插帧", "kind": "array",
       "search_field": "interpolation", "search_aliases": [],
       "search_count": "occurrences", "search_keys": true,
       "search_paths": ["interpolation"],
@@ -151,8 +151,8 @@
       "media": ["image", "video"]
     },
     {
-      "key": "extra", "section_id": "extra", "title": "Extra Metadata", "kind": "object",
-      "display_name": "Details",
+      "key": "extra", "section_id": "extra", "title": "附加元数据", "kind": "object",
+      "display_name": "详情",
       "search_field": "extra", "search_aliases": ["extra metadata", "details"],
       "search_count": "occurrences", "search_keys": true,
       "search_paths": ["extra"],
@@ -160,7 +160,7 @@
       "media": ["image", "video", "audio"]
     },
     {
-      "key": "workflow_nodes", "section_id": "workflow_nodes", "title": "Workflow Nodes", "kind": "nodes",
+      "key": "workflow_nodes", "section_id": "workflow_nodes", "title": "工作流节点", "kind": "nodes",
       "search_field": "workflow_nodes", "search_aliases": ["vlm captioner", "prompt enhancer", "aio aux preprocessor"], "server_aliases": ["workflow nodes"],
       "search_count": "occurrences", "search_keys": true,
       "search_paths": ["workflow_nodes"],
@@ -168,7 +168,7 @@
       "media": ["image", "video", "audio"]
     },
     {
-      "key": "raw", "section_id": "raw", "title": "Raw Metadata", "kind": "raw",
+      "key": "raw", "section_id": "raw", "title": "原始元数据", "kind": "raw",
       "search_field": null, "search_aliases": [],
       "summary_keys": [],
       "media": ["image", "video", "audio"]

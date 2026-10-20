@@ -4,11 +4,11 @@ import { S, idsOfClass } from "./sbg-settings-store.js";
 // A theme's values are keyed by setting id, or by CSS variable for a token no
 // setting reads. A base colour left unset follows ComfyUI's own palette.
 export const BASE_COLORS = Object.freeze([
-  { key: S.CUSTOM_BG, cssVar: "--sbg-bg", label: "Background", tip: "The gallery's background" },
-  { key: S.CUSTOM_SURFACE, cssVar: "--sbg-surface", label: "Surface", tip: "Background of cards, dropdowns and input boxes" },
-  { key: S.CUSTOM_BORDER, cssVar: "--sbg-border", label: "Border", tip: "Borders and dividers" },
-  { key: S.CUSTOM_TEXT, cssVar: "--sbg-text", label: "Text", tip: "Main text color" },
-  { key: S.CUSTOM_ACCENT, cssVar: "--sbg-accent", label: "Accent", tip: "Primary accent color" },
+  { key: S.CUSTOM_BG, cssVar: "--sbg-bg", label: "背景", tip: "图库背景" },
+  { key: S.CUSTOM_SURFACE, cssVar: "--sbg-surface", label: "表面", tip: "卡片、下拉菜单和输入框的背景" },
+  { key: S.CUSTOM_BORDER, cssVar: "--sbg-border", label: "边框", tip: "边框和分隔线" },
+  { key: S.CUSTOM_TEXT, cssVar: "--sbg-text", label: "文字", tip: "主要文字颜色" },
+  { key: S.CUSTOM_ACCENT, cssVar: "--sbg-accent", label: "强调色", tip: "主要强调色" },
 ]);
 const BG = S.CUSTOM_BG, SURFACE = S.CUSTOM_SURFACE, BORDER = S.CUSTOM_BORDER, TEXT = S.CUSTOM_TEXT, ACCENT = S.CUSTOM_ACCENT;
 
@@ -75,7 +75,7 @@ export const THEME_VARIABLES = Object.freeze([
 // Ids are stored and outlive a rename, so `dark` and `blue` stay the ids of Obsidian and Slate.
 export const BUILT_IN_THEMES = [
   { id: "comfy", name: "Comfy", values: { [BG]: "#171718", [SURFACE]: "#262729", [BORDER]: "rgba(240, 239, 237, 0.12)", [TEXT]: "#f0efed", [ACCENT]: "#f2ff59" } },
-  { id: "comfyui", name: "ComfyUI", note: "follows ComfyUI", values: {} },
+  { id: "comfyui", name: "ComfyUI", note: "跟随 ComfyUI", values: {} },
   { id: "dark", name: "Obsidian", values: { [BG]: "#0a0a0a", [SURFACE]: "#161616", [BORDER]: "rgba(255, 255, 255, 0.1)", [TEXT]: "#ededed", [ACCENT]: "#e6e6e6" } },
   { id: "coffee", name: "Coffee", values: { [BG]: "#17140f", [SURFACE]: "#221e17", [BORDER]: "rgba(255, 240, 220, 0.1)", [TEXT]: "#efe6d8", [ACCENT]: "#f5a524" } },
   { id: "blue", name: "Slate", values: { [BG]: "#1b2230", [SURFACE]: "#242d3e", [BORDER]: "rgba(148, 163, 184, 0.2)", [TEXT]: "#e5eaf2", [ACCENT]: "#8aa4ff" } },
@@ -140,7 +140,7 @@ export function resolveThemeRef(ref, storedName, themes) {
 
 // An id means nothing to a person, so a theme found nowhere and stored with no
 // name is called by this.
-export const MISSING_THEME_NAME = "a theme this install doesn't have";
+export const MISSING_THEME_NAME = "本机未安装的主题";
 
 export function themeRefName(ref, storedName, themes) {
   const key = userThemeKey(ref);
@@ -201,10 +201,10 @@ export function themeFile(theme) {
 }
 
 export function readThemeFile(raw, colorKeys) {
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { ok: false, error: "this file isn't a theme" };
-  if (raw.kind !== THEME_FILE_KIND) return { ok: false, error: "this file isn't a theme" };
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { ok: false, error: "此文件不是主题文件" };
+  if (raw.kind !== THEME_FILE_KIND) return { ok: false, error: "此文件不是主题文件" };
   const name = typeof raw.name === "string" ? raw.name.trim() : "";
-  if (!name) return { ok: false, error: "the file gives the theme no name" };
+  if (!name) return { ok: false, error: "文件中的主题没有名称" };
   return { ok: true, theme: { name, values: knownValues(raw.values, colorKeys) } };
 }
 
@@ -216,7 +216,7 @@ export function migrateCustomTheme(values) {
     if (values[key] === "") delete out[key];
     else out[key] = (typeof values[key] === "string" && values[key]) || def;
   }
-  return { name: "Custom", values: out };
+  return { name: "自定义", values: out };
 }
 
 // `base` holds the base colours as painted, keyed without `--sbg-`, plus

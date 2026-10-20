@@ -11,4 +11,4 @@ export const isFavorite = _favorites.has;
 export const toggleFavorite = _favorites.toggle;
 export const hasFavoritesFor = _favorites.hasRoot;
 
-export const favoriteTitle = (on) => (on ? "Remove from favorites" : "Add to favorites");
+export const favoriteTitle = (on) => (on ? "取消收藏" : "添加收藏");
